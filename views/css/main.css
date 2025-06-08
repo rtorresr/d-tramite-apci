@@ -1,0 +1,91 @@
+.img-profile-menu{
+    height: 34px;
+    width: 34px;
+    border-radius: 20px;
+    border: 2px solid white;
+}
+
+.colorfondo{
+    background: rgba(6,80,158,1);
+    background: -moz-linear-gradient(-45deg, rgba(6,80,158,1) 0%, rgba(6,80,158,1) 2%, rgba(34,130,227,1) 18%, rgba(47,121,196,1) 33%, rgba(85,134,186,1) 48%, rgba(48,116,184,1) 56%, rgba(45,113,181,1) 67%, rgba(4,107,209,1) 83%, rgba(6,80,158,1) 100%);
+    background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(6,80,158,1)), color-stop(2%, rgba(6,80,158,1)), color-stop(18%, rgba(34,130,227,1)), color-stop(33%, rgba(47,121,196,1)), color-stop(48%, rgba(85,134,186,1)), color-stop(56%, rgba(48,116,184,1)), color-stop(67%, rgba(45,113,181,1)), color-stop(83%, rgba(4,107,209,1)), color-stop(100%, rgba(6,80,158,1)));
+    background: -webkit-linear-gradient(-45deg, rgba(6,80,158,1) 0%, rgba(6,80,158,1) 2%, rgba(34,130,227,1) 18%, rgba(47,121,196,1) 33%, rgba(85,134,186,1) 48%, rgba(48,116,184,1) 56%, rgba(45,113,181,1) 67%, rgba(4,107,209,1) 83%, rgba(6,80,158,1) 100%);
+    background: -o-linear-gradient(-45deg, rgba(6,80,158,1) 0%, rgba(6,80,158,1) 2%, rgba(34,130,227,1) 18%, rgba(47,121,196,1) 33%, rgba(85,134,186,1) 48%, rgba(48,116,184,1) 56%, rgba(45,113,181,1) 67%, rgba(4,107,209,1) 83%, rgba(6,80,158,1) 100%);
+    background: -ms-linear-gradient(-45deg, rgba(6,80,158,1) 0%, rgba(6,80,158,1) 2%, rgba(34,130,227,1) 18%, rgba(47,121,196,1) 33%, rgba(85,134,186,1) 48%, rgba(48,116,184,1) 56%, rgba(45,113,181,1) 67%, rgba(4,107,209,1) 83%, rgba(6,80,158,1) 100%);
+    background: linear-gradient(135deg, rgba(6,80,158,1) 0%, rgba(6,80,158,1) 2%, rgba(34,130,227,1) 18%, rgba(47,121,196,1) 33%, rgba(85,134,186,1) 48%, rgba(48,116,184,1) 56%, rgba(45,113,181,1) 67%, rgba(4,107,209,1) 83%, rgba(6,80,158,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#06509e', endColorstr='#06509e', GradientType=1 );
+}
+
+div.nav-item a.nav-link span{
+    float: right;
+}
+.boton-flotante{
+    font-size: 1rem;
+    padding: 0.2rem 0.5rem;
+    margin-top: 5px!important;
+    margin-bottom: 5px!important;
+    background-color: #0d47a1!important;
+    border-radius: 100%;
+}
+.boton-flotante i{
+    width: auto;
+    line-height: 0;
+    font-size: 1.5rem;
+
+}
+.botenviar{
+    border: none!important;
+    padding: 0.2rem 0.8rem!important;
+    border-radius: 20px;
+    display: block;
+    background: rgba(21,101,192,1);
+    color: #ffffff!important;
+}
+.botpelota{
+    padding: 0.3rem 0.6rem!important;
+    border-radius: 50%!important;
+    background: #1565c0!important;
+    color: #ffffff!important;
+    border: none!important;
+}
+.botenviar:hover{
+    color: rgba(214, 214, 214, 0.83) !important;
+}
+
+
+.droptitulo{
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bolder;
+}
+.menu-flotante{
+    margin-top: 5.5rem;
+    width: 24px!important;
+}
+.firstmenu{
+    display: none;
+}
+footer.page-footer{
+    font-size: 0.7rem;
+}
+@media (min-width: 576px) {
+    footer.page-footer{
+        font-size: 0.9rem;
+    }
+}
+@media (min-width: 992px) {
+    .firstmenu{
+      display: block;
+    }
+    .secondmenu{
+        display: none;
+    }
+    .boton-flotante{
+    font-size: 1.5rem;
+    padding: 0.3rem 0.8rem;
+    }
+    footer.page-footer{
+        font-size: 1rem;
+    }
+}
+

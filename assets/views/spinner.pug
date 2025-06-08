@@ -1,0 +1,60 @@
+extends includes/base
+
+block globals
+    - var title = "Uso de Spinners"
+    - var body_id = "index"
+    - var body_class= "theme-teal theme-admin"
+    - var page = "Uso de Spinners"
+    - var meta_descript = "Spinner"
+
+block mainmenu
+    +mainmenu('Componentes','Spinner')
+    //- - var extended = true
+
+block content
+  .row
+    .col.s6
+      .card.card-horizontal
+        .card-header
+          span.card-title Llamando un spinner
+        .card-content
+          p
+            | Para usar un spinner, llame la función 
+            pre
+              code getSpinner(message)
+            | , donde 
+            code message
+            |  es un 
+            code string
+            |  con el mensaje del spinner que por defecto es "Cargando data..."
+          br
+          p
+            a#getSpinner.btn.btn-light.btn-block.btn-icon-left(href='#') 
+              i(class="fas fa-circle-notch fa-spin")
+              span Llamar spinner
+    .col.s6
+      .card.card-horizontal
+        .card-header
+          span.card-title Eliminando un spinner
+        .card-content
+          p
+            | Para destruir un spinner, llame la función 
+            pre
+              code deleteSpinner()
+            | y la función eliminará las clases y HTML creado por la funión de llamada.
+          
+block append scripts
+    script.
+      const $ = require('jquery');
+      
+      $(document).ready(function(){
+        $("#getSpinner").click(function(){
+          setTimeout(getSpinner('El spinner se destruirá en 5s, por que se llamó a la función deleteSpinner()...'), 1000);
+          setTimeout(deleteSpinner, 5000);
+        });
+      });
+
+
+
+
+    

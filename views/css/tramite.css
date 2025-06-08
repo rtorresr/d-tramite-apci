@@ -1,0 +1,288 @@
+/* CSS Document */
+body {
+	/*background-image: url(../images/background.jpg);*/
+	background-repeat: repeat-x;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	padding: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	background-color: #e8f0f8;
+}
+.shortcut {
+	color:#F0F0F0;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	text-decoration:none
+}
+
+A {
+	TEXT-DECORATION: none;
+}
+A:visited {
+	TEXT-DECORATION: none;
+}
+A:active {
+	TEXT-DECORATION: none;
+}
+A:hover {
+	TEXT-DECORATION: none;
+}
+
+.shortcut {
+	padding-top:5px;
+	font-family:arial;
+	font-size:12px;
+	color:#C0DCF8;
+	font-weight:bold
+}
+
+.shortcut:link {
+	color:#C0DCF8;
+}
+.shortcut:visited {
+	color:#C0DCF8;
+}
+.shortcut:active {
+	color: #DF0D0D;
+}
+.shortcut:hover {
+	color: #DF0D0D;
+}
+.inputforms {
+	height: 12px;
+	width: 120px;
+	font-size: 11px;
+	background-repeat: repeat-x;
+	border: 1px solid #003366;
+	padding-top: 3px;
+	padding-left: 4px;
+	font-family: Arial;
+	font-style: normal;
+}
+
+.copyright {
+	color:#D3D3D3;
+	font-family: arial,helvetica;
+	font-size: 11px;
+}
+
+.UserInfo {
+	padding-top:3px;
+	color:#4F4F4F;
+	font-family: arial,helvetica;
+	font-size: 11px;
+}
+
+.txt-descripcion {
+	font-family:Arial, Helvetica, sans-serif;	text-decoration: none;
+	font-size: 13px;
+	color:#000000;
+	padding-top:1px;
+	padding-left:53px;
+	padding-right:55px;
+	text-align: Justify;
+}
+
+.size8 {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size9 {
+	FONT-SIZE: 9pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size10 {
+	FONT-SIZE: 10pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size11 {
+	FONT-SIZE: 11pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size12 {
+	FONT-SIZE: 12pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size13 {
+	FONT-SIZE: 13pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size14 {
+	FONT-SIZE: 14pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size15 {
+	FONT-SIZE: 15pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.size16 {
+	FONT-SIZE: 16pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+
+.AreaDesarrollo {
+	font-family:Arial, Helvetica, sans-serif;	text-decoration: none;
+	font-size: 12px;
+	color:#000000;
+	padding-top:1px;
+	padding-left:22px;
+	padding-right:25px;
+	text-align: Justify;
+}
+
+.AreaTitulo {
+  font-family: "Trebuchet MS";
+  font-weight:bold;
+  font-size:14px;
+color: white;
+  padding-top:5px;
+  padding-left:5px;
+  text-transform:uppercase;
+  text-align: left;
+	list-style: none;
+	background-image: url(../images/back_title_rombo.jpg);
+	background-position: left;
+	background-repeat: no-repeat;
+	border-left:1px solid #076BCF;
+	height: 21px;
+}
+
+.FondoFormRegistro {
+	border-top:1px solid #076BCF;
+	border-bottom:1px solid #076BCF;
+	border-right:1px solid #076BCF;
+	border-left:1px solid #076BCF;
+	
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.FondoFormBordes {
+	border-top:1px solid #076BCF;
+	border-bottom:1px solid #076BCF;
+	border-right:1px solid #076BCF;
+	border-left:1px solid #076BCF;
+}
+
+.FondoFormListados {
+	border-top:1px solid #076BCF;
+	border-bottom:1px solid #076BCF;
+	border-right:1px solid #076BCF;
+	border-left:1px solid #076BCF;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+
+.CellFormReg {
+	color:#035FA3;
+	font-size:9pt;
+	font-family:arial,helvetica,sans-serif;
+	text-align:Right;
+	font-weight:bold;
+	padding-top:5px;
+}
+
+.CellFormRegOnly {
+	color:#035FA3;
+	font-size:9pt;
+	font-family:arial,helvetica,sans-serif;
+	font-weight:bold;
+	padding-top:5px;
+	padding-right:5px;
+}
+
+.FormPropertReg {
+	background: #F4F4F4;
+	color:#013154;
+	font-size:9pt;
+	font-family:arial,helvetica,sans-serif;
+}
+
+.FormSubmitReg{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-image:url(../images/back_submit_trab.jpg);
+	border:solid 1px black;
+
+	height:23px;
+	font-weight:bold
+}
+
+.FormSubmitBoton{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-image:url(../images/back_submit_trab.jpg);
+	border:solid 1px black;
+
+	font-weight:bold
+	}
+
+.FormBotonAccion{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	background-color: #FFFFFF;
+	border:solid 0px black;
+	color:#000000;
+	height:20px;
+}
+
+.FormCellRequisito{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	color:#ff0000;
+	font-weight:bold;
+}
+
+.headCellColum {
+	background-color: #004080;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align:center;
+	font-size:12px;
+
+	height:26px;
+}
+
+.headColumnas {
+	background-image: url(../images/back_columna.jpg);
+	background-color: #37668C;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align:center;
+	font-size:12px;
+
+	height:23px;
+}
+
+.menuBoton {
+	background-image: url(../images/back_boton.gif);
+	font-family: Arial, Helvetica, sans-serif;
+	width:148px;
+	height:20px;
+	padding-top:4px;
+	font-size:10px;
+	text-align:left;
+	text-decoration:none
+	
+}
+
+.menu UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; LIST-STYLE-TYPE: none
+}
+.menu LI {
+	Z-INDEX: 100; FLOAT: left; POSITION: relative
+}
+.menu TABLE {
+	Z-INDEX: 80; LEFT: -1px; POSITION: absolute; TOP: 25px; BORDER-COLLAPSE: collapse
+}
+.menu A {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; FONT-SIZE: 10px; BACKGROUND: #bbd5ec; PADDING-BOTTOM: 7px; WIDTH: 190px; COLOR: #366db0; MARGIN-RIGHT: 1px; PADDING-TOP: 10px; FONT-FAMILY: verdana, sans-serif; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.menu :visited {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; FONT-SIZE: 10px; BACKGROUND: #bbd5ec; PADDING-BOTTOM: 7px; WIDTH: 190px; COLOR: #366db0; MARGIN-RIGHT: 1px; PADDING-TOP: 10px; FONT-FAMILY: verdana, sans-serif; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.menu :hover {
+	BACKGROUND: #D3D3D3; COLOR: #004080;
+}
+.menu UL UL {
+	VISIBILITY: hidden; WIDTH: 150px; POSITION: absolute; HEIGHT: 0px
+}
+.menu UL LI:hover UL {
+	VISIBILITY: visible
+}
+.menu UL A:hover UL {
+	VISIBILITY: visible
+}

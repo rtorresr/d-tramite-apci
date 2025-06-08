@@ -1,0 +1,74 @@
+body {
+  .navbar-fixed {
+    .navbar {
+      position: fixed;
+      width: 100%;
+      //left: 0;
+      z-index: 10;
+      // transition: box-shadow .3s, background-color .3s;
+      padding: 0 20px;
+
+      .brand-logo {
+        @include font-family('Ubuntu');
+
+        font-size: 18px;
+      }
+    }
+
+    .nav-content {
+      width: 100%;
+      left: 0;
+      // transition: box-shadow .3s, background-color .3s;
+      padding: 0 20px;
+      top: 56px;
+      height: 48px;
+      background-color: white;
+    
+      @media (min-width: 1200px) {
+        .has-fixed-sidenav & {
+          top: 64px;
+          width: calc(100% - 300px);
+          left: 300px;
+        }
+      }
+    }
+
+    &.nav-extended {
+      min-height: 112px;
+
+      .navbar.white {
+        height: 56px;
+        z-index: 997;
+        box-shadow: none;
+      
+        @media (min-width: 1200px) {
+          height: 64px;
+        }
+      }
+    }
+  }
+
+  /*&.has-fixed-sidenav {
+    .navbar-fixed {
+      @media (min-width: 992px) {
+        .navbar {
+          width: calc(100% - 60px);
+          left: 60px;
+        }
+      }
+
+      @media (min-width: 1700px) {
+        .navbar {
+          width: calc(100% - 300px) !important;
+          left: 300px !important;
+        }
+      }
+    }
+  }*/
+}
+
+.nav-extended {
+  nav {
+    box-shadow: none;
+  }
+}

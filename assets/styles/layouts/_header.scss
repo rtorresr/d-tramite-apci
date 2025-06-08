@@ -1,0 +1,18 @@
+header {
+    &.mainHeader {
+        z-index: 1000;
+        
+        > .navbar-fixed {
+            height: 70px;
+
+            .navbar {
+                height: 70px;
+                line-height: 70px;
+
+                a:hover {
+                    background-color: rgba(0, 0, 0, 0.025);
+                }
+            }
+        }
+    }
+}

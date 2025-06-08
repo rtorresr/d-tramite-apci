@@ -1,0 +1,41 @@
+@charset "utf-8";
+/* CSS Document */
+
+.body{
+ font-family:'Trebuchet MS','Lucida Grande',Verdana,Arial,Sans-Serif;
+}
+
+.fieldset{
+	-webkit-border-radius: 5px 5px 5px 5px;
+	 border-color:#06F;
+	
+	  
+	}
+
+.legend{
+	font-family:'Trebuchet MS','Lucida Grande',Verdana,Arial,Sans-Serif;
+	font-weight:bold;
+	font-style:italic;
+	font-size: 20px;
+	color:#06C;
+    }
+
+.label {
+	font-family:'Trebuchet MS','Lucida Grande',Verdana,Arial,Sans-Serif;
+	font-weight:bold;
+	font-size: 13px;
+	color:#333;
+}
+
+.estilocelda{ 
+    background-color:#FFF; 
+    font-family:'Trebuchet MS','Lucida Grande',Verdana,Arial,Sans-Serif;
+            }
+.estilocelda:focus{
+	color:#03C; 
+	background-color:#E5E5E5;
+	border: 2px double #0099FF;
+		 	
+}
+
+

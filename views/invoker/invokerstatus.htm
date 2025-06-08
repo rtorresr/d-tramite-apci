@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es"><head>    
+  	<title>RENIEC</title>
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="invokerstatus_data/bootstrap.css">
+	<link rel="stylesheet" href="invokerstatus_data/animate.css">
+	<link rel="stylesheet" href="invokerstatus_data/invoker.css">
+
+  </head>
+  <body class="">   
+  	<div class="invokerJWS">
+  		<iframe id="frameInvokerJWS" style="height:0%;width:0%; border:none;display: none;" src="#"></iframe>
+  	</div>
+	<div class="container infoEntity">
+		<div class="col-md-12">	   
+		    <h5>
+		    	<span id="entity_data_name"></span>
+		    </h5>   	   
+	        <span id="entity_data_app"></span> 
+	    </div>
+	</div>
+  	<!-- Modal -->
+	<div class="row">								        
+		<div class="col-sm-12">	                 
+               <div id="mdlInvoker" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade" style="display: none;">
+                   <div class="modal-dialog" style="max-width:350px !important;">
+                       <div class="modal-content" style="background-color:#222222; color:#999">	                        	
+                           <div class="modal-header" style="background-color:#1c1c1c;color:#888;border-bottom: 0px!important;">                            
+                               <div class="modal-title"><i class="glyphicon glyphicon-menu-right"></i>&nbsp;&nbsp; ReFirma Invoker</div>
+                           </div>
+                           <div class="modal-body">	                            			                            	
+                           	<div id="imgLoad" class="row" style="display: inherit;">	
+								<div class="col-sm-12 text-center">		
+									<br>								
+									<img src="invokerstatus_data/s_load.gif" style="border:0; margin-bottom:8px;">										
+								</div>												                            		
+                           	</div>	
+                           	<div id="imgDownload" class="row" style="display: none;">	
+								<div class="col-sm-12 text-center">		
+									<br>								
+									<img src="invokerstatus_data/s_download.gif" style="border:0; margin-bottom:8px;">										
+								</div>												                            		
+                           	</div>
+                           	<div id="imgSign" class="row" style="display: none;">	
+								<div class="col-sm-12 text-center">		
+									<br>									
+									<img src="invokerstatus_data/s_key.gif" style="border:0; margin-bottom:8px;">								
+								</div>												                            		
+                           	</div>	
+                           	<div id="imgUpload" class="row" style="display: none;">	
+								<div class="col-sm-12 text-center">		
+									<br>								
+									<img src="invokerstatus_data/s_upload.gif" style="border:0; margin-bottom:8px;">										
+								</div>												                            		
+                           	</div>
+                           	<div id="imgOk" class="row animated fadeIn" style="display: none;">	
+								<div class="col-sm-12 text-center">		
+									<br>								
+									<img src="invokerstatus_data/s_ok.png" style="border:0; margin-bottom:8px;">									
+								</div>												                            		
+                           	</div>
+                           	<div id="imgCancel" class="row animated fadeIn" style="display: none;">	
+								<div class="col-sm-12 text-center">		
+									<br>											
+									<img src="invokerstatus_data/s_cancel.png" style="border:0; margin-bottom:8px;">											
+								</div>												                            		
+                           	</div>		                            	                         		                            	
+                           	<div class="row">	
+								<div class="col-sm-12 text-center">	
+									<br>											
+									<div id="status">Enviando argumentos...</div>	
+									<br>											
+								</div>												                            		
+                           	</div>	 		                            	     
+                     		                            			                  
+          	                     	                       	   
+                           </div>	
+                       </div>
+                   </div>
+               </div>
+           </div>				
+	</div>  
+  
+</body></html>
+
+<script src="invokerstatus_data/jquery.js"></script>
+<script src="invokerstatus_data/bootstrap.js"></script>
+<script src="invokerstatus_data/invoker.js"></script>

@@ -1,0 +1,184 @@
+.landing {
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+
+    @media #{$large-and-up} {
+      flex-direction: row;
+    }
+
+    .content {
+      height: 100%;
+
+      &__left {
+        
+        display: flex;
+        flex-direction: column;
+        //align-items: center;
+        justify-content: start;
+        //background: url('../images/apci__pattern.svg') repeat-x;
+        padding: 0 2rem;
+        transition: height 0.05s ease-in;
+        width: 100%;
+        
+        @media #{$large-and-up} {
+          height: 100%;
+          width: 33.3333333333%;
+        }
+        
+        header {
+          @include fadeIn();
+
+          @media #{$large-and-up} {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+          }
+        }
+
+        .logo-container {
+          background-color: transparent;
+          color: #FFFFFF;
+
+          &:hover {
+            background-color: transparent !important;
+          }
+
+          svg {
+            margin-right: 1rem;
+            height: 35px;
+            transition: height 0.3s ease-in-out;
+
+            @media #{$large-and-up} {
+              height: 80px;
+            }
+          }
+
+          figure {
+            h1 {
+              font-size: 1.5rem;
+              margin: 0;
+              line-height: 0;
+              transition: font-size 0.3s ease-in-out;
+  
+              @media #{$large-and-up} {
+                font-size: 3.2rem;
+                //margin: 2.8rem 0 1.68rem 0;
+                line-height: 110%;
+              }
+            }
+
+            @media (min-width: 601px) and (max-width: 1699.98px) {
+              flex-direction: column;
+
+              figcaption {
+                display: block;
+                text-align: center;
+              }
+            }
+            
+            @media (min-width: 1700px) {
+              flex-direction: row;
+              
+              figcaption {
+                text-align: left;
+                margin-top: 1rem;
+              }
+            }
+          }
+
+          .brand {
+            margin-bottom: 0;
+
+            a {
+              color: #fff;
+            }
+          }
+
+          p {
+            margin: 0;
+            padding: 0;
+            font-size: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            transition-delay: 0.3s;
+
+            @media #{$large-and-up} {
+              font-size: 14px;
+              opacity: 0.85;
+            }
+          }
+        }
+
+        .apci {
+          h1 {
+            margin: 0;
+            line-height: 0;
+
+            @media #{$large-and-up} {
+              margin: 2.8rem 0 1.68rem 0;
+              line-height: 110%;
+            }
+          }
+
+          img {
+            width: 85px;
+            transition: width 0.3s ease-in-out;
+
+            @media #{$large-and-up} {
+              width: 125px;
+            }
+          }
+        }
+      }
+
+      &__right {
+        @include fadeIn();
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        width: 100%;
+        
+        @media #{$large-and-up} {
+          width: 66.6666666667%;
+        }
+
+        form,
+        .card {
+
+          @media #{$large-and-up} {
+          }
+
+          @media #{$large-and-up} {
+          }
+        }
+
+        .center {
+          padding-bottom: 30px;
+
+          h3 {
+            font-size: 24px;
+            margin-bottom: 0;
+            transition: font-size 0.1s ease-in-out;
+
+            @media #{$large-and-up} {
+              font-size: 30px;
+            }
+          }
+
+          p {
+            font-size: 16px;
+            margin-top: 0;
+            color: rgba(0, 0, 0, 0.5);
+          }
+        }
+      }
+    }
+  }
+}

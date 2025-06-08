@@ -1,0 +1,754 @@
+extends includes/base
+
+block globals
+    - var title = "Uso de SimpleBar"
+    - var body_id = "index"
+    - var body_class= "theme-teal theme-admin"
+    - var page = "Panel de Control"
+    - var meta_descript = "Uso de SimpleBar"
+
+block mainmenu
+    +mainmenu('Componentes','SimpleBar')
+    //- - var extended = true
+
+block content
+  .row
+    .col.s12
+      .card.card-horizontal
+        .card-header
+          span.card-title Inicializando Simplebar
+        .card-content
+          p Antes de usar SimpleBar sinicialícelo como cualquier otro plugin en el CDN:
+          pre.
+            const SimpleBar = require('simplebar'); 
+            
+    .col.s12
+      .card.card-horizontal
+        .card-header
+          span.card-title SimpleBarJS con data-attributes
+        .card-content
+          p
+            | SimpleBar se puede llamar a través de 
+            code data-attributes
+            |. Es importante incluir un 
+            code height
+            | al 
+            code div 
+            | que contiene al scroller (SimpleBar)
+          pre.
+            &lt;div data-simplebar data-simplebar-auto-hide="false" style="height:100px"&gt;&lt;/div&gt;
+
+          div(data-simplebar="", data-simplebar-auto-hide="false", style="height:100px")
+            p Lorem ipsum dolor, sit amet consectetur adipisicing elit. Omnis voluptatibus modi laboriosam ab facere pariatur et veniam dolor odio porro placeat maxime in expedita doloribus eos illo, aut repellendus molestiae?
+            p Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis ullam neque id voluptatum voluptas, nulla error aliquam, aut molestiae labore quae dignissimos, earum odit ipsa autem nam corporis ea amet.Excepturi eos rerum perferendis aspernatur, sit tenetur architecto. Asperiores quos ducimus sit illo nam dolore aliquid rem minus soluta, pariatur inventore praesentium id, nemo dolores, quo labore consectetur repellat hic!Accusamus natus minima provident labore, animi earum! Cupiditate amet rem, dolor nulla numquam, adipisci eum debitis id unde, a reiciendis? Harum exercitationem aspernatur, alias amet aliquid sit excepturi ad praesentium.
+            p Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem, a quis. Sed rem, sint vero earum, beatae voluptatibus rerum provident unde eaque adipisci praesentium ea facere tempora blanditiis, aperiam labore.Illo, veniam, quaerat voluptatem repudiandae sit aliquam eos ex consectetur nesciunt aperiam at veritatis quis cumque hic odit unde quos temporibus cum iure voluptate consequuntur nihil. Ipsa odit hic itaque.Voluptatibus tempore similique quibusdam aliquid perspiciatis veniam ipsa explicabo, sit quae illum minus voluptates libero velit nemo neque natus voluptatem repellendus! Iste est nostrum quibusdam voluptatem deserunt rerum laborum nihil.Reprehenderit, numquam magnam veniam blanditiis non quod ducimus cum perferendis ipsam sint deleniti fugiat corporis repudiandae dolorum illo iure amet voluptatibus repellendus itaque, doloribus, nam voluptatem excepturi necessitatibus iste. Adipisci.Deserunt quis et labore consectetur expedita beatae nobis. Consequuntur sapiente magnam consectetur neque ex minus at fugit beatae modi aliquam! Accusamus, nemo expedita recusandae quod repellendus quos. Fugiat, modi corrupti?
+  .row
+    .col.s12
+      .card.card-horizontal
+        .card-header
+          span.card-title SimpleBar con inicialización de jQuery (JS)
+        .card-content
+          p SimpleBar tambein se puede inicializar a través de JavaScript:
+          code new SimpleBar($('#myElement')[0])
+          |. Esto es útil cuando se usa SimpleBar en elementos creados dinámicamente (por ejemplo, en DataTables)
+          br
+          br
+          p
+            | Se recomienda utilizar el código dentro del 
+            code drawCallback 
+            | de DataTables.
+          br
+          br
+          .row.no-margin-bottom
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Programa Presupuestal
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Producto
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Actividad
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Sub actividad
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Departamento
+            div(class="input-field col s12 m6 l3")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Provincia
+            div(class="input-field col s12 m6 l2")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Unidad de Medida
+            div(class="input-field col s12 m6 l2")
+              select
+                option(value="" disabled selected) Seleccione
+                option(value="1") Option 1
+                option(value="2") Option 2
+                option(value="3") Option 3
+              label Periodo
+            div(class="input-field col s12 m6 l2")
+              a(class="btn btn-light") 
+                i.fas.fa-search
+        
+        //- .card-content
+        .card-table
+          table#default-table-example.striped
+            thead
+              tr
+                th Index
+                th Name
+                th Position
+                th Office
+                th Age
+                th Start date
+                th Index
+                th Name
+                th Position
+                th Office
+                th Age
+                th Start date
+                th Office
+                th Age
+                th Start date
+                
+            tbody
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+              tr
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td Tiger Nixon
+                td System Architect
+                td Edinburgh
+                td 61
+                td 2011/04/25
+                td $320,800
+                td 61
+                td 2011/04/25
+                td $320,800
+  
+block append scripts
+    script.
+      const $ = require('jquery');
+      const SimpleBar = require('simplebar');
+      
+      $(document).ready(function(){
+        $('select').formSelect();
+        var tables = $('#default-table-example').DataTable({
+          responsive: true,
+          scrollY:        "50vh",
+          scrollCollapse: true,
+          drawCallback: function( settings ) {
+            //$(".dataTables_scrollBody").attr("data-simplebar", "");
+            new SimpleBar($('.dataTables_scrollBody')[0]);
+            $('select[name="default-table-example_length"]').formSelect();
+          },
+          //dom: '<"header with-filter"fB>trlip',
+          dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
+           //dom: '<"row"<"col s12"t><"col s12"r>><"row dataTable-footer"f<"col s12 m4 l2"l><"col s12 m8 l6 center"i><"col s12 m12 l4"p>>',
+          "language": {
+            "url": "dist/scripts/datatables-es_ES.json"
+          },
+        });
+
+        //- new SimpleBar(document.getElementById('customBar'), { 
+        //-   scrollbarMinSize: 100
+        //- });
+      });
+
+
+
+
+    

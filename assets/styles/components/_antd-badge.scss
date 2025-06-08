@@ -1,0 +1,31 @@
+.antd-badge {
+    vertical-align: middle;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0,0,0,.65);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    list-style: none;
+    font-feature-settings: "tnum";
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+}
+
+.antd-badge-status-dot {
+    position: relative;
+    background-color: #d9d9d9;
+    top: -1px;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+.ant-badge-status-text {
+    margin-left: 8px;
+    color: rgba(0,0,0,.65);
+    font-size: 14px;
+}

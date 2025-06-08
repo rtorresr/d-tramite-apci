@@ -1,0 +1,123 @@
+.input-field {
+    display: flex;
+    flex-direction: column;
+
+    &.file-field {
+        flex-direction: row;
+    }
+    
+    &.col {
+        label {
+            left: $gutter-width;
+        }
+    }
+
+    & > label {
+        transform: translateY(12px);
+
+        &:not(.label-icon).active {
+            transform: translateY(2px) scale(0.65);
+            font-weight: 500;
+        }
+    }
+
+    input:not([type]),
+    input[type=text]:not(.browser-default),
+    input[type=password]:not(.browser-default),
+    input[type=email]:not(.browser-default),
+    input[type=url]:not(.browser-default),
+    input[type=time]:not(.browser-default),
+    input[type=date]:not(.browser-default),
+    input[type=datetime]:not(.browser-default),
+    input[type=datetime-local]:not(.browser-default),
+    input[type=tel]:not(.browser-default),
+    input[type=number]:not(.browser-default),
+    input[type=search]:not(.browser-default),
+    textarea.materialize-textarea {
+        // General Styles
+        border: $input-border;
+        border-radius: 2px;
+        width: auto;
+        margin: 0;
+
+        &:disabled,
+        &[readonly="readonly"] {
+            cursor: not-allowed;   
+        }
+    }
+
+    > input[type]:-webkit-autofill:not(.browser-default):not([type="search"]) + label, 
+    > input[type=date]:not(.browser-default) + label, 
+    > input[type=time]:not(.browser-default) + label {
+        transform: translateY(2px) scale(0.65);
+    }
+
+    > p.radio,
+    > p.checkbox {
+        border: 1px solid #999999;
+        border-radius: 2px;
+        width: auto;
+        margin: 0;
+        outline: none;
+        height: 3rem;
+        font-size: 16px;
+        padding: 0 0.65rem;
+        //line-height: 3rem;
+
+        label:last-child {
+            transform: translateY(2px) scale(0.65);
+            font-weight: 500;
+            position: absolute;
+            top: 0;
+            transform-origin: 0 0;
+            transition: transform .2s ease-out, color .2s ease-out, -webkit-transform .2s ease-out;
+            text-align: initial;
+            font-size: 1rem;
+        }
+
+        label:not(:last-child) {
+            line-height: 3.75rem;
+            margin-right: 1rem;
+        }
+    }
+}
+
+/* Textarea */
+
+// Default textarea
+textarea {
+    width: 100%;
+
+    &.materialize-textarea {
+        padding: 0.8rem; /* prevents text jump on Enter keypress */
+    }
+}
+
+.select-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .caret {
+        margin: auto 12px;
+    }
+
+    .dropdown-trigger {
+        padding: 0 0.75rem !important;
+    }
+
+    & + label {
+        top: -10px;
+        font-weight: 500;
+    }
+
+    &.select-month,
+    &.select-year {
+        display: block;
+
+        .dropdown-trigger {
+            padding: 0 !important;
+            border: 0 !important;
+            width: 100% !important;
+        }
+    }
+}

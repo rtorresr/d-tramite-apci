@@ -1,0 +1,104 @@
+extends includes/base
+
+block globals
+    - var title = "Uso de Botones"
+    - var body_id = "index"
+    - var body_class= "theme-teal theme-admin"
+    - var page = "Uso de Botones"
+    - var meta_descript = "Botone"
+
+block mainmenu
+    +mainmenu('Componentes','Buttons')
+    //- - var extended = true
+
+block content
+  .row
+    .col.s6
+      .card
+        .card-header
+          span.card-title Raised
+        .card-content
+          p
+            | Botón por defecto. Toma el color primario.
+            pre
+              code &lt;a class=&quot;waves-effect waves-light btn&quot;&gt;button&lt;/a&gt;
+          br
+          p
+            a(class="waves-effect waves-light btn") Botón por defecto
+          br
+          p
+            | Botón con ícono a la izquierda
+            pre
+              code &lt;a class=&quot;waves-effect waves-light btn btn-icon-left&quot;&gt;&lt;i class=&quot;fas fa-user&quot;&gt;&lt;/i&gt; User&lt;/a&gt;
+          br
+          p
+            a(class="waves-effect waves-light btn btn-icon-left")
+              i.fas.fa-user
+              | Botón con ícono a la izquierda
+          br
+          p
+            | Botón con ícono a la derecha
+            pre
+              code &lt;a class=&quot;waves-effect waves-light btn btn-icon-right&quot;&gt;&lt;i class=&quot;fas fa-user&quot;&gt;&lt;/i&gt; User&lt;/a&gt;
+          br
+          p
+            a(class="waves-effect waves-light btn btn-icon-right")
+              | Botón con ícono a la Derecha
+              i.fas.fa-user
+          br
+
+    .col.s6
+      .card
+        .card-header
+          span.card-title Botón tipo link
+        .card-content
+          p
+            | Se usa como botón secundario. En la mayoría de casos acompaña a un botón secundario.
+            pre
+              code
+                | &lt;a class=&quot;waves-effect waves-light btn&quot;&gt;Primario&lt;/a&gt;
+                | &lt;a class=&quot;waves-effect waves-light btn btn-link&quot;&gt;Secundario&lt;/a&gt;
+          br
+          p
+            a.waves-effect.waves-light.btn Primario
+            a.waves-effect.waves-light.btn.btn-link Secundario
+      .card
+        .card-header
+          span.card-title Botón tipo light
+        .card-content
+          p
+            | Se usa como botón cuando este está en el contexto de un formulario y acompaña a textfields.
+            pre
+              code
+                | &lt;a class=&quot;waves-effect waves-light btn btn-light&quot;&gt;Buscar&lt;/a&gt;
+          br
+          p
+            a.waves-effect.waves-light.btn.btn-light Buscar
+      .card
+        .card-header
+          span.card-title Botón tipo block
+        .card-content
+          p
+            | Se usa para extender un botón a su contenedor.
+            pre
+              code
+                | &lt;a class=&quot;waves-effect waves-light btn btn-block&quot;&gt;Botón extendido&lt;/a&gt;
+          br
+          p
+            a.waves-effect.waves-light.btn.btn-block Botón extendido
+          
+block append scripts
+    script.
+      const $ = require('jquery');
+      
+      $(document).ready(function(){
+        $("#getSpinner").click(function(){
+          setTimeout(getSpinner('El spinner se destruirá en 5s, por que se llamó a la función deleteSpinner()...'), 1000);
+          setTimeout(deleteSpinner, 5000);
+        });
+      });
+
+
+
+
+    

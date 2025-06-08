@@ -1,0 +1,35 @@
+@font-face {
+    font-family: 'Cooper Hewitt Bold';
+    src: url('../fonts/cooperhewitt-bold-webfont.woff2') format('woff2'), url('../fonts/cooperhewitt-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cooper Hewitt Medium';
+    src: url('../fonts/cooperhewitt-medium-webfont.woff2') format('woff2'), url('../fonts/cooperhewitt-medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cooper Hewitt Bold' !important;
+}
+
+.btn {
+    text-transform: initial !important;
+    font-family: 'Cooper Hewitt Medium' !important;
+}
+
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 600;
+}
+
+.card {
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    -webkit-box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%) !important;
+    box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%) !important;
+}

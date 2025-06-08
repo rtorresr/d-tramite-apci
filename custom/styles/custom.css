@@ -1,0 +1,9 @@
+@media only screen and (min-width: 993px) {
+    .modal {
+        width: 75%;
+    }
+}
+
+.select-info .select-item {
+    display: none;
+}

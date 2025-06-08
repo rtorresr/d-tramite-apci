@@ -1,0 +1,17 @@
+.collapsible {
+    &.collapsible-flow {
+        .collapsible-header {
+            padding: 0;
+            background-color: #eeeeee !important;
+
+            table thead tr {
+                color: initial;
+                background-color: transparent;
+            }
+
+            table tr.proyectado {
+                opacity: 0.65;
+            }
+        }
+    }
+}

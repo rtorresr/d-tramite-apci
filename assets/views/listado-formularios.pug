@@ -1,0 +1,124 @@
+extends includes/base
+
+block globals
+    - var title = "Listado Formularios"
+    - var body_id = "index"
+    - var body_class= "theme-default has-fixed-sidenav"
+    - var page = "Panel de Control"
+    - var meta_descript = "Listado Formularios"
+
+block mainmenu
+    +mainmenu('Recursos Naturales','Listado Formularios')
+    //- - var extended = true
+
+block content
+  .row
+    .col.s12
+      .card.card-horizontal
+        .card-header
+          span.card-title Card Title 1
+
+        //- .card-content
+        .card-table
+          .chart__table
+
+block append scripts
+    //script(src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js")
+    script.
+      const $ = require('jquery');
+      const SimpleBar = require('simplebar');
+
+      $(".chart__table").html(`
+        <table id="starwars" class="dt-responsive" cellspacing="0" width="100%">
+          <thead class="thead-dark">
+            <tr>
+              <th>Planeta</th>
+              <th>Diametro</th>
+              <th>Población</th>
+              <th data-priority="1">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      `);
+      
+      $(document).ready(function(){
+        var instances = M.FormSelect.init($("select"));
+        var tables = $('#starwars').DataTable({
+          responsive: true,
+          scrollY:        "50vh",
+          scrollCollapse: true,
+          drawCallback: function( settings ) {
+            $(".dataTables_scrollBody").attr("data-simplebar", "");
+            $('select[name="starwars_length"]').formSelect();
+          },
+          dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
+          buttons: [
+            { extend: 'copy', text: '<i class="fas fa-copy"></i> Copiar' },
+            { extend: 'csv', text: '<i class="fas fa-file-excel"></i> CSV' },
+            { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel' },
+            { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+            { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
+          ],
+          "language": {
+            "url": "dist/scripts/datatables-es_ES.json"
+          },
+          'columnDefs': [
+            {
+              'targets': 0,
+              'checkboxes': {
+                'selectRow': true
+              }
+            }
+          ],
+          'select': {
+            'style': 'multi'
+          }, 
+          'order': [[1, 'asc']]
+        });
+
+        $.ajax({
+          url: "https://swapi.co/api/planets/",
+          dataType: "json",
+          beforeSend: function() {
+            getSpinner('Esperando data...');
+          },
+          complete: function() {
+            deleteSpinner();
+          },
+          success: function( data ) {
+            let arr = data.results;
+
+            //console.log(data.results);
+
+            for(var i = 0; i < arr.length; i++ ){
+              tables.row.add( [
+                arr[i].name,
+                arr[i].diameter,
+                arr[i].population,
+                `<nav class="nav-actions">
+                  <a class="waves-effect waves-light btn btn-link nav-action-link success" href="#">
+                    <i class="fas fa-fw fa-plus"></i>
+                  </a>
+                  <a class="waves-effect waves-light btn btn-link nav-action-link" href="#">
+                    <i class="fas fa-fw fa-edit"></i>
+                  </a>
+                  <a class="waves-effect waves-light btn btn-link nav-action-link" href="#">
+                    <i class="fas fa-fw fa-file-word"></i>
+                  </a>
+                  <a class="waves-effect waves-light btn btn-link nav-action-link" href="#">
+                    <i class="fas fa-fw fa-eye"></i>
+                  </a>
+                  <a class="waves-effect waves-light btn btn-link nav-action-link" href="#">
+                    <i class="fas fa-fw fa-external-link-alt"></i>
+                  </a>
+                  <a class="waves-effect waves-light btn btn-link nav-action-link danger" href="#">
+                    <i class="fas fa-fw fa-trash-alt"></i>
+                  </a>
+                </nav>`
+              ] ).draw( false );
+            }
+          }
+        });
+      });    

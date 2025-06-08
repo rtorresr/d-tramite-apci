@@ -1,0 +1,98 @@
+extends includes/base
+
+block globals
+    - var title = "Listado Formularios"
+    - var body_id = "index"
+    - var body_class= "theme-teal theme-admin"
+    - var page = "Panel de Control"
+    - var meta_descript = "Listado Formularios"
+
+block mainmenu
+    +mainmenu('Recursos Naturales','Listado Formularios')
+    //- - var extended = true
+
+block content
+  .row
+    .col.s12
+      ul.collapsible.collapsible-accordion
+        li.active
+          div(class="collapsible-header", tabindex="0")
+            i(class="fas fa-users")
+            span Agregar item
+          div(class="collapsible-body")
+            .row
+              .col.m4.s12
+                .card
+                  .card-header
+                    span.card-title Datos Generales
+                  .card-content
+                    div(class="input-field")
+                      input(id="first_name" type="text" class="validate")
+                      label(for="first_name") SNIP
+              .col.m4.s12
+                .card
+                  .card-header
+                    span.card-title Referenciación
+                  .card-content
+                    .row
+                      div(class="input-field col s12")
+                        select#cboRegion
+                          option(value="" disabled selected) Seleccione
+                        label(for="cboRegion") Región
+                      div(class="input-field col s12")
+                        select#cboProv
+                          option(value="" disabled selected) Seleccione
+                        label(for="cboProv") Provincia
+                      div(class="input-field col s12")
+                        select#cboDis
+                          option(value="" disabled selected) Seleccione
+                        label(for="cboDis") Distrito
+              .col.m4.s12
+                .card
+                  .card-header
+                    span.card-title Responsable
+                  .card-content
+                      div(class="input-field")
+                        input(id="txtDNI" type="text" class="validate")
+                        label(for="txtDNI") DNI      
+  
+block append scripts
+    script.
+      const $ = require('jquery');
+
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var instances = M.FormSelect.init($("select"));
+
+        //- instances.formSelect();
+      });
+      
+      
+      $(document).ready(function(){
+        var tables = $('#default-table-example').DataTable({
+          responsive: true,
+          scrollY:        "50vh",
+          scrollCollapse: true,
+          drawCallback: function( settings ) {
+            $(".dataTables_scrollBody").attr("data-simplebar", "");
+            $('select[name="default-table-example_length"]').formSelect();
+          },
+          dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
+          //-  buttons: [{
+          //-   extend: 'csv',
+          //-   exportOptions: {
+          //-       columns: ':visible'
+          //-   }
+          //- }],
+          buttons: [
+            { extend: 'copy', text: '<i class="fas fa-copy"></i> Copiar' },
+            { extend: 'csv', text: '<i class="fas fa-file-excel"></i> CSV' },
+            { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel' },
+            { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+            { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
+          ],
+          "language": {
+            "url": "dist/scripts/datatables-es_ES.json"
+          },
+        });
+      });

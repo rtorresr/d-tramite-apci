@@ -1,0 +1,45 @@
+extends includes/login
+block globals
+    - var body_id= "login"
+    - var body_class= "theme-default login"
+    - var page = "Ingresando"
+    - var meta_descript = "Ingresando a la aplicación"
+
+block left-content
+  header.appName 
+    h1.brand 
+      a(href="admin.html") SITDD
+    p.small Sistema Integrado de Trámite Documentario Digital
+  footer.apci
+    h1
+      a(href="")
+        img(src="dist/images/apci__logo--large.svg", width="185")
+block right-content
+  form
+    .center
+      h3 Bienvenido de nuevo
+      p Ingrese a su cuenta
+    .input-field
+      input(id="txtUsername" type="text" autocomplete="off")
+      label(for="txtUsername") Usuario
+    .input-field
+      input(id="txtClave" type="password" autocomplete="off")
+      label(for="txtClave") Contraseña
+      button.input-field__icon.btn.btn-link#toggleEye
+        i(class="fas fa-eye")
+    .form-ref-box
+        label(for="checkbox1")
+          input(id="checkbox1" type="checkbox")
+          span Recordar
+        span.form-ref-link
+          a(href="#") ¿Olvidó su clave?
+    .input-field
+      button(class="btn btn-action-form btn-block waves-effect waves-light btn-large btn-primary" type="button") Iniciar Sesión
+
+
+block footer
+
+//- block append scripts
+//-     script.
+//-       const $ = require('jquery');
+//-       require('materialize-css');

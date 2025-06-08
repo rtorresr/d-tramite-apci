@@ -1,0 +1,35 @@
+@import "common/variables";
+
+@import "../../node_modules/materialize-css/sass/materialize";
+@import "../../node_modules/animatewithsass/animate.scss";
+@import "../../node_modules/select2/src/scss/core";
+
+@import "common/mixins";
+@import "common/global";
+
+@import "components/login";
+@import "components/landing";
+@import "components/datatables";
+@import "components/sidenav";
+@import "components/modals";
+@import "components/simplebar";
+@import "components/input-fields";
+@import "components/datepicker";
+@import "components/typography";
+@import "components/confirm";
+@import "components/nav";
+@import "components/collapsible";
+@import "components/card";
+@import "components/select2";
+@import "components/buttons";
+@import "components/print";
+@import "components/antd";
+@import "components/ios";
+
+@import "layouts/nav";
+@import "layouts/header";
+@import "layouts/footer";
+
+@include theme(theme-default, #1B365D, #FF9E1B);
+
+@import "components/theme-admin";

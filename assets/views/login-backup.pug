@@ -1,0 +1,32 @@
+.page-wrapper
+    .control-body
+      main
+        section(class="section")
+          .row
+            div(class="col s6")
+              .card
+                .card-content
+                  header
+                    a(href="./dashboard.html") SITDD
+                    p Bienvenido de nuevo
+                    
+                  form
+                    .input-field
+                      i(class="fas fa-user prefix")
+                      input(id="txtUsername" type="email" class="validate" autocomplete="off" required="required")
+                      label(for="txtUsername") Ingrese usuario
+                    .input-field
+                      i(class="fas fa-key prefix")
+                      input(id="txtClave" type="password" class="validate" autocomplete="off" required="required")
+                      label(for="txtClave") Ingrese clave
+                    .form-ref-box
+                      .left
+                        label(for="checkbox1")
+                          input(id="checkbox1" type="checkbox" checked="checked" class="filled-in")
+                          span Recuérdame
+                      .right
+                        span.form-ref-link
+                          a(href="#") ¿Olvidaste tu clave?
+                    .input-field
+                      button(class="btn btn-action-form btn-block waves-effect waves-light theme-bg btn-large" type="submit" name="action") Ingrese a su cuenta
+

@@ -1,0 +1,177 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	padding: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 10px;
+	background-
+}
+A {
+	TEXT-DECORATION: none;
+}
+A:visited {
+	TEXT-DECORATION: none;
+}
+A:active {
+	TEXT-DECORATION: none;
+}
+A:hover {
+	TEXT-DECORATION: none;
+}
+
+.LnkZonas {
+	padding-top:0px;
+	font-family:arial;
+	font-size:12px;
+	color:#3B3B3B;
+	font-weight:bold;
+	text-transform:uppercase;	
+}
+
+.LnkZonas:link {
+	color:#3B3B3B;
+}
+.LnkZonas:visited {
+	color:#3B3B3B;
+}
+.LnkZonas:active {
+	color: #660000;
+}
+.LnkZonas:hover {
+	color: #660000;
+}
+
+.AreaDesarrollo {
+	font-family:Arial, Helvetica, sans-serif;	text-decoration: none;
+	font-size: 12px;
+	color:#000000;
+	padding-top:1px;
+	padding-left:22px;
+	padding-right:25px;
+	text-align: Justify;
+}
+
+.AreaTitulo {
+  font-family: "Trebuchet MS";
+  font-weight:bold;
+  font-size:17px;
+  color:#003162;
+  padding-left:5px;
+  text-transform:uppercase;
+  text-align: left;
+	list-style: none;
+	background-image: url(../images/back_title.jpg);
+	background-position: left;
+	background-repeat: no-repeat;
+	border-left:1px solid #076BCF;
+}
+
+.FondoFormRegistro {
+	border-top:1px solid #076BCF;
+	border-bottom:1px solid #076BCF;
+	border-right:1px solid #076BCF;
+	border-left:1px solid #076BCF;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.CellFormReg {
+	font-size:9pt;
+	font-family:arial,helvetica,sans-serif;
+	text-align:Right;
+	font-weight:bold;
+	padding-top:5px;
+}
+
+.CellFormDet {
+	color:#666666;
+	font-size:8pt;
+	font-family:arial,helvetica,sans-serif;
+	text-align:Left;
+	font-weight:bold;
+	padding-top:5px;
+}
+
+.CellFormCol {
+	font-size:9pt;
+	font-family:verdana;
+	font-weight:normal;
+	padding-top:5px;
+}
+
+.FlujoSquareEmpty{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-color: #FFFFFF;
+	border:solid 2px #FFFFFF;
+	width:104px;
+	height:60px;
+}
+
+.FlujoSquareData{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-color: #FFFFAE;
+	border:solid 1px black;
+	color:#4F4F00;
+	width:70px;
+	height:30px;
+	font-weight:bold;
+}
+
+.FlujoSquareAnexo{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-color: #C6E2FF;
+	border:solid 1px black;
+	color:#4F4F00;
+	width:70px;
+	height:30px;
+	font-weight:bold;
+}
+
+.FormSubmitBoton{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-image:url(../images/back_submit_trab.jpg);
+	border:solid 1px black;
+
+	font-weight:bold
+}
+
+.FormCellRequisito{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	color:#ff0000;
+	font-weight:bold;
+}
+
+.FormSubmitReg{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	background-image:url(../images/back_submit_trab.jpg);
+	border:solid 1px black;
+
+	height:23px;
+	font-weight:bold
+}
+
+.headCellColum {
+	background-color: #004080;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align:center;
+	font-size:12px;
+
+	height:26px;
+}
+
+.headColumnas {
+	background-color: #004080;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align:center;
+	font-size:12px;
+
+	height:23px;
+}

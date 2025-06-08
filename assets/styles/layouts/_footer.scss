@@ -1,0 +1,16 @@
+.mainFooter {
+  .container {
+    > .row {
+      margin-bottom: 0;
+    }
+  }
+
+  h5 {
+    @extend .overline;
+  }
+
+  p,
+  h5 {
+    color: rgba(0, 0, 0, 0.85);
+  }
+}

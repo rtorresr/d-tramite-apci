@@ -1,0 +1,146 @@
+block globals
+
+doctype html
+html(lang="en")
+  head
+    include _head.pug
+
+  body(id=(body_id || 'default-page'), class=(body_class || 'theme-default'))
+
+  block navigation
+    header.mainHeader
+      if extended
+        .navbar-fixed.nav-extended
+          nav(class="navbar")
+            .nav-wrapper
+              a(href="#", class="brand-logo") #{title}
+              ul(id="nav-mobile", class="right")
+                li.hide-on-med-and-down
+                  a(href="#") Enlace
+                li.hide-on-med-and-down
+                  a(href="#")
+                    i.fas.fa-bell
+                li
+                  a(href="#")
+                    i.fas.fa-cog
+              a(href="#!", data-target="slide-out", class="sidenav-trigger left")
+                i.fas.fa-bars
+          nav(class="nav-content")
+            .nav-wrapper
+              ul.tabs
+                li.tab
+                  a(href="#test1") Métrica
+                li.tab
+                  a(href="#test2") Empleados
+                li.tab
+                  a(href="#test3") Calendario
+      else
+        .navbar-fixed
+          nav(class="navbar")
+            .nav-wrapper
+              a(href="#", class="brand-logo") #{title}
+              ul(id="nav-mobile", class="right")
+                li.switchProfile
+                  a(class="switch-profile tooltipped" href="#!" data-target="swtichDropdownProfile" data-position="left" data-tooltip="Cambiar de perfil")
+                    picture
+                      img(src="dist/images/switch-user.png", alt="", srcset="", width="26", height="26")
+                  ul(id="swtichDropdownProfile", class="dropdown-content", style="top:100% !important")
+                    li
+                      a(href="#!") Dummy text
+                li
+                  a(class="profile-trigger" href="#!" data-target="dropdownProfile")
+                    .profile
+                      p.name Marcial Soto
+                      p.access USI (Profesional) 
+                    picture
+                      img(src="dist/images/marcial-soto__pic.jpg", alt="", srcset="", width="36", height="36")
+                  ul(id="dropdownProfile", class="dropdown-content", style="top:100% !important")
+                    li
+                      a(href="#!") Perfil
+                    li
+                      a(href="#!") Configuración
+                    li(class="divider")
+                    li
+                      a(href='#!')
+                        i.fas.fa-sign-out-alt
+                        span(style="padding-left:0.5rem") Salir
+                        
+              a(href="#!", data-target="slide-out", class="sidenav-trigger left")
+                i.fas.fa-bars
+        
+      ul#slide-out.sidenav.sidenav-fixed
+          li
+            a.logo-container(href='/admin.html') SITDD
+          mixin mainmenu(activeItem, activeItemChild)
+            -var menuItems = [{name: 'Inicio', href: './admin.html', isActive: false, child: null, icon: 'fa-fw fas fa-home'}, {name: 'Recursos Naturales', href :null, isActive: false, icon: 'fa-fw fas fa-home', child: [{name: 'Listado Formularios', href: './listado-formularios.html', isActive: false, child: null, icon: 'fa-fw fab fa-wpforms'}]}, {name: 'Componentes', href :null, isActive: false, icon: 'fa-fw fas fa-home', child: [{name: 'Spinner', href: './spinner.html', isActive: false, child: null, icon: 'fa-fw fas fa-circle-notch'}, {name: 'SimpleBar', href: './simplebar.html', isActive: false, child: null, icon: 'fa-fw fas fa-sliders-h'}, {name: 'Modals', href: './modals.html', isActive: false, child: null, icon: 'fa-fw fas fa-window-restore'}, {name: 'Buttons', href: './buttons.html', isActive: false, child: null, icon: 'fa-fw fas fa-sticky-note'}]}]
+
+            li.bold.cta
+              a.waves-effect.btn.btn-primary(href="#", title="")
+                i(class="fas fa-fw fa-pencil-alt")
+                span Agregar
+                
+            each val, index in menuItems
+              if val.child == null
+                if menuItems[index].name === activeItem
+                  li.bold.active
+                    a.waves-effect.waves-primary(href=val.href, title=val.name)
+                        i(class=val.icon)
+                        span= val.name
+                else
+                  li.bold.waves-effect
+                    a.waves-effect.waves-primary(href=val.href, title=val.name)
+                      i(class=val.icon)
+                      span= val.name
+              else
+                li.no-padding
+                  ul.collapsible.collapsible-accordion
+                    if menuItems[index].name === activeItem
+                      li.bold.active
+                        a.collapsible-header.waves-effect.waves-primary(tabindex="0")
+                          i(class=val.icon)
+                          span= val.name
+                        .collapsible-body
+                          ul
+                            each value, index in val.child
+                              if value.name === activeItemChild
+                                li.active
+                                  a(href=value.href, title=value.name)
+                                    i(class=value.icon)
+                                    span= value.name
+                              else
+                                li
+                                  a(href=value.href, title=value.name)
+                                    i(class=value.icon)
+                                    span= value.name
+
+                    else
+                      li.bold.waves-effect
+                        a.collapsible-header.waves-effect.waves-primary(tabindex="0") 
+                          i(class=val.icon)
+                          span= val.name
+                        .collapsible-body
+                          ul
+                            each value, index in val.child
+                              if value.name === activeItemChild
+                                li.active
+                              else
+                                li
+                                  a(href=value.href, title=value.name)
+                                    i(class=value.icon)
+                                    span= value.name
+
+          block mainmenu
+            +mainmenu('Inicio','')
+    
+  block main
+    main
+      .container
+        block content
+
+  block footer
+    include _footer.pug
+
+  block scripts
+    //- script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js")
+    script(src='dist/scripts/vendor.js')
+    //- script(src='https://cdn.jsdelivr.net/npm/materialize-stepper@2.1.4/materialize-stepper.js')

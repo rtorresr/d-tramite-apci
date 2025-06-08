@@ -1,0 +1,54 @@
+.sidenav{
+  height: 100vh;
+  bottom: 0;
+  padding-bottom: 0;
+
+  .badge {
+    border-radius: 0.25rem;
+    font-size: 75%;
+    min-width: 1rem;
+  }
+
+  li {
+    width: 100%;
+
+    > a {
+      padding: 0 16px;
+      display: block;
+    }
+
+    &.bold {
+      a {
+        span {
+          margin-left: 1.5rem;
+        }
+      }
+    }
+  }
+
+  &.sidenav-fixed {
+    left: 0;
+    // transform: translateX(0);
+    position: fixed;
+
+    .collapsible {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+
+nav a.sidenav-trigger {
+  display: block;
+  position: relative;
+  margin-left: 0;
+  height: 70px;
+  line-height: 70px;
+}
+
+nav .brand-logo {
+  @media #{$large-and-up} {
+    position: relative;
+  }
+}

@@ -1,0 +1,130 @@
+.modal {
+  @media #{$large-and-up} {
+    width: 55%;
+  }
+
+  &#modal1 {
+    width: 90%;
+
+    @media #{$medium-and-up} {
+      width: 45%;
+    }
+
+    .modal-content {
+      h4 {
+        font-size: 24px;
+
+        span {
+          text-transform: capitalize;
+        }
+      }
+
+      p {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .modal-header {
+    padding: 16px 24px;
+    
+    h4 {
+      font-size: 24px;
+      padding: 0;
+      margin: 0;
+    }
+
+    p {
+      margin: 5px 0 0;
+    }
+  }
+
+  .modal-footer {
+    height: auto;
+    //padding: 16px 24px;
+  }
+
+  .modal-content {
+    form.row {
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+      margin-bottom: 0;
+    }
+  }
+
+  &.modal-fixed-header.modal-fixed-footer {
+    .modal-content {
+      top: 60px;
+      bottom: 56px;
+      height: calc(100% - 116px);
+    }
+  }
+
+  &.modal-fixed-header {
+    overflow: hidden;
+    padding: 0;
+    height: 70%;
+
+    .modal-header {
+      z-index: 1004;
+      height: 60px;
+    }
+
+    .modal-content {
+      top: 60px;
+      bottom: 0;
+      position: absolute;
+      max-height: 100%;
+      width: 100%;
+      overflow-y: auto;
+    }
+  }
+
+  &.modal-fixed-footer {
+    .modal-footer {
+      z-index: 1004;
+    }
+  }
+
+  .collapsible {
+    .collapsible-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.35rem 1rem;
+    }
+
+    //.collapsible-body {}
+  }
+
+  dl{
+      margin-bottom: 0.05rem;
+      margin-top: 0;
+    dt {
+      position: relative;
+      font-weight: 600;
+      //border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+
+      &:after {
+        position: absolute;
+        content: ':';
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+    }
+    
+    dd {
+      margin: 0;
+      //border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.modal.modal-fixed-header .modal-header {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  position: absolute;
+  top: 0;
+  border-radius: 0 0 2px 2px;
+  width: 100%;
+}

@@ -1,0 +1,20 @@
+block globals
+
+doctype html
+html(lang="en")
+  head
+    include _head.pug
+
+  body(id=(body_id || 'default-page'), class=(body_class || 'theme-default'))
+    block main
+      main
+        .content.content__left
+          block left-content
+        .content.content__right
+          block right-content
+
+    block footer
+      include _footer.pug
+                            
+    block scripts
+        script(src='dist/scripts/vendor.js')
