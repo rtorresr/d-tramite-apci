@@ -373,12 +373,37 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         </div>
     </div>
 
+    <div id="modalValidar" class="modal modal-fixed-header modal-fixed-footer">
+        <div class="modal-header">
+            <h4>Validar solicitud de préstamo</h4>
+        </div>
+        <div class="modal-content">
+            <form>
+                <div class="row">
+                    <div class="input-field col s12 m12">
+                         <select id="OficinaRequeridaValidar" name="OficinaRequeridaValidar">
+                        </select>
+                        <label for="OficinaRequeridaValidar">Oficina responsable de la atención</label>
+                    </div> 
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a class="waves-effect waves-green btn-flat" id="btnValidarSolicitudPrestamo"> Validar</a>
+            <a class="modal-close waves-effect waves-green btn-flat"> Cerrar</a>
+        </div>
+    </div>
+
 
     <?php include("includes/userinfo.php"); ?>
     <?php include("includes/pie.php"); ?>
     </body>
     <script src="includes/dropzone.js"></script>
     <script>
+        var sesionTrabajador = <?=$_SESSION['CODIGO_TRABAJADOR']?>;
+        var sesionOficina = <?=$_SESSION['iCodOficinaLogin']?>;
+        var sesionPerfil = <?=$_SESSION['iCodPerfilLogin']?>;
+
         $('.datepicker').datepicker({
             i18n: {
                 months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -574,6 +599,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     switch (count) {
                         case 1:
                             let fila = tblBandejaSolicitudesEnCurso.rows( { selected: true } ).data().toArray()[0];
+                            
                             switch(fila.IdEstadoSolicitudPrestamo) {
                                 case 7: // en curso
                                     $.each( actionButtonsRecibidosEnCurso, function( key, value ) {
@@ -1511,6 +1537,71 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     }
                 });
 
+            });
+
+            btnValidarSolicitud.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                $.ajax({
+                    cache: 'false',
+                    url: 'ajax/ajaxOficinas.php',
+                    method: 'POST',
+                    data: {esTupa: '0', esPrestamo: '1'},
+                    datatype: 'json',
+                    success: function (data) {
+                        
+                        $("#OficinaRequeridaValidar").val("");
+                        $('#OficinaRequeridaValidar').empty().append('<option value="">Seleccione</option>');
+                        let documentos = JSON.parse(data);
+                        $.each(documentos.data, function (key,value) {
+                            $('#OficinaRequeridaValidar').append(value);
+                        });
+
+                        $("#OficinaRequeridaValidar").val(fila.IdOficinaRequerida);
+                        $('#OficinaRequeridaValidar').formSelect().trigger("change");
+
+                        let elem = document.querySelector('#modalValidar');
+                        let instance = M.Modal.init(elem, {dismissible:false});
+                        instance.open();
+                    }
+                });                
+            });
+
+            $("#btnValidarSolicitudPrestamo").on("click", function (e) {
+                e.preventDefault();
+
+                let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","ValidarSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("OficinaRequeridaValidar",$("#OficinaRequeridaValidar").val());
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(data) {
+                        M.toast({html: '¡Solicitud validada!'});
+                        let elem = document.querySelector('#modalValidar');
+                        let instance = M.Modal.init(elem, {dismissible:false});
+                        instance.close();
+                        tblBandejaSolicitudesEnCurso.ajax.reload();
+                    }
+                });
             });
 
             btnDevolverFaltaDatos.on("click", function (e) {

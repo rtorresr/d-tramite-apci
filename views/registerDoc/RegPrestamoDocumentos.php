@@ -11,13 +11,18 @@ require_once("../../conexion/srv-Nginx.php");
 require_once("../../conexion/parametros.php");
 require_once('../clases/DocDigital.php');
 require_once("../clases/Log.php");
+require_once("../../core/CURLConection.php");
 
 
 session_start();
 
 date_default_timezone_set('America/Lima');
 if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
+
+    // $evento = isset($_POST['Evento']) ? $_POST['Evento'] : $_GET['Evento'];
+
     switch ($_POST['Evento']) {
+    // switch ($evento) {
         case 'RegistroSolicitud':
             #1. Registro de solicitud
             $params = array(
@@ -87,10 +92,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             //     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
             //     http_response_code(500);
             //     die(print_r(sqlsrv_errors()));
-            // }
-
-            #4. Retorno de archivo para firma
-            
+            // }            
             break;
 
         case 'ObtenerDetalleSolicitud':
@@ -606,30 +608,43 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             echo json_encode($Rs);
             break;
 
-        case 'ObtenerHistorico':
-            $params = [
-                $_POST['IdSolicitudPrestamo']
-            ];
-            
-            $sql = "{call UP_LISTAR_SOLICITUD_PRESTAMO_HISTORICO (?)}";
-            
-            $rs = sqlsrv_query($cnx,$sql,$params);
-            
+        case 'ValidarSolicitudPrestamo':
+            #1. Registro de solicitud
+            $params = array(
+                $_POST['IdSolicitudPrestamo'],
+                $_POST['OficinaRequeridaValidar'],
+                $_SESSION['IdSesion']
+            );
+            $sql = "{call UP_VALIDAR_SOLICITUD_PRESTAMO  (?,?,?) }";
+            $rs = sqlsrv_query($cnx, $sql, $params);
             if($rs === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            
-            $data = array();
-            
-            while($Rs=sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC)){
-                $subdata=array();
-                $subdata = $Rs;
-                $subdata['FecRegistro'] = $Rs['FecRegistro'] != null ? $Rs['FecRegistro']->format( 'Y-m-d H:i:s') : '';
-                
-                $data[]=$subdata;
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
             }
 
-            echo json_encode($data);            
+            $Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
+
+            #2. Generacion de la solicitud
+            $data = $Rs;
+
+            $flgSegundoPdf = 1;    
+            $idDocDigital = 0;        
+            include("../solicitud_prestamo_pdf.php");
+
+            unset($flgSegundoPdf);
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoSolicitud = ".$idDocDigital."
+                    where IdSolicitudPrestamo = ".$data['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+        case '':
+
             break;
     }
 }else{

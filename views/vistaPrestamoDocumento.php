@@ -67,10 +67,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                     <div class="input-field col s12 m12">
                                         <input id="NumeroDocumento" type="text" class="validate">
                                         <label for="NumeroDocumento">N° de documento</label>
-                                    </div>
+                                    </div>                                    
                                     <div class="input-field col s12 m12">
                                         <textarea id="DescripcionDocumento" class="materialize-textarea" style="height: 127px;!important"></textarea>
                                         <label for="DescripcionDocumento">Descripción documento</label>                                        
+                                    </div>
+                                    <div class="input-field col s12 m12">
+                                        <input id="FechaDocumento" type="date" class="validate">
+                                        <label for="FechaDocumento">Fecha del documento</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -108,6 +112,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                     <th>Serie documental</th>
                                                     <th>Tipo documental</th>
                                                     <th>N° de documento</th>
+                                                    <th>Fecha del documento</th>
                                                     <th>Descripción</th>
                                                     <!--<th>Serie Documental</th>-->
                                                     <th>Tipo documento</th>
@@ -281,9 +286,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     "url": "../dist/scripts/datatables-es_ES.json"
                 },
                 'columns': [
-                    { 'data': 'NroExpediente', 'autoWidth': true, "width": "15%",'className': 'text-left' },
-                    { 'data': 'TipoDocumental', 'autoWidth': true,"width": "15%", 'className': 'text-left' },
+                    { 'data': 'NroExpediente', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                    { 'data': 'TipoDocumental', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
                     { 'data': 'NumeroDocumento', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
+                    { 'data': 'FechaDocumento', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
                     { 'data': 'DescripcionDocumento', 'autoWidth': true,"width": "30%", 'className': 'text-left' },
                     //{ 'data': 'NombreSerieDocumental', 'autoWidth': true, "width": "40%",'className': 'text-left' },
                     { 'data': 'TipoDocumento', 'autoWidth': true, "width": "10%",'className': 'text-left' },
@@ -309,6 +315,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 detalle.NroExpediente = $('#NroExpediente').val();
                 detalle.TipoDocumental = $('#TipoDocumental').val();
                 detalle.NumeroDocumento = $('#NumeroDocumento').val();
+                detalle.FechaDocumento = $('#FechaDocumento').val();
                 //detalle.IdSerieDocumental = $('#IdSerieDocumental').val();
                 //detalle.NombreSerieDocumental = $('#IdSerieDocumental').find(':selected').text();
                 detalle.FlgTipoDocumento = $("#FlgTipoDocumento:checked").length;
@@ -336,6 +343,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $('#DescripcionDocumento').val('');
                         $('#TipoDocumental').val('');
                         $('#NumeroDocumento').val('');
+                        $('#FechaDocumento').val('');
                         tblDetalleSolicitudPrestamo.row.add(detalle).draw();
                     } else {
                         $.alert("El documento ya está agreado");
