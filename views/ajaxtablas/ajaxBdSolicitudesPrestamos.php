@@ -46,6 +46,7 @@ while($Rs=sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC)){
     $subdata['Comentario']=$Rs['Comentario'];
     $subdata['IdDetallePrestamo'] = $Rs['IdDetallePrestamo'];
     $subdata['IdDocDigital'] = $Rs['IdDocDigital'];
+    $subdata['IdArchivoSolicitud'] = $Rs['IdArchivoSolicitud'];
     $data[]=$subdata;
     $contador++;
 }

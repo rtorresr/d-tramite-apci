@@ -268,6 +268,9 @@ class DocDigital
             case 16:
                 $carpeta = 'Prestamo/Solicitudes/PreFirmados';
                 break;
+            case 17:
+                $carpeta = 'Prestamo/Solicitudes/Firmados';
+                break;
         }
 
         return $carpeta;
@@ -743,8 +746,6 @@ class DocDigital
             $this->idRepositorio,
             $this->sesion
         );
-
-        print_r($parametros);
 
         $stored = "{CALL UP_ACTUALIZAR_DATOS_ALMACENAMIENTO_DOCUMENTO_DOC_DIGITAL (?,?,?,?)}";
 

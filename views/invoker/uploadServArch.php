@@ -1,0 +1,34 @@
+<?php
+require_once("../../conexion/conexion.php");
+require_once("../../conexion/parametros.php");
+require_once("../clases/DocDigital.php");
+
+$docDigital = new DocDigital($cnx);
+$docDigital->obtenerDocDigitalPorId($_GET['idDigital'], 1);
+$documenturl = RUTA_DTRAMITE.$docDigital->obtenerRutaDocDigitalSecundario();
+$documentName = $docDigital->clearName;
+
+
+//if (isset($_FILES['signed_file'])){
+    $separa=DIRECTORY_SEPARATOR;
+
+    $tmp = dirname(tempnam (null,''));
+
+    $concurrentDirectory = $tmp.$separa."upload";
+
+    if (!mkdir($concurrentDirectory,0777,true) && !is_dir($concurrentDirectory)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+    }
+
+    $file_name = $documentName;
+    $file_tmp = $_FILES['signed_file']['tmp_name'];
+    $tamanio = $_FILES['signed_file']['size'];
+    $tipo = $_FILES["signed_file"]["type"];
+
+    move_uploaded_file($file_tmp, $tmp.$separa."upload".$separa.$file_name);
+
+    echo $tmp . DIRECTORY_SEPARATOR . "upload" . DIRECTORY_SEPARATOR . $file_name;
+
+//}
+
+?>

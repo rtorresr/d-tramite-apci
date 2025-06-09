@@ -21,6 +21,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             <nav>
                 <div class="nav-wrapper">
                     <ul id="nav-mobile" class="">
+                        <li><button id="btnVistoBueno" style="display: none" class="btn btn-primary"><i class="fas fa-signature"></i><span> Visto Bueno</span></button></li>
                         <li><button id="btnVerSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver Solicitud</span></button></li>
                         <li><button id="btnHistorico" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver historico</span></button></li>
                         <li><button id="btnEditarSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Editar Solicitud</span></button></li>
@@ -194,10 +195,123 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         </div>
     </div>
 
+    <input type="hidden" id="idSolicitudPrestamo" value="">
+    <input type="hidden" id="idDigital" value="">
+    <input type="hidden" id="tipo_f" value="">
+    <input type="hidden" id="idTipoTra" value="">
+    <input type="hidden" id="nroVisto" value="">
+    <input type="hidden" id="flgRequireFirmaLote" value="">
+
     <?php include("includes/userinfo.php"); ?>
     <?php include("includes/pie.php"); ?>
     </body>
     <script src="includes/dropzone.js"></script>
+
+    <script src="includes/dropzone.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.6/dist/js/bootstrap.bundle.min.js" ></script>
+    <!--FIN PERU--> 
+
+    <script type="text/javascript" src="../conexion/global.js"></script>
+    <script type="text/javascript">
+
+        // window.onload = function() {
+        //     mueveReloj();
+        // };
+        //<![CDATA[
+        var documentName_ = null;
+
+        //::LÓGICA DEL PROGRAMADOR::
+        //INICIO PERU
+        var jqFirmaPeru = jQuery.noConflict(true);
+
+        function signatureInit(){
+            alert('PROCESO INICIADO');
+        }
+
+        function signatureOk(){
+            alert('DOCUMENTO FIRMADO');
+            MiFuncionOkWeb();
+        }
+
+        function signatureCancel(){
+            alert('OPERACIÓN CANCELADA');
+        }
+
+        function base64EncodeUnicode(str) {
+            // Codifica texto unicode en base64 (equivalente a base64_encode en PHP)
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function generateToken(length) {
+            const array = new Uint8Array(length);
+            window.crypto.getRandomValues(array);
+            return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        function sendParam() {
+            const idDigital = document.getElementById("idDigital").value;
+            const tipFirma = $("#tipo_f").val();
+            const nroVisto = $("#nroVisto").val();
+            const flgRequireFirmaLote = $("#flgRequireFirmaLote").val();
+            const idTipoTra = $("#idTipoTra").val(); // PARA SELLADO DE TIEMPO EXTERNO
+            
+            const firmaInitParams = {
+                param_url: RUTA_DTRAMITE + "views/invoker/postArgumentsServArch.php?idDigital="+idDigital+"&tipFirma="+tipFirma+"&nroVisto="+nroVisto+"&flgRequireFirmaLote="+flgRequireFirmaLote+"&idTipoTra="+idTipoTra,
+                param_token: generateToken(16),
+                document_extension: "pdf"
+            };
+            const jsonString = JSON.stringify(firmaInitParams);
+
+            const base64Param = base64EncodeUnicode(jsonString);
+
+            const port = "48596";
+
+            // Llama al cliente de Firma Perú
+            startSignature(port, base64Param);
+        }
+
+        //FIN PERU
+
+        function MiFuncionOkWeb(){
+            let idDigital = document.getElementById("idDigital").value;
+            let idSolicitudPrestamo = document.getElementById("idSolicitudPrestamo").value;
+
+            getSpinner('Guardando Documento');
+            $.ajax({
+                url: "registerDoc/RegPrestamoDocumentos.php",
+                method: "POST",
+                data: {
+                    Evento: "GuardarVistoBueno",
+                    IdSolicitudPrestamo: idSolicitudPrestamo,
+                    IdDigital: idDigital,
+                },
+                datatype: "json",
+                success: function (response) { 
+                    tblBandejaSolicitudesEmitidoFinalizados.clear().draw();
+                    tblBandejaSolicitudesEmitidoFinalizados.ajax.reload();
+                },
+                error: function (e) {
+                    console.log(e);
+                    console.log('Error al actualizar estados de firma!');
+                    M.toast({html: "Error al firmar"});
+                }
+            });
+        }
+
+        function MiFuncionCancel(){
+            alert("El proceso de firma digital fue cancelado.");
+        }
+    </script>
+    <!--INICIO PERU-->
+    <script src="https://apps.firmaperu.gob.pe/web/clienteweb/firmaperu.min.js"></script> 
+    <div id="addComponent" style="display:none;"></div>
+    <!--FIN PERU-->
+
     <script>
         $('.datepicker').datepicker({
             i18n: {
@@ -219,6 +333,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         $(document).ready(function() {
             $('.actionButtons').hide();
 
+            var btnVistoBueno = $("#btnVistoBueno");
             var btnVerSolicitud = $("#btnVerSolicitud");
             var btnEditarSolicitud = $("#btnEditarSolicitud"); 
             var btnArchivarSolicitud = $("#btnArchivarSolicitud");      
@@ -291,6 +406,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     let count = tblBandejaSolicitudesEmitidoFinalizados.rows( { selected: true } ).count();
                     switch (count) {
                         case 1:
+                            let fila = tblBandejaSolicitudesEmitidoFinalizados.rows( { selected: true } ).data().toArray()[0];
+
+                            switch(fila.IdEstadoSolicitudPrestamo) {
+                                case 112: //nuevo
+                                    btnVistoBueno.css("display","inline-block");
+                                    break;
+                            }
+
                             $.each( actionButtonsEmitidosFinalizados, function( key, value ) {
                                 value.css("display","inline-block");
                             });
@@ -299,7 +422,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                             });
                             $('.actionButtons').show();
 
-                            let fila = tblBandejaSolicitudesEmitidoFinalizados.rows( { selected: true } ).data().toArray()[0];
+                            
                             if (fila.IdEstadoSolicitudPrestamo != 93 && fila.IdEstadoSolicitudPrestamo != 95 && fila.IdEstadoSolicitudPrestamo != 96) {
                                 btnEditarSolicitud.css("display","none");
                                 btnArchivarSolicitud.css("display","none");
@@ -767,6 +890,25 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $('#modalHistorico div.modal-content').html(html);
                         instance.open();
                     });
+            });
+
+            btnVistoBueno.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                $("#idSolicitudPrestamo").val(fila.IdSolicitudPrestamo);
+                $("#idDigital").val(fila.IdArchivoSolicitud);
+                $("#tipo_f").val('v');
+                $("#nroVisto").val(0);
+                $("#idTipoTra").val(2);
+                $("#flgRequireFirmaLote").val(0);
+
+                sendParam();
             });
         });
     </script>

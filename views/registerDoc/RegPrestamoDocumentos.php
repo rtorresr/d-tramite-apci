@@ -643,6 +643,82 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             }
 
             break;
+
+        case 'GuardarVistoBueno':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 17;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalVistoBueno = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoSolicitud = ".$idDocDigitalVistoBueno."
+                    , IdEstadoSolicitudPrestamo = 113 
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+
+        case 'GuardarFirmaAutorizacion':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 17;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalVistoBueno = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoSolicitud = ".$idDocDigitalVistoBueno."
+                    , IdEstadoSolicitudPrestamo = 7 
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+
+            
         case '':
 
             break;
