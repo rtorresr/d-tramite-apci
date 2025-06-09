@@ -11,13 +11,18 @@ require_once("../../conexion/srv-Nginx.php");
 require_once("../../conexion/parametros.php");
 require_once('../clases/DocDigital.php');
 require_once("../clases/Log.php");
+require_once("../../core/CURLConection.php");
 
 
 session_start();
 
 date_default_timezone_set('America/Lima');
 if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
+
+    // $evento = isset($_POST['Evento']) ? $_POST['Evento'] : $_GET['Evento'];
+
     switch ($_POST['Evento']) {
+    // switch ($evento) {
         case 'RegistroSolicitud':
             #1. Registro de solicitud
             $params = array(
@@ -34,63 +39,60 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
 
             $Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
 
-            #2. Generacion de la solicitud
-            $datos = $Rs;
-            include("../solicitud_prestamo_pdf.php");
+            // #2. Generacion de la solicitud
+            // $datos = $Rs;
+            // include("../solicitud_prestamo_pdf.php");
 
-            $flgSegundoPdf = 1;    
-            $idDocDigital = 0;        
-            include("../solicitud_prestamo_pdf.php");
+            // $flgSegundoPdf = 1;    
+            // $idDocDigital = 0;        
+            // include("../solicitud_prestamo_pdf.php");
 
-            unset($flgSegundoPdf);
+            // unset($flgSegundoPdf);
 
-            #3. Envio de correo
-            $nombres = $Rs['NOMBRE_COMPLETO'];
-            $correo = $Rs['CORREO'];
-            $nombre_doc = $Rs['NOMBRE_DOC'];
+            // #3. Envio de correo
+            // $nombres = $Rs['NOMBRE_COMPLETO'];
+            // $correo = $Rs['CORREO'];
+            // $nombre_doc = $Rs['NOMBRE_DOC'];
 
-            $asunto = 'Solicitud de préstamo '.$nombre_doc;
-            $cuerpo = '<p>Estimado(a) '.$nombres.', usted a recibido la solicitud de préstamo '.$nombre_doc.', el cual cuenta con 5 días de atención apartir de la presente fecha.';
+            // $asunto = 'Solicitud de préstamo '.$nombre_doc;
+            // $cuerpo = '<p>Estimado(a) '.$nombres.', usted a recibido la solicitud de préstamo '.$nombre_doc.', el cual cuenta con 5 días de atención apartir de la presente fecha.';
 
-            $correos = [];
-            array_push($correos,$correo);
+            // $correos = [];
+            // array_push($correos,$correo);
 
-            $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-            try {
-                //Server settings
-                $mail->SMTPDebug = 0;                                 // Enable verbose debug output
-                $mail->isSMTP();                                      // Set mailer to use SMTP
-                $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-                $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                $mail->Password = MAIL_PASSWORD;                           // SMTP password
-                $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-                $mail->Port = 465;                                    // TCP port to connect to
+            // $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+            // try {
+            //     //Server settings
+            //     $mail->SMTPDebug = 0;                                 // Enable verbose debug output
+            //     $mail->isSMTP();                                      // Set mailer to use SMTP
+            //     $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+            //     $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            //     $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
+            //     $mail->Password = 'Hacker147';                           // SMTP password
+            //     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+            //     $mail->Port = 465;                                    // TCP port to connect to
 
-                //Recipients
-                $mail->setFrom('no-reply@apci.gob.pe', 'D-Trámite');
-                //$mail->addAddress('jatayauri@apci.gob.pe', 'Joe User');     // Add a recipient
-                for ($e = 0; $e < count($correos); $e++){
-                    $mail->addAddress($correos[$e]);
-                }
+            //     //Recipients
+            //     $mail->setFrom('no-reply@apci.gob.pe', 'D-Trámite');
+            //     //$mail->addAddress('jatayauri@apci.gob.pe', 'Joe User');     // Add a recipient
+            //     for ($e = 0; $e < count($correos); $e++){
+            //         $mail->addAddress($correos[$e]);
+            //     }
 
-                //Content
-                $mail->isHTML(true);// Set email format to HTML
-                $mail->Subject = $asunto;
-                $mail->Body = $cuerpo;
-                $mail->CharSet = 'UTF-8';
-                $mail->AltBody = 'No responder';
+            //     //Content
+            //     $mail->isHTML(true);// Set email format to HTML
+            //     $mail->Subject = $asunto;
+            //     $mail->Body = $cuerpo;
+            //     $mail->CharSet = 'UTF-8';
+            //     $mail->AltBody = 'No responder';
 
-                $mail->send();
-                echo 'Message has been sent';
-            } catch (Exception $e) {
-                echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-                http_response_code(500);
-                die(print_r(sqlsrv_errors()));
-            }
-
-            #4. Retorno de archivo para firma
-            
+            //     $mail->send();
+            //     echo 'Message has been sent';
+            // } catch (Exception $e) {
+            //     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            //     http_response_code(500);
+            //     die(print_r(sqlsrv_errors()));
+            // }            
             break;
 
         case 'ObtenerDetalleSolicitud':
@@ -214,7 +216,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
                 $mail->SMTPAuth = true;                               // Enable SMTP authentication
                 $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                $mail->Password = MAIL_PASSWORD;                           // SMTP password
+                $mail->Password = 'Hacker147';                           // SMTP password
                 $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
                 $mail->Port = 465;                                    // TCP port to connect to
 
@@ -297,7 +299,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
                 $mail->SMTPAuth = true;                               // Enable SMTP authentication
                 $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                $mail->Password = MAIL_PASSWORD;                           // SMTP password
+                $mail->Password = 'Hacker147';                           // SMTP password
                 $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
                 $mail->Port = 465;                                    // TCP port to connect to
 
@@ -354,7 +356,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
                 $mail->SMTPAuth = true;                               // Enable SMTP authentication
                 $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                $mail->Password = MAIL_PASSWORD;                           // SMTP password
+                $mail->Password = 'Hacker147';                           // SMTP password
                 $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
                 $mail->Port = 465;                                    // TCP port to connect to
 
@@ -380,24 +382,6 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 die(print_r(sqlsrv_errors()));
             }
             break;
-
-        case 'DerivarArchivoCentral':
-                $params = array(
-                    $_POST['IdSolicitudPrestamo'],
-                    $_SESSION['IdSesion']
-                );
-                $sql = "{call UP_DERIVAR_ARCHIVO_CENTRAL_SOLICITUD_PRESTAMO  (?,?) }";
-                $rs = sqlsrv_query($cnx, $sql, $params);
-                if($rs === false) {
-                    http_response_code(500);
-                    die(print_r(sqlsrv_errors()));
-                }
-                $Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
-               
-                $data = [];
-                $data['COMENTARIO'] = $Rs['COMENTARIO'];
-                echo json_encode($data);
-                break;
 
         case 'AnularSolicitudPrestamo':
             $params = array(
@@ -427,7 +411,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                     $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
                     $mail->SMTPAuth = true;                               // Enable SMTP authentication
                     $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                    $mail->Password = MAIL_PASSWORD;                           // SMTP password
+                    $mail->Password = 'Hacker147';                           // SMTP password
                     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
                     $mail->Port = 465;                                    // TCP port to connect to
 
@@ -624,30 +608,43 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             echo json_encode($Rs);
             break;
 
-        case 'ObtenerHistorico':
-            $params = [
-                $_POST['IdSolicitudPrestamo']
-            ];
-            
-            $sql = "{call UP_LISTAR_SOLICITUD_PRESTAMO_HISTORICO (?)}";
-            
-            $rs = sqlsrv_query($cnx,$sql,$params);
-            
+        case 'ValidarSolicitudPrestamo':
+            #1. Registro de solicitud
+            $params = array(
+                $_POST['IdSolicitudPrestamo'],
+                $_POST['OficinaRequeridaValidar'],
+                $_SESSION['IdSesion']
+            );
+            $sql = "{call UP_VALIDAR_SOLICITUD_PRESTAMO  (?,?,?) }";
+            $rs = sqlsrv_query($cnx, $sql, $params);
             if($rs === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            
-            $data = array();
-            
-            while($Rs=sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC)){
-                $subdata=array();
-                $subdata = $Rs;
-                $subdata['FecRegistro'] = $Rs['FecRegistro'] != null ? $Rs['FecRegistro']->format( 'Y-m-d H:i:s') : '';
-                
-                $data[]=$subdata;
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
             }
 
-            echo json_encode($data);            
+            $Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
+
+            #2. Generacion de la solicitud
+            $data = $Rs;
+
+            $flgSegundoPdf = 1;    
+            $idDocDigital = 0;        
+            include("../solicitud_prestamo_pdf.php");
+
+            unset($flgSegundoPdf);
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoSolicitud = ".$idDocDigital."
+                    where IdSolicitudPrestamo = ".$data['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+        case '':
+
             break;
     }
 }else{

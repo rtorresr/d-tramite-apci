@@ -61,8 +61,20 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <label for="NroExpediente">Serie documental</label>
                                     </div>
                                     <div class="input-field col s12 m12">
+                                        <input id="TipoDocumental" type="text" class="validate">
+                                        <label for="TipoDocumental">Tipo documental</label>
+                                    </div>
+                                    <div class="input-field col s12 m12">
+                                        <input id="NumeroDocumento" type="text" class="validate">
+                                        <label for="NumeroDocumento">N° de documento</label>
+                                    </div>                                    
+                                    <div class="input-field col s12 m12">
                                         <textarea id="DescripcionDocumento" class="materialize-textarea" style="height: 127px;!important"></textarea>
                                         <label for="DescripcionDocumento">Descripción documento</label>                                        
+                                    </div>
+                                    <div class="input-field col s12 m12">
+                                        <input id="FechaDocumento" type="date" class="validate">
+                                        <label for="FechaDocumento">Fecha del documento</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -71,14 +83,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         </select>
                                         <label for="IdSerieDocumental">Serie documental</label>
                                     </div>-->
-                                    <div class="col s12 m2 input-field">
+                                    <div class="col s12 m4 input-field">
                                         <!--<p for="FlgTipoDocumento">Tipo documento:</p>-->
                                         <div class="switch">
                                             <label>
-                                                Digital
+                                                Reproducción Digital
                                                 <input type="checkbox" id="FlgTipoDocumento" name="FlgTipoDocumento" value="0">
                                                 <span class="lever"></span>
-                                                Físico
+                                                Reproducción Física
                                             </label>
                                         </div>
                                     </div>
@@ -98,6 +110,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <thead>
                                                 <tr>
                                                     <th>Serie documental</th>
+                                                    <th>Tipo documental</th>
+                                                    <th>N° de documento</th>
+                                                    <th>Fecha del documento</th>
                                                     <th>Descripción</th>
                                                     <!--<th>Serie Documental</th>-->
                                                     <th>Tipo documento</th>
@@ -271,11 +286,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     "url": "../dist/scripts/datatables-es_ES.json"
                 },
                 'columns': [
-                    { 'data': 'NroExpediente', 'autoWidth': true, "width": "30%",'className': 'text-left' },
+                    { 'data': 'NroExpediente', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                    { 'data': 'TipoDocumental', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
+                    { 'data': 'NumeroDocumento', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
+                    { 'data': 'FechaDocumento', 'autoWidth': true,"width": "10%", 'className': 'text-left' },
                     { 'data': 'DescripcionDocumento', 'autoWidth': true,"width": "30%", 'className': 'text-left' },
                     //{ 'data': 'NombreSerieDocumental', 'autoWidth': true, "width": "40%",'className': 'text-left' },
-                    { 'data': 'TipoDocumento', 'autoWidth': true, "width": "30%",'className': 'text-left' },
-                    { 'data': 'NombreTipoServicio', 'autoWidth': true, "width": "30%",'className': 'text-left' },
+                    { 'data': 'TipoDocumento', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                    { 'data': 'NombreTipoServicio', 'autoWidth': true, "width": "20%",'className': 'text-left' },
                     {
                         'render': function (data, type, full, meta) {
                             return '<button type="button" data-accion="eliminar" data-toggle="tooltip" title="Eliminar" class="btn btn-sm btn-link tooltipped" data-placement="top"><i class="fas fa-trash-alt"></i></button> ';
@@ -295,13 +313,16 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 let detalle = new Object();
                 detalle.DescripcionDocumento = $('#DescripcionDocumento').val();
                 detalle.NroExpediente = $('#NroExpediente').val();
+                detalle.TipoDocumental = $('#TipoDocumental').val();
+                detalle.NumeroDocumento = $('#NumeroDocumento').val();
+                detalle.FechaDocumento = $('#FechaDocumento').val();
                 //detalle.IdSerieDocumental = $('#IdSerieDocumental').val();
                 //detalle.NombreSerieDocumental = $('#IdSerieDocumental').find(':selected').text();
                 detalle.FlgTipoDocumento = $("#FlgTipoDocumento:checked").length;
                 if ($("#FlgTipoDocumento:checked").length === 0){
                     detalle.TipoDocumento = 'DIGITAL';
                     detalle.IdTipoServicio = 0;
-                    detalle.NombreTipoServicio = 'ESCANEO';
+                    detalle.NombreTipoServicio = 'Reproducción Digital del documento';
                 } else {
                     detalle.TipoDocumento = 'FÍSICO';
                     detalle.IdTipoServicio = $('#IdTipoServicioFisico').val();
@@ -312,14 +333,17 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 if (detalle.DescripcionDocumento !== '') {
                     let data = tblDetalleSolicitudPrestamo.data();
                     let estado = true;
-                    $.each(data, function (i, item) {
-                        if (detalle.DescripcionDocumento == item.DescripcionDocumento) {
-                            estado = false;
-                        }
-                    });
+                    // $.each(data, function (i, item) {
+                    //     if (detalle.DescripcionDocumento == item.DescripcionDocumento) {
+                    //         estado = false;
+                    //     }
+                    // });
                     if (estado) {
                         $('#NroExpediente').val('');
                         $('#DescripcionDocumento').val('');
+                        $('#TipoDocumental').val('');
+                        $('#NumeroDocumento').val('');
+                        $('#FechaDocumento').val('');
                         tblDetalleSolicitudPrestamo.row.add(detalle).draw();
                     } else {
                         $.alert("El documento ya está agreado");
