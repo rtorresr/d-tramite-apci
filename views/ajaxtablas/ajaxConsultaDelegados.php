@@ -11,11 +11,12 @@ $VI_FFECREGISTRO_FINAL = $_POST['VI_FFECREGISTRO_FINAL'] =="" ? '' : $_POST['VI_
 //$VI_CCODTIPODOC = 0;
 //$VI_CCODIFICACION = $_POST['VI_CCODIFICACION']=="" ? "" : trim($_POST['VI_CCODIFICACION']);
 $VI_USARIODELEGADO = $_POST['VI_USARIODELEGADO'] ==""?"": trim($_POST['VI_USARIODELEGADO']);
+$VI_ESTADO = $_POST['VI_ESTADO'] ==""?"": trim($_POST['VI_ESTADO']);
 $start =$_POST["start"]=="" ? 0 : $_POST["start"];
 $length = $_POST["length"]=="" ? 10 : $_POST["length"];
 
 //echo $start; 
-$sqlConsulta = "execute SP_CONSULTA_DOCUMENTOS_DELEGADOS '".$VI_NCUD."',".$VI_ICODOFICINAREGISTRO.",'".$VI_FFECREGISTRO_INICIO."','".$VI_FFECREGISTRO_FINAL."','".$VI_USARIODELEGADO."',".$start.",". $length;
+$sqlConsulta = "execute SP_CONSULTA_DOCUMENTOS_DELEGADOS '".$VI_NCUD."',".$VI_ICODOFICINAREGISTRO.",'".$VI_FFECREGISTRO_INICIO."','".$VI_FFECREGISTRO_FINAL."','".$VI_USARIODELEGADO."','".$VI_ESTADO."',".$start.",". $length;
 
 $rsConsulta = sqlsrv_query($cnx,$sqlConsulta);
 
@@ -40,12 +41,13 @@ while($Rs=sqlsrv_fetch_array($rsConsulta)){
     $subdata['OFICINA_ORIGIN']=$Rs['OFICINA_ORIGIN'];
     $subdata['TRABAJADOR_ORIGEN']=$Rs['TRABAJADOR_ORIGEN'];
     $subdata['TRABAJADOR_DERIVAR']=$Rs['TRABAJADOR_DESTINO'];    
-    $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd-m-Y H:i:s') : '';
+    $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd/m/Y H:i:s') : '';
     $subdata['DESTINO']=$Rs['DESTINO'];
-    $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd-m-Y H:i:s') : '';
+    $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd/m/Y H:i:s') : '';
     $subdata['ESTADO_TRAMITE']=$Rs['ESTADO_TRAMITE'];
     $subdata['flgEncriptado']=$Rs['flgEncriptado'];
     $subdata['origen']=$Rs['origen'];
+    $subdata['ENTIDAD']=$Rs['ENTIDAD'] ?? '';
     $data[]=$subdata;
 }
 $VO_TOTREG=0;

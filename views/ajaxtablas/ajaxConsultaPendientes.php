@@ -42,11 +42,11 @@ while($Rs=sqlsrv_fetch_array($rsConsulta)){
     $subdata['TIPO']=$Rs['TIPO'];
     $subdata['TIPO_DOCUMENTO']=$Rs['NRO_DOCUMENTO'];
     $subdata['ASUNTO']=$Rs['ASUNTO'];
-    $subdata['OFICINA_ORIGIN']=$Rs['OFICINA_ORIGIN'];
+    $subdata['OFICINA_ORIGIN']=$Rs['OFICINA_ORIGIN'].' | '.$Rs['TRABAJADOR_ORIGEN'];
     $subdata['TRABAJADOR_ORIGEN']=$Rs['TRABAJADOR_ORIGEN'];
-    $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd-m-Y H:i:s') : '';
+    $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd/m/Y H:i:s') : '';
     $subdata['DESTINO']=$Rs['DESTINO'];
-    $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd-m-Y H:i:s') : '';
+    $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd/m/Y H:i:s') : '';
     $subdata['ESTADO_TRAMITE']=$Rs['ESTADO_TRAMITE'];
     $subdata['origen']=$Rs['origen'];
     $data[]=$subdata;

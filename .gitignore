@@ -99,12 +99,13 @@ srv-files/docNoFirmados
 srv-files/firmas
 
 # Conexiones
-# conexion
-# interoperabilidad/config
-# mesa-de-partes-virtual/config
-# views/includes/conexion.menu.php
-# views/includes/conexion.inc.php
-# views/invoker/config.php
-# views/invoker/client.js
+conexion
+interoperabilidad/config
+mesa-de-partes-virtual/config
+views/includes/conexion.menu.php
+views/includes/conexion.inc.php
+views/invoker/config.php
+views/invoker/client.js
 archivosTemp
 d-tramite-qa
+views/registerDoc/phpqrcode\temp/

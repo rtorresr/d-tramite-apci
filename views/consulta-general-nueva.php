@@ -2,8 +2,8 @@
 date_default_timezone_set('America/Lima');
 session_start();
 
-$pageTitle = "Consulta General";
-$activeItem = "consulta-general.php";
+$pageTitle = "Consulta General Integrada";
+$activeItem = "consulta-general-nueva.php";
 $navExtended = true;
 $hasSearch = true;
 $nNumAno    = date("Y");
@@ -1056,7 +1056,14 @@ if( $_SESSION['CODIGO_TRABAJADOR'] != "" ) {
                                                                     if(json.tieneAnexos == '1') {
                                                                         let cont = 1;
                                                                         json.anexos.forEach(function (elemento) {
-                                                                            $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                            /*Inicio Renombre*/
+                                                                                let elementoNombre = elemento.nombre;            
+                                                                                if (/^\d/.test(elementoNombre)) {
+                                                                                elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                                }
+                                                                            /*Fin Renombre*/
+                                                                            //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                            $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                             cont++;
                                                                         })
                                                                     }else{
@@ -1098,7 +1105,14 @@ if( $_SESSION['CODIGO_TRABAJADOR'] != "" ) {
                                 if(json.tieneAnexos == '1') {
                                     let cont = 1;
                                     json.anexos.forEach(function (elemento) {
-                                        $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                        /*Inicio Renombre*/
+                                            let elementoNombre = elemento.nombre;            
+                                            if (/^\d/.test(elementoNombre)) {
+                                            elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                            }
+                                        /*Fin Renombre*/
+                                        //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                        $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                         cont++;
                                     })
                                 }else{

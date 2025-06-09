@@ -6,7 +6,7 @@
                     <i class="fas fa-search"></i>
                 </button>
                 
-                <input id="txtAsuntoMain" class="txtAsuntoMain" type="search" required="" placeholder="Consulta general">
+                <input id="txtAsuntoMain" class="txtAsuntoMain" type="search" required="" placeholder="Consulta general Integrada">
 
                 <button type="button" id="btnAdvanced" class="btn-flat btnAdvanced tooltipped"  data-position="right" data-tooltip="Bùsqueda avanzada">
                     <i class="fas fa-angle-double-down"></i>

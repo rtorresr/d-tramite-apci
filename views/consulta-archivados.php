@@ -73,23 +73,79 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col s3 input-field">
+                                            <div class="col s6 input-field">
                                                 <select id="cCodTipoDoc" name="cCodTipoDoc">
                                                 </select>
                                                 <label for="cCodTipoDoc" class="active">Tipo de documento</label>
                                             </div>
-                                            <div class="col s3 input-field">
+                                            <div class="col s6 input-field">
                                                 <input type="text" name="txtDoc" id="txtDoc">
                                                 <label for="txtDoc">N° Doc.</label>
                                             </div>
-                                            <div class="col s3 input-field">
+                                        </div>
+                                        <!--div class="row">
+                                            <div class="col s6 input-field">
                                                 <input type="text" name="txtRemitente" id="txtRemitente">
-                                                <label for="txtRemitente">Remitente</label>
+                                                <label for="txtRemitente">Nombre Remitente</label>
                                             </div>
-                                            <div class="col s3 input-field">
+                                            <div class="col s6 input-field">
                                                 <select id="cCodOfi" name="cCodOfi">
                                                 </select>
                                                 <label for="cCodOfi" class="active">Oficina Finaliza</label>
+                                            </div>
+                                        </div-->
+                                        <!--div class="row">
+                                            <div class="col s6 input-field">
+                                                <input type="text" name="txtTrabajador" id="txtTrabajador">
+                                                <label for="txtTrabajador">Especialista</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-field col s6">
+                                                <select id="txtTrabajador">
+                                                    <?php   //WHERE pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil";
+                                                    $sqlTra ="SELECT pu.iCodTrabajador, cNombresTrabajador, cApellidosTrabajador , cDescPerfil
+                                                                FROM Tra_M_Perfil_Ususario AS pu, Tra_M_Trabajadores AS tb, Tra_M_Perfil AS p
+                                                                WHERE nFlgEstado=1 and pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil ORDER BY cNombresTrabajador ASC";
+                                                    $rsTra = sqlsrv_query($cnx,$sqlTra);
+                                                    echo "<option value=''>TODOS</option>";
+                                                    while ($RsTra = sqlsrv_fetch_array($rsTra)){
+                                                        //echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cApellidosTrabajador']).", ".rtrim($RsTra['cNombresTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                        echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cNombresTrabajador']).", ".rtrim($RsTra['cApellidosTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                                <label for="codEspecialista" class="active">Especialista</label>
+                                         </div-->
+                                         <div class="row">
+                                            <div class="input-field col s6">
+                                                <!--select id="codOficina">
+                                                    <?php
+                                                    $sqlOfiVisado = "SELECT iCodOficina, TRIM(cSiglaOficina)+' | '+TRIM(cNomOficina) AS nomOficina FROM Tra_M_Oficinas";
+                                                    $rsOfiVisado = sqlsrv_query($cnx, $sqlOfiVisado);
+                                                    while ($RsOfiVisado = sqlsrv_fetch_array($rsOfiVisado)) {
+                                                        echo "<option value='".$RsOfiVisado['iCodOficina']."'>".$RsOfiVisado['nomOficina']."</option>";
+                                                    }
+                                                    ?>
+                                                </select-->
+                                                <select id="cCodOfi" name="cCodOfi">
+                                                </select>
+                                                <label for="codOficina" class="active">Oficina</label>
+                                            </div>
+
+                                            <div class="input-field col s6">
+                                                <select id="codEspecialista" name="codEspecialista">
+                                                </select>
+                                                <label for="codEspecialista" class="active">Especialista</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col s6 input-field">
+                                                <input type="text" name="txtFecIni" id="txtFecIni" class="datepicker">
+                                                <label for="txtFecIni">Fecha Inicio</label>
+                                            </div>
+                                            <div class="col s6 input-field">
+                                                <input type="text" name="txtFecFin" id="txtFecFin" class="datepicker">
+                                                <label for="txtFecFin">Fecha Fin</label>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -122,9 +178,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <th>Remitente</th>
                                         <!--<th>Oficina de Origen</th>-->
                                         <!--<th>Trabajador Origen</th>-->
-                                        <th>Fecha de Recepcion</th>
                                         <th>Oficina Finaliza</th>
                                         <th>Trabajador Finaliza</th>
+                                        <th>Fecha de Recepcion</th>
                                         <th>Fecha de finalización</th>
                                         <th>Motivo Archivamiento</th>
                                     </tr>
@@ -237,6 +293,22 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
     $(document).ready(function (){
         $('.modal').modal();
 
+        $('.datepicker').datepicker({
+            i18n: {
+                months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic"],
+                weekdays: ["Domingo","Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                weekdaysShort: ["Dom","Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+                weekdaysAbbrev: ["D","L", "M", "M", "J", "V", "S"],
+                cancel: "Cancelar",
+                clear: "Limpiar"
+            },
+            format: 'dd-mm-yyyy',
+            disableWeekends: true,
+            autoClose: true,
+            showClearBtn: true
+        });
+
         $.ajax({
             cache: 'false',
             url: 'ajax/ajaxTipoDocumentoAll.php',
@@ -300,8 +372,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     "iCodOficinaOrigen": $('#cCodOfi').val(),
                     "nroDoc": $('#txtDoc').val(),
                     // "cboTramite": $('#cboTramite').val(),
-                    "remitente": $('#txtRemitente').val()                
+                    "remitente": $('#txtRemitente').val(),                   
+                    //"trabajadorFinal": $('#txtTrabajador').val(),
+                    "trabajadorFinal": $('#codEspecialista').val(),
+                    "fecIni": $('#txtFecIni').val()==null?"":$('#txtFecIni').val(),
+                    "fecFin": $('#txtFecFin').val()==null?"":$('#txtFecFin').val(),  
                   } );
+
+
                 }
             },
             drawCallback: function( settings ) {
@@ -316,7 +394,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
             buttons: [
                 { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                 { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
             ],
             "language": {
@@ -352,9 +430,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 ,{'data': 'remitente', 'autoWidth': true}
                 //,{'data': 'cOficinaOrigen', 'autoWidth': true}
                 //,{'data': 'cTrabajadorRegistro', 'autoWidth': true}
-                ,{'data': 'fFecRecepcion', 'autoWidth': true}
                 ,{'data': 'cOficinaDestino', 'autoWidth': true}
                 ,{'data': 'cTrabajadorDerivar', 'autoWidth': true}
+                ,{'data': 'fFecRecepcion', 'autoWidth': true}
                 ,{'data': 'fFecDerivar', 'autoWidth': true}
                 ,{'data': 'cObservacionesFinalizar', 'autoWidth': true}
             ],
@@ -405,6 +483,12 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         });
 
         $('#txtRemitente').keyup(function (e) {
+            if(e.which === 13){
+                DrawTable(tblConsultaGen);
+            }
+        });
+
+        $('#txtTrabajador').keyup(function (e) {
             if(e.which === 13){
                 DrawTable(tblConsultaGen);
             }
@@ -531,7 +615,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $.each( supportButtons, function( key, value ) {
                             value.css("display","none");
                         });
-                        $('.actionButtons').hide(100);
+                        //$('.actionButtons').hide(100);
                         break;
 
                     case 1:
@@ -745,7 +829,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                             if(json.tieneAnexos == '1') {
                                                                 let cont = 1;
                                                                 json.anexos.forEach(function (elemento) {
-                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                    /*Inicio Renombre*/
+                                                                        let elementoNombre = elemento.nombre;            
+                                                                        if (/^\d/.test(elementoNombre)) {
+                                                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                        }
+                                                                    /*Fin Renombre*/
+                                                                    //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                     cont++;
                                                                 })
                                                             }else{
@@ -788,7 +879,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{
@@ -850,6 +948,81 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         //return permiso;
         return true;
     }
+
+
+    // Al cambiar la oficina, actualiza los especialistas
+    /*$('#codOficina').change(function() {
+
+        var oficinaId = $(this).val(); // Obtiene el id de la oficina seleccionada
+
+        // Si se ha seleccionado una oficina
+        //if (oficinaId) {
+            $.ajax({
+                url: 'ajax/ajaxTrabajador.php',  // Cambia esta URL a la que uses para procesar la petición
+                type: 'POST',
+                data: {'Evento' : 'ListarTrabajadoresPorOficina', 'idOficina': oficinaId},
+                datatype: 'json',
+                success: function (data) {
+                $('select[name="codEspecialista"]').empty().append('<option value="">TODOS</option>');
+                var especialistas = JSON.parse(data);
+                $.each(especialistas.data, function (key,value) {
+
+                    $('select[name="codEspecialista"]').append(value);
+                });
+                $('select[name="codEspecialista"]').formSelect();
+                }
+                
+            });
+        //}
+    });*/
+
+
+    $('#cCodOfi').change(function() {
+    var oficinaId = $(this).val(); // Obtiene el id de la oficina seleccionada
+    // Verifica que el idOficina no esté vacío
+    if (oficinaId) {
+        $.ajax({
+            url: 'ajax/ajaxTrabajador.php',  // Cambia esta URL a la que uses para procesar la petición
+            type: 'POST',
+            data: {
+                'Evento': 'ListarTrabajadoresPorOficina', 
+                'idOficina': oficinaId
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('select[name="codEspecialista"]').empty().append('<option value="">Seleccionar</option>');
+
+                // Verifica si hay datos de especialistas
+                if (data && data.length > 0) {
+                    $.each(data, function (key, value) {
+                        // Agrega cada especialista como opción al select
+                        $('select[name="codEspecialista"]').append(
+                            $('<option>', {
+                                value: value.idTrabajador, // Asume que 'id' es el valor de cada especialista
+                                text: value.nomTrabajador // Asume que 'nombre' es el nombre del especialista
+                            })
+                            
+                        );
+                    });
+                } else {
+                    // Si no hay datos, agrega una opción que lo indique
+                    $('select[name="codEspecialista"]').append('<option value="">No hay especialistas disponibles</option>');
+                }
+                
+                // Re-inicializa el select para que se apliquen los estilos de Materialize (si lo usas)
+                $('select[name="codEspecialista"]').formSelect();
+            },
+            error: function() {
+                alert("Error al cargar los especialistas");
+            }
+        });
+    } else {
+        // Si no hay oficina seleccionada, limpia el select de especialistas
+        $('select[name="codEspecialista"]').empty().append('<option value="">Seleccionar Especialista</option>');
+        $('select[name="codEspecialista"]').formSelect();
+    }
+});
+
 </script>
 
 </body>

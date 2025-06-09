@@ -28,6 +28,7 @@ switch ($_POST['evento']){
             $subdata['FecNotificacionEntrega'] = $Rs['FecNotificacionEntrega'] != null ? $Rs['FecNotificacionEntrega']->format( 'Y-m-d H:i:s') : '';
             $subdata['CantidadNotificaciones'] = $Rs['CantidadNotificaciones'];
             $subdata['UltimaFecNotificacion'] = $Rs['UltimaFecNotificacion'] != null ? $Rs['UltimaFecNotificacion']->format( 'Y-m-d H:i:s') : '';
+            $subdata['idSolicitudPrestamo'] = $Rs['idSolicitudPrestamo'];
             $data[]=$subdata;
             $contador++;
         }

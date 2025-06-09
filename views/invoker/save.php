@@ -14,6 +14,7 @@ $response = new stdClass();
 $response->ok = false;
 
 $idDigital = $_REQUEST['idDigital'];
+
 $flgRequireFirmaLote = $_REQUEST['flgRequireFirmaLote'];
 
 $docDigitalOriginal = new DocDigital($cnx);
@@ -32,7 +33,8 @@ if($flgRequireFirmaLote == 1){
     $extension = '.'.array_pop($arrayExploded);
     $nuevoNombre = implode('.',$arrayExploded);
 
-    $nombreFile = urlencode($nuevoNombre."[R]");
+    //$nombreFile = urlencode($nuevoNombre."[R]");
+    $nombreFile = urlencode($nuevoNombre."[FP]");
 
     $separa=DIRECTORY_SEPARATOR;
     $tmp = dirname(tempnam (null,''));
@@ -53,7 +55,9 @@ if($flgRequireFirmaLote == 1){
             $contenti = $fileFirmado->getFromIndex($i);
             $tmp_namei = $tmp.$separa."upload".$separa.$nombrei;
 
-            $arrayNameSinR = explode('-',implode('',explode('[R]',$nombrei)));
+         
+            //$arrayNameSinR = explode('-',implode('',explode('[R]',$nombrei)));
+            $arrayNameSinR = explode('-',implode('',explode('[FP]',$nombrei)));
             array_shift($arrayNameSinR);
             array_shift($arrayNameSinR);
             $clearNamei = implode('-',$arrayNameSinR);
@@ -111,6 +115,15 @@ if($flgRequireFirmaLote == 1){
     if($docDigital->subirDocumento()){
         $ruta = RUTA_DTRAMITE.$docDigital->obtenerRutaDocDigital();
     };
+
+/*    
+var_dump('tmp_name: ');
+var_dump($tmp_name);
+var_dump('subirDocumento: ');
+var_dump($docDigital->subirDocumento());
+var_dump('obtenerRutaDocDigital: ');
+var_dump(RUTA_DTRAMITE.$docDigital->obtenerRutaDocDigital());
+*/
 }
 
 echo json_encode(["url" => $ruta]);

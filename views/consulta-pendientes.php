@@ -89,14 +89,15 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             </div>
                                             <div class="input-field col s6">
                                                 <select id="codEspecialista">
-                                                    <?php
+                                                    <?php //WHERE pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodTrabajador != ".$_SESSION['CODIGO_TRABAJADOR']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil";
                                                     $sqlTra ="SELECT pu.iCodTrabajador, cNombresTrabajador, cApellidosTrabajador , cDescPerfil
                                                                 FROM Tra_M_Perfil_Ususario AS pu, Tra_M_Trabajadores AS tb, Tra_M_Perfil AS p
-                                                                WHERE pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodTrabajador != ".$_SESSION['CODIGO_TRABAJADOR']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil";
+                                                                WHERE nFlgEstado=1 and pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodTrabajador != ".$_SESSION['CODIGO_TRABAJADOR']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil ORDER BY cNombresTrabajador ASC";
                                                     $rsTra = sqlsrv_query($cnx,$sqlTra);
                                                     echo "<option value='0'>TODOS</option>";
                                                     while ($RsTra = sqlsrv_fetch_array($rsTra)){
-                                                        echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cApellidosTrabajador']).", ".rtrim($RsTra['cNombresTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                        //echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cApellidosTrabajador']).", ".rtrim($RsTra['cNombresTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                        echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cNombresTrabajador']).", ".rtrim($RsTra['cApellidosTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
                                                     }
                                                     ?>
                                                 </select>
@@ -132,11 +133,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                     <!-- <th>Tipo</th> -->
                                     <th>Documento</th>
                                     <th>Asunto</th>
-                                    <th>Oficina Origen</th>
-                                    <th>Trabajador Origen</th>
-                                    <th>Fecha de envío</th>
-                                    <th>Oficina Destino</th>
+                                    <th>Origen</th>
+                                    <!--th>Trabajador Origen</th-->
+                                    <th>Destino</th>
                                     <!-- <th>Fecha Derivación</th> -->
+                                    <th>Fecha de envío</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
@@ -144,6 +145,18 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                 </tbody>
                             </table>
                         </div>
+                        Resumen:
+                    <table id="tblConsultaPendResument" name="tblConsultaPendResument" style="width: 40%">
+                        <thead>
+                            <tr>
+                                <th> </th>
+                                <th>Servidor(a)</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                     </div>
                 </div>
             </div>
@@ -318,7 +331,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
                 buttons: [
                     { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                     { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
                 ],
                 "language": {
@@ -349,9 +362,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     }
                     ,{'data': 'ASUNTO', 'autoWidth': true}
                     ,{'data': 'OFICINA_ORIGIN', 'autoWidth': true}
-                    ,{'data': 'TRABAJADOR_ORIGEN', 'autoWidth': true}
-                    ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
+                    //,{'data': 'TRABAJADOR_ORIGEN', 'autoWidth': true}
                     ,{'data': 'DESTINO', 'autoWidth': true}
+                    ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
                     ,{'data': 'ESTADO_TRAMITE', 'autoWidth': true}
 
                 ],
@@ -360,6 +373,62 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 },
                 "ordering": false
             });
+
+
+            var tblConsultaPendResument = $('#tblConsultaPendResument').DataTable({
+                'processing': true,
+                'serverSide': true,
+                "pageLength": 0,
+                responsive: {
+                    details: {
+                        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+                        type: ''
+                    }
+                },
+                //scrollY: "100%",
+                //scrollCollapse: true,
+                ajax: {
+                    url: 'ajaxtablas/ajaxConsultaPendientesResumen.php',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: function ( d ) {
+                        //console.log( $('#cCodOfi').val());
+
+                        return $.extend( {}, d, {
+                            "VI_ASUNTO": $('#txtAsunto').val()==null?"":$('#txtAsunto').val(),
+                            "VI_NCUD": $('#txtCUD').val()==null?"":$('#txtCUD').val(),
+                            "VI_FFECREGISTRO_INICIO": $('#txtFecIni').val()==null?"":$('#txtFecIni').val(),
+                            "VI_FFECREGISTRO_FINAL": $('#txtFecFin').val()==null?"":$('#txtFecFin').val(),
+                            "VI_CCODTIPODOC": $('#cCodTipoDoc').val()==null?0: $('#cCodTipoDoc').val(),
+                            "VI_CCODIFICACION": $('#txtDoc').val()==null?"":$('#txtDoc').val(),
+                            "VI_ICODOFICINAREGISTRO": $('#codOficina').val()==null?0:$('#codOficina').val(),
+                            "VI_ICODESPECIALISTAREGISTRO": $('#codEspecialista').val()==null?0:$('#codEspecialista').val(),
+                        } );
+
+                    }
+                },
+                drawCallback: function( settings ) {
+                    $(".dataTables_scrollBody").attr("data-simplebar", "");
+
+                    $('.paginate_button:not(.disabled)', this.api().table().container()).on('click', function(){
+                        tblConsultaPendResument.rows().deselect();
+                    });
+                },
+                dom: 'tr<"footer"<"paging">>',
+                //dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
+                
+                "language": {
+                    "url": "../dist/scripts/datatables-es_ES.json"
+                },
+                'columns': [
+                    {'data': 'VACIO', 'autoWidth': true}
+                    ,{'data': 'TRABAJADOR_DESTINO', 'autoWidth': true}
+                    ,{'data': 'CANTIDAD', 'autoWidth': true}
+
+                ],
+                "ordering": false
+            });
+
 
             $("#txtAsunto").click(function(){
                 $(".filters").removeClass("hide");
@@ -620,7 +689,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                 /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{

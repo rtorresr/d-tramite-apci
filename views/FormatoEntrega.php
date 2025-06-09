@@ -47,7 +47,7 @@ $datos = $_POST;
                     <p>
                         "Decenio de la Igualdad de Oportunidades para mujeres y hombres"
                         <br>
-                        "Año del Bicentenario, de la consolidación de nuestra Independencia y de la Conmemoración de las heroicas batallas de Junín y Ayacucho"
+                        "Año de la recuperación y consolidación de la economía peruana"
                     </p>
                 </td>
             </tr>

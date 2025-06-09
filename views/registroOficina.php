@@ -13,9 +13,9 @@ $nNumAno    = date("Y");
 if($_SESSION['CODIGO_TRABAJADOR']!=""){
     $url = RUTA_SIGTI_SERVICIOS."/ApiPide/token";
     $data = array(
-        "UserName" =>  USUARIO_SSO,
+        /*"UserName" =>  USUARIO_SSO,
         "Password" =>   PASSWORD_SSO,
-        "grant_type" => GRANT_TYPE_SSO
+        "grant_type" => GRANT_TYPE_SSO*/
     );
     $client = curl_init();
     curl_setopt($client, CURLOPT_URL, $url);
@@ -209,7 +209,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <th>Fecha del Documento</th>
                                         <th>Responsable</th>
                                         <th>Encriptado</th>
-                                        <th>Distribución</th>
+                                        <th>Origen</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -295,6 +295,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col m12">
                                             <div id="areaOficina">
@@ -334,6 +335,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                         <input name="button" type="button" class="btn btn-secondary" value="Confirmar" id="btnAgregarDestinatario">
                                                     </div>
                                                 </div>
+                                                
                                             </div>
                                             <table id="TblDestinatarios" class="bordered hoverable highlight striped" style="width:100%">
                                                 <thead>
@@ -347,6 +349,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             </table>
                                         </div>
                                     </div>
+                                    
                                 </fieldset>
                                 <fieldset style="display: none" id="destinoExterno">
                                     <legend>Destinatario externo</legend>
@@ -383,11 +386,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <label for="prefijoNombre">Pre-fijo</label>
                                         </div>
                                         <div class="col m4 input-field">
-                                            <input type="text" name="responsableDestinoExterno" id="responsableDestinoExterno">
+                                            <input type="text" class="input-disabled" name="responsableDestinoExterno" id="responsableDestinoExterno">
                                             <label for="responsableDestinoExterno">Nombre del responsable</label>
                                         </div>
                                         <div class="col m6 input-field">
-                                            <input type="text" name="cargoResponsableDestinoExterno" id="cargoResponsableDestinoExterno">
+                                            <input type="text" class="input-disabled" name="cargoResponsableDestinoExterno" id="cargoResponsableDestinoExterno">
                                             <label for="cargoResponsableDestinoExterno">Cargo del responsable</label>
                                         </div>
                                         <div class="col m12 input-field">
@@ -918,7 +921,19 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
 
     <!--COMPONENTES PARA LA FIRMA Y VISTOS-->
     <!-- <script type="text/javascript" src="invoker/client.js"></script> -->
-    <script type="text/javascript" src="https://dsp.reniec.gob.pe/refirma_invoker/resources/js/client.js"></script>
+    <!--RENIEC--> <!--script type="text/javascript" src="https://dsp.reniec.gob.pe/refirma_invoker/resources/js/client.js"></script-->
+    
+    <!--INICIO PERU--> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />	
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>     
+    <!--link href="https://getbootstrap.com/docs/4.6/dist/css/bootstrap.min.css" rel="stylesheet"-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>        
+    <script src="https://getbootstrap.com/docs/4.6/dist/js/bootstrap.bundle.min.js" ></script>
+    <!--FIN PERU--> 
+
+
     <script type="text/javascript" src="../conexion/global.js"></script>
     <script type="text/javascript">
 
@@ -928,7 +943,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         //<![CDATA[
         var documentName_ = null;
         //
-        window.addEventListener('getArguments', function (e) {
+
+        //INICIO RENIEC
+        /*window.addEventListener('getArguments', function (e) {
             type = e.detail;
             if(type === 'W'){
                 ObtieneArgumentosParaFirmaDesdeLaWeb(); // Llama a getArguments al terminar.
@@ -955,7 +972,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             let idDigital = document.getElementById("idDigital").value;
             let tipFirma = $("#tipo_f").val();
             let nroVisto = $("#nroVisto").val();
-            let flgRequireFirmaLote = $("#flgRequireFirmaLote").val();            
+            let flgRequireFirmaLote = $("#flgRequireFirmaLote").val();   
+            let idTipoTra = $("#idTipoTra").val(); // PARA SELLADO DE TIEMPO EXTERNO
+            
 
             //Obtiene argumentos
             $.post("invoker/postArguments.php", {
@@ -963,11 +982,75 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 tipFirma: tipFirma,
                 idDigital: idDigital,
                 nroVisto: nroVisto,
-                flgRequireFirmaLote: flgRequireFirmaLote
+                flgRequireFirmaLote: flgRequireFirmaLote,
+                idTipoTra: idTipoTra    // PARA SELLADO DE TIEMPO EXTERNO
             }, function(data, status) {
                 dispatchEventClient('sendArguments', data);
             });
         }
+        */
+
+        //::LÓGICA DEL PROGRAMADOR::
+        //INICIO PERU
+        var jqFirmaPeru = jQuery.noConflict(true);
+
+        function signatureInit(){
+            alert('PROCESO INICIADO');
+        }
+
+        function signatureOk(){
+            alert('DOCUMENTO FIRMADO');
+            MiFuncionOkWeb();
+        }
+
+        function signatureCancel(){
+            alert('OPERACIÓN CANCELADA');
+        }
+
+        function base64EncodeUnicode(str) {
+            // Codifica texto unicode en base64 (equivalente a base64_encode en PHP)
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function sendParam() {
+
+            const idDigital = document.getElementById("idDigital").value;
+            const tipFirma = $("#tipo_f").val();
+            const nroVisto = $("#nroVisto").val();
+            const flgRequireFirmaLote = $("#flgRequireFirmaLote").val();   
+            const idTipoTra = $("#idTipoTra").val(); // PARA SELLADO DE TIEMPO EXTERNO
+            
+            const firmaInitParams = {
+                //param_url: "http://localhost/d-tramite-final/views/invoker/postArgumentsPeru.php?pades="+pades+"&idDigital="+idDigital,
+                param_url: "http://localhost/d-tramite-final/views/invoker/postArguments.php?idDigital="+idDigital+"&tipFirma="+tipFirma+"&nroVisto="+nroVisto+"&flgRequireFirmaLote="+flgRequireFirmaLote+"&idTipoTra="+idTipoTra,
+                //param_token: "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6IjE2NTUzMjY3MTI3NDEifQ.eyJpc3MiOiJQbGF0YWZvcm1hIE5hY2lvbmFsIGRlIEZpcm1hIERpZ2l0YWwgLSBGaXJtYSBQZXLDuiIsInN1YiI6IkZpcm1hZG9yIiwiZXhwIjoxNzQ3MjUzNjk5LCJpYXQiOjE3NDcxNjcyOTksImp0aSI6Inc0TnpwVWs4N3pJd05UQTBPVEUxTlRJemNQYk0zM0VyeVEiLCJ2ZXIiOiIxLjAuMCYxLjEuMCIsImVudCI6ImVudGl0eV90eXBlPVNpbiBlc3BlY2lmaWNhciwgZW50aXR5PUFnZW5jaWEgUGVydWFuYSBkZSBDb29wZXJhY2nDs24gSW50ZXJuYWNpb25hbCwgaW5pdGlhbHM9QVBDSSwgZG9jdW1lbnQ9MjA1MDQ5MTU1MjMiLCJhcHAiOiJELVRSQU1JVEUiLCJhaWQiOiJjN1RTSzVMSml2WDIwWkhpQ2t1VzFCQldXNCtJUjc0aUdKMERQNjhXZlY1bGQ3RXhiQWtpZDZlVVhmcHI3ekNxIiwidG9rIjoiTUtoTTA3SWJJSWZuN3FTRWFpa0daRU5KS0FyYmdNSDNHTzBmalFlTFkwdHZVUytUdHphZ29LT2ozV0hnVUJ2MWQ3bDBDNnAzTG5JS3FNUnFxMkV6OVE9PSIsIm13cyI6IldlUWFTSjNwTWFVQzNVN1BNYkJ3SENrNHV6UEVSZXQ2VVJicjRiRGdUZlM4dzNzOGlQVldBeDlOZEYzQnZCUzNjbjJGRmZ5TXB3dit3OU9Da21XMFRRPT0ifQ.AVsEYmMIcTBxJuyE_l3HOYjLbMl9l3R0wQdX9VM92NEr_H51_mtsuycRDxjqiLDCoUGk0wEPnflZM0dYhVXFanP1ADsMugikbE5NKxnxDCEIv50RI43JiXJJa9ENqD3uWdjfZXfnDVmx5cgO5dSQJnTIxJYiCpwGppbfQv2yzxxp-C5E",
+                param_token: "http://localhost/d-tramite-final/views/invoker/token.php",
+                document_extension: "pdf"
+            };
+            const jsonString = JSON.stringify(firmaInitParams);
+
+            const base64Param = base64EncodeUnicode(jsonString);
+
+            const port = "48596";
+
+            // Llama al cliente de Firma Perú
+            startSignature(port, base64Param);
+
+
+            /*window.addEventListener('signatureOk', function (e) {
+            type = e.status;
+            if(type === 'ok'){
+                MiFuncionOkWeb();
+            }
+            else if(type === 'L'){
+                //MiFuncionOkLocal();
+            }
+        });*/
+
+
+        }
+
+        //FIN PERU
 
         function MiFuncionOkWeb(){
             let idDigital = document.getElementById("idDigital").value;
@@ -977,6 +1060,23 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             let datosDoc = $("#datosDoc").val();
             let flgRequireFirmaLote = $("#flgRequireFirmaLote").val();
             let idEntidad = $("#idEntidad").val();
+            let idTipoTra = $("#idTipoTra").val();  // PARA SELLADO DE TIEMPO EXTERNO
+
+
+
+            console.log('DATOS 1');
+            console.log('idDigital'+idDigital);
+            console.log('nroVisto'+nroVisto);
+            console.log('tipFirma'+tipFirma);
+            console.log('idtra'+idtra);
+            console.log('datosDoc'+datosDoc);
+            console.log('flgRequireFirmaLote'+flgRequireFirmaLote);
+            console.log('idEntidad'+idEntidad);
+            console.log('idTipoTra'+idTipoTra);
+
+
+
+
 
             getSpinner('Guardando Documento');
             $.ajax({
@@ -989,6 +1089,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 },
                 datatype: "json",
                 success: function (response) { 
+
                     $.post("invoker/save.php",
                         {
                             idDigital: idDigital,
@@ -999,6 +1100,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         }
                     ).done(function (data){
                         var data = $.parseJSON(data);
+                
                         $.post("enviarDocAsistentes.php",
                             {
                                 codigoEnviar: idtra,
@@ -1139,6 +1241,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             // );
         }
     </script>
+    <!--INICIO PERU-->
+    <script src="https://apps.firmaperu.gob.pe/web/clienteweb/firmaperu.min.js"></script> 
+    <div id="addComponent" style="display:none;"></div>
+    <!--FIN PERU-->
+
 
     <script>
         var sesionTrabajador = <?=$_SESSION['CODIGO_TRABAJADOR']?>;
@@ -1871,7 +1978,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                 if(full.firma === 0){
                                     if(full.iCodOficinaFirmante === sesionOficina && (full.iCodTrabajadorFirmante === sesionTrabajador || sesionDelegado === 1)) {
                                         botones += '<button type="button" data-accion="firmar" data-tooltip="Firmar" class="btn btn-sm btn-link tooltipped" data-position="bottom" name="Firmar"><i class="fas fa-fw fa-signature fa-fw left"></i></button>';
-                                        if (full.tipoDoc.trim() != 'NOTA INFORMATIVA'){
+                                        //if (full.tipoDoc.trim() != 'NOTA INFORMATIVA'){
+                                        if ((full.tipoDoc.trim() != 'NOTA INFORMATIVA') || (full.tipoDoc.trim() != 'INFORME INSTRUCCION') ){  //CONDICIONAL SI ES NOTA INFORMATIVA O INFORME INSTRUCCION
                                             botones += '<button type="button" data-accion="enviarVisto" data-tooltip="Enviar para Visto" class="btn btn-sm btn-link tooltipped" data-position="bottom" name="Firmar"><i class="fas fa-stamp"></i></button>';
                                         }
                                     } else {
@@ -2348,8 +2456,20 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                     $("#flgRequireFirmaLote").val(flgRequireFirmaLote);
                                     $("#idEntidad").val(idEntidad);
                                     // $("#idTramiteNotificacion").val(dataFila.idTramiteNotificacion != 0 ? dataFila.idTramiteNotificacion : '');
+
+
+                                    console.log("COD DIGITAL= "+ idDigital);
+                                    console.log("ID TRAMITE= "+ dataFila.codigo);
+                                    console.log("ID tipo_f= f");
+                                    console.log("NRO DE VISTO= "+ dataFila.visto);
+                                    console.log("datosDoc= "+ informacion);
+                                    console.log("idTraP= "+ dataFila.iCodProyectoRef);
+                                    console.log("idTipoTra= "+ dataFila.nFlgTipoDoc);
+                                    console.log("flgRequireFirmaLote= "+ flgRequireFirmaLote);
+                                    console.log("idEntidad= "+ idEntidad);
                                     
-                                    initInvoker('W');
+                                    //initInvoker('W');  //RENIEC
+                                    sendParam();        //PERU
                                 } else {
                                     console.log('¡No se pudo obtener el documento!');
                                     M.Toast({html:'¡No se pudo obtener el documento!'});
@@ -3071,7 +3191,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     if(json.tieneAnexos == '1') {
                         let cont = 1;
                         json.anexos.forEach(function (elemento) {
-                            $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-fw fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                            /*Inicio Renombre*/
+                                let elementoNombre = elemento.nombre;            
+                                if (/^\d/.test(elementoNombre)) {
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                }
+                            /*Fin Renombre*/
+                            //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-fw fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                            $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-fw fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                             cont++;
                         })
                     }else{
@@ -3515,11 +3642,13 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             }
         });
 
+
+        
         //tabla de anexos
         var tblAnexos = $('#TblAnexos').DataTable({
             responsive: true,
             searching: false,
-            ordering: false,
+            ordering: true,
             paging: false,
             info: false,
             "drawCallback": function() {
@@ -3531,10 +3660,17 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     $("#TblAnexos").show();
                     $('#anexosDoc').css('display', 'block');
                 }
+                enableDragAndDrop();
             },
             "language": {
                 "url": "../dist/scripts/datatables-es_ES.json"
             },
+            'columnDefs': [
+                {
+                   'targets': [0,1,3],
+                    'orderable': false
+                }
+            ],
             'columns': [
                 {
                     'render': function (data, type, full, meta) {
@@ -3550,19 +3686,32 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         return anexoImprimir;
                     }, 'className': 'center-align',"width": "5%"
                 },
-                {
+                /*{
                     'render': function (data, type, full, meta) {
                         let nombreAnexo = '';
                         nombreAnexo = '<a href="'+full.rutaAnexo+'" target="_blank">'+full.nombreAnexo+'</a>';
                         return nombreAnexo;
                     }, 'className': 'center-align',"width": "85%"
+                },*/
+                {
+                    'render': function (data, type, full, meta) {
+                        let nombreAnexo = '';
+                        nombreAnexo = '<p class="nombre-anexo" data-url="'+full.rutaAnexo+'">'+full.nombreAnexo+'</p>';
+                        return nombreAnexo;
+                    }, 'className': 'center-align',"width": "85%"
                 },
+
                 {
                     'render': function (data, type, full, meta) {
                         return '<button type="button" data-accion="eliminar" data-toggle="tooltip" title="Eliminar" class="btn btn-sm btn-link tooltipped danger" data-placement="top"><i class="fas fa-fw fa-trash-alt"></i></button> ';
                     }, 'className': 'center-align',"width": "5%"
                 },
             ]
+        });
+
+        $(document).on('click', '.nombre-anexo', function() {
+            var url = $(this).data('url');
+            window.open(url, '_blank');
         });
 
         $("#TblAnexos tbody")
@@ -3590,6 +3739,62 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         break;
                 }
             });
+
+            //inicio funcion DragAndDrop
+            function enableDragAndDrop() {
+                    const list = document.getElementById('TblAnexos').getElementsByTagName('tbody')[0];
+                    let draggedItem = null;
+
+                    
+                    $('#TblAnexos tbody tr').attr('draggable', 'true');
+
+                  
+                    list.addEventListener('dragstart', (e) => {
+                        draggedItem = e.target;
+                        setTimeout(() => {
+                            e.target.style.display = 'none'; 
+                        }, 0);
+                    });
+
+                  
+                    list.addEventListener('dragend', (e) => {
+                        setTimeout(() => {
+                            draggedItem.style.display = 'table-row'; 
+                            draggedItem = null;
+                        }, 0);
+                    });
+
+                    
+                    list.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+
+                    
+                    list.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const target = e.target.closest('tr');  
+
+                        
+                        if (target && target !== draggedItem) {
+                            const allItems = [...list.querySelectorAll('tr')];
+                            const draggedIndex = allItems.indexOf(draggedItem);
+                            const targetIndex = allItems.indexOf(target);
+
+                            
+                            if (draggedIndex < targetIndex) {
+                                list.insertBefore(draggedItem, target.nextSibling);
+                            } else {
+                                list.insertBefore(draggedItem, target);
+                            }
+                        }
+                    });
+                }
+
+                $(document).ready(function() {
+                    enableDragAndDrop();
+                });
+            //fin funcion
+
 
         function InsertarAnexo(codigo, nombre, ruta, imprimible = true) {
             let anexo = new Object();
@@ -3974,7 +4179,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         }
                     });
                 } else if (paraJefeProyecto.length !== 0) {
-                    let modelo = new Object();
+
+                let modelo = new Object();
                     modelo.Evento = "DerivarJefeProyecto";
                     modelo.codigos = paraJefeProyecto;
                     $.ajax({
@@ -3996,6 +4202,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                             M.toast({html: "Error al derivar"});
                         }
                     });
+
+                    
                 } else {
                     let modelo = new Object();
                     modelo.Evento = "DerivarJefeInmediato";
@@ -4374,7 +4582,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         derivarDocumentos(this);                        
                         cleanBody();
                     },
-                    Continuar: function () { 
+                    /*Continuar: function () { 
                         getSpinner('Cargando...');                       
                         tblDocumentos.ajax.reload();
                         
@@ -4387,6 +4595,32 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $("#btnCerrarDocFirmado").removeClass('disabled');
                         cleanBody();
                         deleteSpinner();
+                    }*/
+
+                    Continuar: function () { 
+                        // Popup con mensaje de éxito
+                        $.confirm({
+                            title: 'Nota:',
+                            content: 'Su documento aún no está siendo derivado, revise su Bandeja de Trabajo.',
+                            buttons: {
+                                Aceptar: function () {
+                                    getSpinner('Cargando...');                       
+                                    tblDocumentos.ajax.reload();
+                                    
+                                    CargaDocumentosGrupo($("#cDocumentosEnTramite").val());
+                                    let elem = document.querySelector('#modalDoc');
+                                    let instance = M.Modal.init(elem, {dismissible:false});
+
+                                    instance.close();
+                                    $("#btnCerrarDocFirmado").css('display','inline-block');
+                                    $("#btnCerrarDocFirmado").removeClass('disabled');
+                                    cleanBody();
+                                    deleteSpinner();
+
+                                    // Acción opcional cuando el usuario haga clic en Aceptar
+                                }
+                            }
+                        });                        
                     }
                 }
             });
@@ -4981,6 +5215,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             form.submit();
             document.body.removeChild(form);
         }
+
     </script>
     </body>
     </html>

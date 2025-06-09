@@ -1,3 +1,15 @@
+<style>
+ .btn-xs {
+    padding: 2px 6px;
+    font-size: 12px;
+    line-height: 1;
+    height: 37px;
+    margin-top: auto;
+    background-color: #001f4a;
+    color: #fff;
+  }
+</style>
+
 <form id="FormRemitente">
     <?php if (isset($_POST["tipoPersona"])){ ?>
         <input type="hidden" id="idTipoPersona" value="<?=$_POST["tipoPersona"]?>">
@@ -67,23 +79,39 @@
                 </div>
             </div>
             </div>
-            <div class="col" id="htmlNombreR">
+            <div class="col" id="htmlNombreR" style="display: none;">
                 <label for="txtNombComp">Nombre completo</label>
                 <input class="form-control" id="txtNombComp" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required>
+            </div>
+            <div class="col" id="htmlNombreCorto">
+                <label for="txtNombCompCorto">Nombre completo</label>
+                <input class="form-control" id="txtNombCompCorto" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required>
             </div>
         </div>
     </div>
     <div class="form-group">
         <div class="row"> 
-            <div class="col" id="htmlDireccionR">
+            <div class="col" id="htmlDireccionR" style="display: none;">
                 <label for="txtDireccion">Dirección</label>
-                <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required>
-                <div class="invalid-feedback">
-                    Por favor, ingrese la dirección.
+                <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4"  disabled="disabled" required>
+                <div class="invalid-feedback">Por favor, ingrese la dirección.</div>
+            </div>
+            <div class="col" id="htmlDireccionRCorto">
+                <label for="txtDireccionCorto">Dirección</label>
+                <div class="input-group">
+                    <input class="form-control" id="txtDireccionCorto" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4"  disabled="disabled" required>
+                    
+                    <div class="invalid-feedback">Por favor, ingrese la dirección.</div>
                 </div>
+                <!--div class="input-group-append" style="display: none;">
+                        <button id="limpiarBoton" class="btn btn-danger">Limpiar</button>
+                    </div-->
+            </div>
+            <div class="input-group-append" style="display: none;"><button id="limpiarBoton" class="btn-xs"><i class="fas fa-pencil-alt"></i> Editar</button>
             </div>
         </div>
     </div>
+    <!--button type="button" class="btn btn-secondary" id="limpiarBoton">Limpiar</button-->
     <div class="form-group">
         <div class="row"> 
             <div class="col">
@@ -144,3 +172,38 @@
         <button class="btn btn-secondary-light" id="primerBoton">Siguiente</button>
     </div>
 </form>
+
+<script>
+document.getElementById('limpiarBoton').addEventListener('click', function () {
+    // Mostrar los campos si están ocultos
+    const htmlDireccionR = document.getElementById('htmlDireccionR');
+    const htmlDireccionRCorto = document.getElementById('htmlDireccionRCorto');
+
+    // Asegurarse de que los campos sean visibles para poder limpiarlos
+    if (htmlDireccionR) {
+        htmlDireccionR.style.display = 'block';  // Mostrar el campo txtDireccion
+    }
+    if (htmlDireccionRCorto) {
+        htmlDireccionRCorto.style.display = 'none';  // Mostrar el campo txtDireccionCorto
+    }
+
+    // Limpiar solo el campo txtDireccion (incluso si está oculto)
+    const txtDireccion = document.getElementById('txtDireccion');
+    if (txtDireccion) {
+        txtDireccion.value = '';  // Limpiar el valor
+        txtDireccion.removeAttribute('disabled');  // Asegurarse de que no esté deshabilitado
+        txtDireccion.removeAttribute('readonly');  // Asegurarse de que no esté en solo lectura
+    }
+
+    // Limpiar solo el campo txtDireccionCorto
+    const txtDireccionCorto = document.getElementById('txtDireccionCorto');
+    if (txtDireccionCorto) {
+        txtDireccionCorto.value = '';  // Limpiar el valor
+        txtDireccionCorto.removeAttribute('disabled');  // Asegurarse de que no esté deshabilitado
+        txtDireccionCorto.removeAttribute('readonly');  // Asegurarse de que no esté en solo lectura
+    }
+
+    // Si hay otros cambios que hacer en los valores o validaciones adicionales, se pueden agregar aquí
+    console.log('Campos direccion limpiados');
+});
+</script>

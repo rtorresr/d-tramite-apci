@@ -52,11 +52,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                     <th>CUD</th>
                                     <th>Documento</th>
                                     <th>Asunto</th>
-                                    <th>Estado Doc.</th>
+                                    <!--th>Estado Doc.</th-->
                                     <!--<th>Oficina Origen</th>-->
+                                    <th>Oficina Destino</th>
+                                    <th>Trabajador Destino</th>
                                     <th>Fecha Documento</th>
-                                    <th>Última Oficina Destino</th>
-                                    <th>Último Trabajador Destino</th>
                                     <th>Estado Envío</th>
                                 </tr>
                                 </thead>
@@ -280,7 +280,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
                 buttons: [
                     { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                     { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
                 ],
                 "language": {
@@ -308,11 +308,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         'autoWidth': true
                     }
                     ,{'data': 'ASUNTO', 'autoWidth': true}
-                    ,{'data': 'ESTADO_DOCUMENTO', 'autoWidth': true}
+                    //,{'data': 'ESTADO_DOCUMENTO', 'autoWidth': true}
                     //,{'data': 'OFICINA_ORIGIN', 'autoWidth': true}
-                    ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
-                    ,{'data': 'DESTINO', 'autoWidth': true}
+                     ,{'data': 'DESTINO', 'autoWidth': true}
                     ,{'data': 'TRABAJADOR_DESTINO', 'autoWidth': true}
+                    ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
                     ,{'data': 'ESTADO_TRAMITE', 'autoWidth': true}
                 ],
                 'select': {
@@ -620,7 +620,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                                 if(json.tieneAnexos == '1') {
                                                                     let cont = 1;
                                                                     json.anexos.forEach(function (elemento) {
-                                                                        $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                        /*Inicio Renombre*/
+                                                                            let elementoNombre = elemento.nombre;            
+                                                                            if (/^\d/.test(elementoNombre)) {
+                                                                            elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                            }
+                                                                        /*Fin Renombre*/
+                                                                        //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                        $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                         cont++;
                                                                     })
                                                                 }else{
@@ -661,7 +668,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                             if(json.tieneAnexos == '1') {
                                 let cont = 1;
                                 json.anexos.forEach(function (elemento) {
-                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                    /*Inicio Renombre*/
+                                        let elementoNombre = elemento.nombre;            
+                                        if (/^\d/.test(elementoNombre)) {
+                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                        }
+                                    /*Fin Renombre*/
+                                    //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                     cont++;
                                 })
                             }else{

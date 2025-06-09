@@ -52,48 +52,46 @@ $formatted_tag = preg_replace_callback( $regex, function( $matches) {
 }, ucwords(mb_strtolower(trim($siglaoficina['oficina']))));
 $oooo = sliceString($formatted_tag,3);
 
-$queryDatosSolicitud = "select
-	sp.IdOficinaRequerida,
-	o.cNomOficina,
-	sp.FecRegistro,
-	sp.NroSolicitud
-from T_Solicitud_Prestamo as sp
-	inner join Tra_M_Oficinas as o on o.iCodOficina = sp.IdOficinaRequerida
-where sp.FlgEliminado = 1 and sp.IdSolicitudPrestamo = ".$data['IdSolicitudPrestamo'];
-$rsDatosSolicitud = sqlsrv_query($cnx, $queryDatosSolicitud);
-$datosSolicitud = sqlsrv_fetch_array($rsDatosSolicitud, SQLSRV_FETCH_ASSOC);
-
 #1. Declaramos las variables
-$titulo = 'SERVICIO ARCHIVISTICO N° '.$datosSolicitud['NroSolicitud'];
+$titulo = 'SERVICIO ARCHIVISTICO N° '.$data['NOMBRE_DOC'];
 
-$asunto = "Solicitud de préstamos de documentos";
+# Tipo de servicio
+$sqlTipoServicio = "select distinct IIF(de.FlgDocDigital = 0, 'escaneo', (select tc.NombreContenido from Tra_M_Tipo_Contenido as tc where tc.IdContenido = de.IdTipoServicio ) ) + ' ' +IIF(de.FlgDocDigital = 0, 'digital', 'físico') as tipo
+                from T_Solicitud_Prestamo_Detalle as de
+                where de.FlgEliminado = 1 and de.IdSolicitudPrestamo = ".$data['IdSolicitudPrestamo'];
+$rsTipoServicio=sqlsrv_query($cnx,$sqlTipoServicio);
 
-$timestamp = $datosSolicitud['FecRegistro'] instanceof \DateTimeInterface
-    ? $datosSolicitud['FecRegistro']->getTimestamp()
-    : strtotime((string) $datosSolicitud['FecRegistro']);
-
-$fecha = ucfirst(strftime('%A, %e de %B del %Y', $timestamp));
-
-$queryDatosSolicitudDetalle = "select
-	spd.IdDetallePrestamo,
-	spd.ExpedienteDocumento,
-	spd.TipoDocumental,
-	spd.NumeroDocumento,
-	spd.FechaDocumento,
-	spd.DescripcionDocumento,
-	spd.FlgDocDigital,
-	spd.IdTipoServicio,
-	tc.NombreContenido as NombreTipoServicio
-from T_Solicitud_Prestamo_Detalle as spd
-	left join Tra_M_Tipo_Contenido as tc on tc.IdContenido = spd.IdTipoServicio
-where spd.FlgEliminado = 1 and spd.IdSolicitudPrestamo = ".$data['IdSolicitudPrestamo'];
-$rsDatosSolicitudDetalle = sqlsrv_query($cnx, $queryDatosSolicitudDetalle);
-
-$datosSolicitudDetalle = [];
-while ($row = sqlsrv_fetch_array($rsDatosSolicitudDetalle, SQLSRV_FETCH_ASSOC)) {
-    $datosSolicitudDetalle[] = $row;
+$tipoServicio = "";
+while( $RsTipoServicio = sqlsrv_fetch_array($rsTipoServicio,SQLSRV_FETCH_ASSOC)){
+    $tipoServicio.= $RsTipoServicio['tipo']." ,";
 }
+$tipoServicio = substr($tipoServicio, 0, -1);
 
+$asunto = "Solicitud de ".$tipoServicio." de documentos";
+$fecha= strftime('%A, %e de %B del %Y', strtotime(date('m/d/Y')));
+
+# Oficina solicitante
+$sqlOficina = "SELECT cNomOficina, cSiglaOficina FROM Tra_M_Oficinas WHERE iCodOficina = ".$data['IdOficinaSolicitante'];
+$rsOficina=sqlsrv_query($cnx,$sqlOficina);
+$RsOficina = sqlsrv_fetch_array($rsOficina,SQLSRV_FETCH_ASSOC);
+$seccion = $RsOficina['cNomOficinac']." - ".$RsOficina['cSiglaOficina'];
+
+if (isset($flgSegundoPdf)){    
+    $tmp = dirname(tempnam(null, ''));
+    $tmp = $tmp . "/qrImagen/";
+    if (!is_dir($tmp)) {
+        mkdir($tmp, 0777, true);
+    }
+    $PNG_TEMP_DIR = $tmp;
+    $errorCorrectionLevel = 'L';
+    $matrixPointSize = 2;
+
+    $rutaRedirect = $_SERVER['HTTP_HOST'] . '/verifica.php?cud=&clave=';
+    $codigoQr = 'QR' . md5($rutaRedirect . '|' . $errorCorrectionLevel . '|' . $matrixPointSize) . '.png';
+    $filename = $PNG_TEMP_DIR . $codigoQr;
+
+    QRcode::png($rutaRedirect, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="en">
@@ -104,12 +102,15 @@ while ($row = sqlsrv_fetch_array($rsDatosSolicitudDetalle, SQLSRV_FETCH_ASSOC)) 
 </head>
 <body>
 <?php
-    include ('../template/head.php');
+    if ($param['head'] === 'title'){
+        include ('template/head.php');
+    }
 ?>
+<p><?=$titulo;?></p>
 
 <footer>
     <?php if (isset($flgSegundoPdf)){ ?>
-        <!-- <table style="width: 100%; border-top: 1px solid #CC9933;">
+        <table style="width: 100%; border-top: 1px solid #CC9933;">
             <tr>
                 <td style="padding-left: 0.15rem;" valign="top">
                     <p style="word-wrap:break-word; margin-bottom: 0; white-space:normal; font-size: 55%; font-style: italic; line-height: 1; text-align: justify; color: #999"><strong>Esta es una copia auténtica imprimible de un documento electrónico archivado en la Agencia Peruana de Cooperación Internacional,</strong> aplicando lo dispuesto por el Art. 25 de D.S. 070-2013-PCM y la Tercera Disposición Complementaria Final del D.S. 26-2016-PCM. Su autenticidad e integridad pueden ser contrastadas a través de la siguiente dirección web: https://d-tramite.apci.gob.pe/verifica.php con clave: <?=$dataFirma['clave']?></p>
@@ -121,128 +122,31 @@ while ($row = sqlsrv_fetch_array($rsDatosSolicitudDetalle, SQLSRV_FETCH_ASSOC)) 
                     <img class="footerImg" src="../../dist/images/con-punche-peru.png" height="48" />
                 </td>
             </tr>
-        </table> -->
-        <img class="footerImg" src="../dist/images/pie.png">
+        </table>
     <?php } else { ?>
-        <img class="footerImg" src="../dist/images/pie.png">
+        <img class="footerImg" src="../../dist/images/pie.png">
     <?php } ?>
 </footer>
 <main>
-    <style>
-        .serv-archivistico {
-            font-family: Arial, sans-serif;
-            font-size: 10pt;
-        }
-        .serv-archivistico h1 {
-            text-align: center;
-            font-size: 12pt;
-        }
-        .serv-archivistico table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1em 0;
-        }
-        .serv-archivistico td {
-            padding: 5px;
-            vertical-align: top;
-            border: 1px solid #000;
-        }
-        .serv-archivistico .tabla-sin-bordes td {
-            border: none;
-            padding: 3px;
-        }
-        .serv-archivistico .checkbox {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 1px solid #000;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-        .serv-archivistico .checked {
-            background-color: #000;
-        }
-        .serv-archivistico .espaciado {
-            margin-top: 1em;
-            margin-bottom: 0.5em;
-        }
-    </style>
-    
-    <div class="serv-archivistico">
-        <h1><?=$titulo;?></h1>
-        <table class="tabla-sin-bordes">
-            <tr>
-                <td><strong>Asunto:</strong></td>
-                <td><?=$asunto;?></td>
-            </tr>
-            <tr>
-                <td><strong>Fecha:</strong></td>
-                <td><?=$fecha;?></td>
-            </tr>
-        </table>
-
-        <?php
-            foreach($datosSolicitudDetalle as $detalle){
-        ?>
-            <table>
-                <tr>
-                    <td><strong>SECCIÓN</strong></td>
-                    <td colspan="7"><?=$datosSolicitud['cNomOficina'];?></td>
-                </tr>
-                <tr>
-                    <td><strong>SERIE DOCUMENTAL</strong></td>
-                    <td colspan="7"><?=$detalle['ExpedienteDocumento'];?></td>
-                </tr>
-                <tr>
-                    <td><strong>TIPO DOCUMENTAL</strong></td>
-                    <td colspan="7"><?=$detalle['TipoDocumental'];?></td>
-                </tr>
-                <tr>
-                    <td><strong>N° DEL DOCUMENTO</strong></td>
-                    <td colspan="7"><?=$detalle['NumeroDocumento'];?></td>
-                </tr>
-                <tr>
-                    <td><strong>DESCRIPCIÓN DEL DOCUMENTO</strong></td>
-                    <td colspan="7"><?=$detalle['DescripcionDocumento'];?></td>
-                </tr>
-                <tr>
-                    <td><strong>FECHA DEL DOCUMENTO</strong></td>
-                    <td colspan="7">
-                        <?php
-                            if ($detalle['FechaDocumento'] instanceof DateTime) {
-                                echo $detalle['FechaDocumento']->format('d/m/Y');
-                            } elseif (!empty($detalle['FechaDocumento'])) {
-                                $fecha = date_create($detalle['FechaDocumento']);
-                                echo $fecha ? $fecha->format('d/m/Y') : $detalle['FechaDocumento'];
-                            } else {
-                                echo '';
-                            }
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="8"><strong>MODALIDAD DE SERVICIO ARCHIVÍSTICO</strong></td>
-                </tr>
-                <tr>
-                    <td>REPRODUCCIÓN FÍSICA DE DOCUMENTO</td>
-                    <td><span class="checkbox <?=($detalle['FlgDocDigital'] == 1 && $detalle['IdTipoServicio'] == 110 ? 'checked' : '');?>"></span></td>
-                    <td>REPRODUCCIÓN DIGITAL DE DOCUMENTO</td>
-                    <td><span class="checkbox <?=($detalle['FlgDocDigital'] == 0 ? 'checked' : '');?>"></span></td>
-                    <td>CONSULTA DE DOCUMENTO</td>
-                    <td><span class="checkbox <?=($detalle['FlgDocDigital'] == 1 && $detalle['IdTipoServicio'] == 58 ? 'checked' : '');?>"></span></td>
-                    <td>PRÉSTAMO FÍSICO DE DOCUMENTO</td>
-                    <td><span class="checkbox <?=($detalle['FlgDocDigital'] == 1 && $detalle['IdTipoServicio'] == 59 ? 'checked' : '');?>"></span></td>
-                </tr>
-            </table>
-
-        <?php
-            }
-        ?>
-
-        <p class="espaciado">
-            El presente documento cuenta con el visto bueno del colaborador de la dependencia, quien de ser el caso debe recoger lo solicitado en el archivo central, y la firma del responsable del archivo de gestión.
-        </p>
-    </div>
+    <div class="glosa">
+        <?php if (isset($flgSegundoPdf)){
+            echo '<table style="width: 100%">
+                    <tr>
+                        <td style="width: 55px">
+                            <img class="" src="../../dist/images/apci__loco__square.png" width="55" height="55" />
+                        </td>
+                        <td style="padding-left: 0.35rem;">
+                            <p style="line-height: 1">
+                                <span style="font-size: 70%; margin-bottom: 0.25rem;display: block;">Firmado digitalmente por: </span>
+                                <strong style="font-size: 70%; color: #333366">'.$RsRemitente['nombreCompleto'].'</strong><br>
+                                <span style="font-size: 70%;">'.$RsRemitente['cargo'].'</span>
+                                <span style="font-size: 60%; padding-top: 0.25rem; display: block;">Motivo: Soy autor del documento</span>                                 
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            ';
+        }?>
 </main>
 </body>
 </html>
@@ -280,11 +184,9 @@ if (isset($flgSegundoPdf)){
 $docDigital->tmp_name = $urlTemp;
 $docDigital->name = $nuevo_nombre;
 $docDigital->type = 'application/pdf';
-$docDigital->size = filesize($urlTemp);
 
 $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
 $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
-$docDigital->sesion = $_SESSION['IdSesion'];
 
 $docDigital->subirDocumentoSecundario();
 

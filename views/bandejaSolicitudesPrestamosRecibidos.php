@@ -19,9 +19,12 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         <div class="navbar-fixed actionButtons">
             <nav>
                 <div class="nav-wrapper">
-                    <ul id="nav-mobile" class="">
-                        <li><button id="btnValidarSolicitud" style="display: none" class="btn btn-primary"><i class="fas fa-check"></i><span> Validar</span></button></li>
+                
+                    <ul id="nav-mobile" class=""> <?php echo $_SESSION['CODIGO_TRABAJADOR'];?>
                         <li><button id="btnAtenderSolicitud" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span> Atender</span></button></li>
+                        <?php if ($_SESSION['CODIGO_TRABAJADOR']!==345){ ?>
+                        <li><button id="btnAtenderArchivoCentral" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span> Archivo Central</span></button></li>
+                        <?php }?>
                         <li><button id="btnObservar" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> Observar</span></button></li>
                         <li><button id="btnAmpliarPLazoAtencion" style="display: none" class="btn btn-link"><i class="fas fa-hourglass-end"></i><span> Ampliar Plazo Atención</span></button></li>
                         <li><button id="btnDevolverFaltaDatos" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> Devolver por falta de datos</span></button></li>
@@ -57,8 +60,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <th>Oficina Origen</th>
                                             <th>Trabajador Origen</th>
                                             <th>Documento</th>
+                                            <th>Comentario</th>
                                             <th>Fecha de Envío</th>
                                             <th>Fecha de Plazo Atención</th>
+                                            <th>PreVisualizar</th>
                                             <th></th>
                                         </tr>
                                         </thead>
@@ -121,6 +126,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                 <th>Tiene Doc. Digital</th>
                                 <th>Servicio dado</th>
                                 <th>Estado</th>
+                                <th>Comentario</th>  
                                 <th></th>
                             </tr>
                             </thead>
@@ -373,37 +379,12 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         </div>
     </div>
 
-    <div id="modalValidar" class="modal modal-fixed-header modal-fixed-footer">
-        <div class="modal-header">
-            <h4>Validar solicitud de préstamo</h4>
-        </div>
-        <div class="modal-content">
-            <form>
-                <div class="row">
-                    <div class="input-field col s12 m12">
-                         <select id="OficinaRequeridaValidar" name="OficinaRequeridaValidar">
-                        </select>
-                        <label for="OficinaRequeridaValidar">Oficina responsable de la atención</label>
-                    </div> 
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a class="waves-effect waves-green btn-flat" id="btnValidarSolicitudPrestamo"> Validar</a>
-            <a class="modal-close waves-effect waves-green btn-flat"> Cerrar</a>
-        </div>
-    </div>
-
 
     <?php include("includes/userinfo.php"); ?>
     <?php include("includes/pie.php"); ?>
     </body>
     <script src="includes/dropzone.js"></script>
     <script>
-        var sesionTrabajador = <?=$_SESSION['CODIGO_TRABAJADOR']?>;
-        var sesionOficina = <?=$_SESSION['iCodOficinaLogin']?>;
-        var sesionPerfil = <?=$_SESSION['iCodPerfilLogin']?>;
-
         $('.datepicker').datepicker({
             i18n: {
                 months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -502,8 +483,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         $(document).ready(function() {
             $('.actionButtons').hide();
 
-            var btnValidarSolicitud = $("#btnValidarSolicitud");
             var btnAtenderSolicitud = $("#btnAtenderSolicitud");
+            var btnAtenderArchivoCentral = $("#btnAtenderArchivoCentral");
             var btnObservar = $("#btnObservar");
             var btnAmpliarPLazoAtencion = $("#btnAmpliarPLazoAtencion");
             var btnDevolverFaltaDatos = $("#btnDevolverFaltaDatos");
@@ -518,7 +499,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             
 
             var actionButtonsRecibidosEnCurso = [];
-            var supportButtonsRecibidosEnCurso = [btnAtenderSolicitud, btnAnular, btnObservar, btnAmpliarPLazoAtencion, btnDevolverFaltaDatos, btnDevolverNoObrarArchivo, btnHistorico];
+            var supportButtonsRecibidosEnCurso = [btnAtenderSolicitud, btnAtenderArchivoCentral, btnAnular, btnObservar, btnAmpliarPLazoAtencion, btnDevolverFaltaDatos, btnDevolverNoObrarArchivo, btnHistorico];
 
             var actionButtonsRecibidosNotificados = [];
             var supportButtonsRecibidosNotificados = [btnRenotificar, btnAnular, btnVerSolicitud, btnHistorico];
@@ -575,8 +556,18 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     ,{'data': 'oficinaOrigen', 'autoWidth': true}
                     ,{'data': 'trabajadorOrigen', 'autoWidth': true}
                     ,{'data': 'documento', 'autoWidth': true}
+                    ,{'data': 'Comentario', 'autoWidth': true}
                     ,{'data': 'fechaEnvio', 'autoWidth': true}
                     ,{'data': 'fechaPlazoAtencion', 'autoWidth': true}
+                    , {
+                        'render': function (data, type, full, meta) {
+                            let iconos = '';
+                            if (full.IdDocDigital > 0) {
+                                iconos += '<button type="button" data-accion="ver-documento" title="Ver documento" data-tooltip="Ver documento" class="btn btn-sm btn-link tooltipped" data-position="bottom" name="Ver"><i class="far fa-eye"></i></button>';
+                            }
+                            return iconos
+                        },
+                    }
                     , {
                         'render': function (data, type, full, meta) {
                             let iconos = '';
@@ -586,6 +577,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                             return iconos
                         },
                     }
+                    
                 ],
                 'select': {
                     'style': 'multi'
@@ -594,33 +586,18 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
 
             tblBandejaSolicitudesEnCurso
                 .on( 'select', function ( e, dt, type, indexes ) {
-                    let count = tblBandejaSolicitudesEnCurso.rows( { selected: true } ).count();        
-                    
+                    let count = tblBandejaSolicitudesEnCurso.rows( { selected: true } ).count();
                     switch (count) {
                         case 1:
-                            let fila = tblBandejaSolicitudesEnCurso.rows( { selected: true } ).data().toArray()[0];
-                            
-                            switch(fila.IdEstadoSolicitudPrestamo) {
-                                case 7: // en curso
-                                    $.each( actionButtonsRecibidosEnCurso, function( key, value ) {
-                                        value.css("display","inline-block");
-                                    });
-                                    $.each( supportButtonsRecibidosEnCurso, function( key, value ) {
-                                        value.css("display","inline-block");
-                                    });
-
-                                    btnValidarSolicitud.css("display","none");
-
-                                    break;
-                                case 111: //nuevo
-                                    btnValidarSolicitud.css("display","inline-block");
-                                    btnVerSolicitud.css("display","inline-block");
-                                    btnHistorico.css("display","inline-block");
-                                    break;
-                            }
-                            
+                            $.each( actionButtonsRecibidosEnCurso, function( key, value ) {
+                                value.css("display","inline-block");
+                            });
+                            $.each( supportButtonsRecibidosEnCurso, function( key, value ) {
+                                value.css("display","inline-block");
+                            });
                             $('.actionButtons').show();
 
+                            let fila = tblBandejaSolicitudesEnCurso.rows( { selected: true } ).data().toArray()[0];
                             if (fila.flgFueraPlazoAtencion == 0) {
                                 btnAmpliarPLazoAtencion.css("display","none");
                             }
@@ -711,6 +688,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     { 'data': 'TieneDocDigital'},
                     { 'data': 'NomTipoServicioOfrecido'},
                     { 'data': 'NomEstadoDetallePrestamo'},
+                    { 'data': 'Comentario'},
                     {
                         'render': function (data, type, full, meta) {
                             let botones = '';
@@ -830,6 +808,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 instance.open();
             });
 
+           
             $("#btnNotificar").on("click", function (e) {
                 let data = tblDetalleSolicitud.data();
                 let noNotificar = false;
@@ -1050,6 +1029,32 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         break;
                 }
             });
+
+            $('#tblBandejaSolicitudesEnCurso tbody').on('click', 'button', function (e) {
+                e.preventDefault();
+                let fila = tblBandejaSolicitudesEnCurso.row($(this).parents('tr'));
+                let dataFila = fila.data();
+                let accion = $(this).attr("data-accion");
+                switch (accion) {
+                    case 'ver-documento':
+                        $.ajax({
+                            cache: false,
+                            url: "registerDoc/RegPrestamoDocumentos.php",
+                            method: "POST",
+                            data: {
+                                "Evento" : "VerDocumentoPrestamoDetalle"
+                                ,"IdDetallePrestamo" : dataFila.IdDetallePrestamo
+                            },
+                            datatype: "json",
+                            success : function(data) {
+                                data = JSON.parse(data);
+                                window.open(data.RutaDocDigital, '_blank');
+                            }
+                        });
+                        break;
+                }
+            });
+            
 
             $('#btnGuardarDatosDevolver').on('click', function (e) {
 
@@ -1437,6 +1442,67 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 instance.open();
             });
 
+
+            /*DERIVAR A CENTRAL*/
+
+            /*btnAnular.on("click", function (e) {
+                let elem = document.querySelector('#modalComentario');
+                let instance = M.Modal.init(elem, {dismissible:false});
+                $("#comentario").val('');
+                instance.open();
+            });*/
+
+            $("#btnAtenderArchivoCentral").on("click", function (e) {
+                e.preventDefault();
+                var tablaObtenerDato = tblBandejaSolicitudesEnCurso;
+                if (tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected().length !== 0){
+                    var tablaObtenerDato = tblBandejaSolicitudesEnCurso;
+                } else if (tblBandejaSolicitudesNotificados.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                }
+
+                let rows_selected = tablaObtenerDato.column(0).checkboxes.selected();
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tablaObtenerDato.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","DerivarArchivoCentral");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                //formData.append("Comentario",$("#comentario").val());
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(data) {
+                        data = JSON.parse(data);
+                        if (data.COMENTARIO === 1){
+                            M.toast({html: '¡Solicitud Enviada a Archivo Central!'});
+                        } else {
+                            M.toast({html: '¡Error, la Solicitud Ya fue enviada!'});  
+                        }
+                        
+                        tablaObtenerDato.ajax.reload();
+                    }
+                });
+
+
+
+            });
+
+
+            /*FIN*/
+
+
+
+
+
             btnAnular.on("click", function (e) {
                 let elem = document.querySelector('#modalAnular');
                 let instance = M.Modal.init(elem, {dismissible:false});
@@ -1537,71 +1603,6 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     }
                 });
 
-            });
-
-            btnValidarSolicitud.on("click", function (e) {
-                let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
-                let values=[];
-                $.each(rows_selected, function (index, rowId) {
-                    values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
-                });
-                let fila = values[0];
-
-                $.ajax({
-                    cache: 'false',
-                    url: 'ajax/ajaxOficinas.php',
-                    method: 'POST',
-                    data: {esTupa: '0', esPrestamo: '1'},
-                    datatype: 'json',
-                    success: function (data) {
-                        
-                        $("#OficinaRequeridaValidar").val("");
-                        $('#OficinaRequeridaValidar').empty().append('<option value="">Seleccione</option>');
-                        let documentos = JSON.parse(data);
-                        $.each(documentos.data, function (key,value) {
-                            $('#OficinaRequeridaValidar').append(value);
-                        });
-
-                        $("#OficinaRequeridaValidar").val(fila.IdOficinaRequerida);
-                        $('#OficinaRequeridaValidar').formSelect().trigger("change");
-
-                        let elem = document.querySelector('#modalValidar');
-                        let instance = M.Modal.init(elem, {dismissible:false});
-                        instance.open();
-                    }
-                });                
-            });
-
-            $("#btnValidarSolicitudPrestamo").on("click", function (e) {
-                e.preventDefault();
-
-                let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
-                let values=[];
-                $.each(rows_selected, function (index, rowId) {
-                    values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
-                });
-                let fila = values[0];
-
-                let formData = new FormData();
-                formData.append("Evento","ValidarSolicitudPrestamo");
-                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
-                formData.append("OficinaRequeridaValidar",$("#OficinaRequeridaValidar").val());
-                $.ajax({
-                    cache: false,
-                    url: "registerDoc/RegPrestamoDocumentos.php",
-                    method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    datatype: "json",
-                    success : function(data) {
-                        M.toast({html: '¡Solicitud validada!'});
-                        let elem = document.querySelector('#modalValidar');
-                        let instance = M.Modal.init(elem, {dismissible:false});
-                        instance.close();
-                        tblBandejaSolicitudesEnCurso.ajax.reload();
-                    }
-                });
             });
 
             btnDevolverFaltaDatos.on("click", function (e) {

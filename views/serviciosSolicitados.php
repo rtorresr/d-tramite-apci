@@ -51,6 +51,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <th>Fecha de notificación</th>
                                             <th>Cantidad notificaciones</th>
                                             <th>Última fecha notificación</th>
+                                            <th>PreVisualizar</th>
                                         </tr>
                                         </thead>
                                     </table>
@@ -67,7 +68,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <th>N° de Ampliaciones</th>
                                             <th>Fecha plazo</th>
                                             <th>Observación</th>
-                                            <th></th>
+                                            <th>Ver</th>
                                         </tr>
                                         </thead>
                                     </table>
@@ -199,6 +200,16 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     ,{'data': 'FecNotificacionEntrega', 'autoWidth': true}
                     ,{'data': 'CantidadNotificaciones', 'autoWidth': true}
                     ,{'data': 'UltimaFecNotificacion', 'autoWidth': true}
+                    , {
+                        'render': function (data, type, full, meta) {
+                            let iconos = '';
+                            if (1==1) {
+                                iconos += '<button type="button" data-accion="ver-documento" title="Ver documento" data-tooltip="Ver documento" class="btn btn-sm btn-link tooltipped" data-position="bottom" name="Ver"><i class="far fa-eye"></i></button>';
+                            }
+                            return iconos
+                        },
+                    }
+                    
                 ],
                 'select': {
                     'style': 'multi'
@@ -458,6 +469,31 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 }
             });
 
+            $('#tblBandejaSolicitudesEmitidoPorRecibir tbody').on('click', 'button', function (e) {
+                e.preventDefault();
+                let fila = tblBandejaSolicitudesEmitidoPorRecibir.row($(this).parents('tr'));
+                let dataFila = fila.data();
+                let accion = $(this).attr("data-accion");
+                switch (accion) {
+                    case 'ver-documento':
+                        $.ajax({
+                            cache: false,
+                            url: "registerDoc/RegPrestamoDocumentos.php",
+                            method: "POST",
+                            data: {
+                                "Evento" : "VerDocumentoPrestamoDetalle"
+                                ,"IdDetallePrestamo" : dataFila.IdDetallePrestamo
+                            },
+                            datatype: "json",
+                            success : function(data) {
+                                data = JSON.parse(data);
+                                window.open(data.RutaDocDigital, '_blank');
+                            }
+                        });
+                        break;
+                }
+            });
+
             btnRequiereMasTiempo.on("click", function (e) {
                 let elem = document.querySelector('#modalAmpliar');
                 let instance = M.Modal.init(elem, {dismissible:false});
@@ -526,7 +562,6 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 });
 
                 var fila = values[0];
-
                 $.post("registerDoc/RegPrestamoDocumentos.php", 
                     {
                         Evento: "ObtenerHistorico", 

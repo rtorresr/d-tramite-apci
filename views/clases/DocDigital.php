@@ -289,6 +289,7 @@ class DocDigital
             $nomenclatura .= '/'.$datos->grupo;
         }
 
+        // return 'prueba17012023/'.self::carpetaPerteneciente($datos->idTipo).'/'.$nomenclatura.'/';
         return self::carpetaPerteneciente($datos->idTipo).'/'.$nomenclatura.'/';
     }
 
@@ -709,7 +710,7 @@ class DocDigital
             $this->idRegistroTabla
         );
         
-        $store = "{CALL UP_INSERTAR_DOC_DIGITAL (?,?,?,?,?,?,?,?)}";
+        $store = "{CALL UP_INSERTAR_DOC_DIGITAL (?,?,?,?,?,?,?)}";
 
         $rs = sqlsrv_query($this->tramiteDbCnx,$store,$parametros);
         if($rs === false) {
@@ -743,8 +744,6 @@ class DocDigital
             $this->idRepositorio,
             $this->sesion
         );
-
-        print_r($parametros);
 
         $stored = "{CALL UP_ACTUALIZAR_DATOS_ALMACENAMIENTO_DOCUMENTO_DOC_DIGITAL (?,?,?,?)}";
 

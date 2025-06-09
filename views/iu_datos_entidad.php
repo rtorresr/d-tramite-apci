@@ -1140,11 +1140,16 @@ include_once("../conexion/conexion.php");
                                     id: response.id,
                                     text: response.text
                                 };
-
+                                if(data.id >0){
                                 var nuevaOpcion = new Option(data.text, data.id, false, false);
                                 $('#idEntidad').append(nuevaOpcion).trigger('change').trigger('select2:select');
                                 M.Modal.init(elem, {dismissible:false}).close();
                                 M.toast({html: "¡Agregado correctamente!"});
+                            }
+                            else {
+                                M.toast({html: data.text});
+                            }
+
                             }
                         }); 
                     }                           

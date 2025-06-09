@@ -40,6 +40,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             <th>CUD</th>
                                             <th>Documento</th>
                                             <th>Asunto</th>
+                                            <th>Entidad</th>
                                             <th>Remitente</th>
                                             <th>Fecha de Envío</th>
                                             <th>Estado</th>
@@ -144,7 +145,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     },
                     { 
                         "width": "65px", 
-                        "targets": [1, 5] 
+                        "targets": [1, 6] 
                     }
                 ],
                 'columns': [
@@ -152,6 +153,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     ,{'data': 'nCud', 'autoWidth': true}
                     ,{'data': 'Proyecto', 'autoWidth': true}
                     ,{'data': 'cAsunto', 'autoWidth': true}
+                    ,{'data': 'entidad', 'autoWidth': true}
                     ,{'data': 'Remitente', 'autoWidth': true}
                     ,{'data': 'fFecMovimiento', 'autoWidth': true}
                     ,{'data': 'estado', 'autoWidth': true}

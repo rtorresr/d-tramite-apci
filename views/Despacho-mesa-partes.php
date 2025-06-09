@@ -1460,7 +1460,14 @@
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{
@@ -1674,7 +1681,8 @@
                     let json = $.parseJSON(response);
                     $.each(json, function (i,fila) {
                         if (fila.evento === 'REGISTRADO' || fila.evento === 'REPETIDO'){
-                            let check = '<p class="'+fila.codigo+'"><label><input type="checkbox" class="filled-in '+fila.codigo+'" checked="checked" name="documentoCargo[]" value="'+fila.codigo+'"><span><a href="'+fila.ruta+'" target="_blank">'+fila.nombre+'</a></span></label></p>';
+                            //let check = '<p class="'+fila.codigo+'"><label><input type="checkbox" class="filled-in '+fila.codigo+'" checked="checked" name="documentoCargo[]" value="'+fila.codigo+'"><span><a href="'+fila.ruta+'" target="_blank">'+fila.nombre+'</a></span></label></p>';
+                            let check = '<p class="'+fila.codigo+'"><label><input type="checkbox" class="filled-in '+fila.codigo+'" checked="checked" name="documentoCargo[]" value="'+fila.codigo+'"><span>'+fila.nombre+' <a href="'+fila.ruta+'" target="_blank" class="btn btn-sm btn-link tooltipped" data-position="bottom" name="Ver"> | <i class="far fa-eye"></i> Vista Previa </a></span></label></p>';
                             $('#documentoArchivoCargo div.row div.col').append(check);
                             $('#documentoArchivoCargo').css('display', 'block');
                         }

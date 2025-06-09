@@ -121,7 +121,30 @@ if (isset($flgSegundoPdf)){
                 </tr>
             </table>
         ';
-    } else {
+    } 
+    
+    elseif($_SESSION['CODIGO_TRABAJADOR'] == 361){
+        echo '
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 55px">
+                        <img class="" src="../../dist/images/apci__loco__square.png" width="55" height="55" />
+                    </td>
+                    <td style="padding-left: 0.35rem;">
+                        <p style="line-height: 1">
+                            <span style="font-size: 70%; margin-bottom: 0.25rem;display: block;">Firmado digitalmente por: </span>
+                            <strong style="font-size: 70%; color: #333366">'.$RsRemitente['nombreCompleto'].'</strong><br>
+                            <span style="font-size: 70%; margin-bottom: 0.25rem;display: block;">Embajadora</span>
+                            <span style="font-size: 70%;">'.$RsRemitente['cargo'].'</span>
+                            <span style="font-size: 60%; padding-top: 0.25rem; display: block;">Motivo: Soy autor del documento</span>                                 
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        ';
+    }
+
+    else {
         $firma = '
             <table style="width: 100%">
                 <tr>

@@ -21,6 +21,7 @@ function ObtieneArgumentosParaFirmaDesdeLaWeb(){
         type : "W",
         urlDocFirmar: $("#urlDocumentoFirmar").val(),
         nombreDocumentoFirmar: $("#nombreDocumentoFirmar").val(),
+        cud: $("#cud").val(),
         tipFirma: $("#tipoFirma").val(),
         nroVisto: $("#nroVisto").val()
     };
@@ -46,6 +47,7 @@ function MiFuncionOkWeb(){
     var datos = {
         urlDocFirmar: $("#urlDocumentoFirmar").val(),
         nombreDocumentoFirmar: $("#nombreDocumentoFirmar").val(),
+        cud: $("#cud").val(),
         idTramite: $("#idTramite").val(),
         sIdrecext: $("#sIdrecext").val()
     };

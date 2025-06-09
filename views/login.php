@@ -10,8 +10,8 @@ If ($_POST['usuario']=="" OR $_POST['contrasena']==""){
     $clave = strip_tags(trim($_POST["contrasena"]));
 	$contrasena = md5($usuario.$clave);
 	error_log('CONTRASEA ==>'.$contrasena);
-	// $sql = "SELECT * FROM Tra_M_Trabajadores WHERE cUsuario='$usuario' AND cPassword='$contrasena'";
-	$sql = "SELECT * FROM Tra_M_Trabajadores WHERE cUsuario='$usuario'";
+	$sql = "SELECT * FROM Tra_M_Trabajadores WHERE cUsuario='$usuario' AND cPassword='$contrasena'";
+	//$sql = "SELECT * FROM Tra_M_Trabajadores WHERE cUsuario='$usuario'";
 	// print_r($contrasena);
 	// die();
 	$rs = sqlsrv_query($cnx,$sql);

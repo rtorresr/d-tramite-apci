@@ -156,14 +156,12 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
+    <!--div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalDiscLabel">Términos y condiciones</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> -->
+            
                 </div>
                 <div class="modal-body">
                     <p>Mediante el uso del presente Módulo, personas naturales y personas jurídicas tendrán la opción de generar de manera virtual, desde cualquier punto del país, las 24 horas del día y durante los 365 días del año la presentación de documentos electrónicos dirigidos a la APCI, sin la necesidad de acercarse para tal fin a nuestra Mesa de partes digital.</p>
@@ -180,7 +178,40 @@
                 </div>
             </div>
         </div>
+    </div-->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <!--h5 style="color: #1B365D;">🔧 MANTENIMIENTO DE LA MESA DE PARTES DIGITAL</h5-->
+                        <p>Informamos que la <strong>Mesa de Partes Digital de la Agencia Peruana de Cooperación Internacional (APCI)</strong>
+                        se encuentra <strong>temporalmente inhabilitada</strong> debido a problemas técnicos con su servicio de interoperabilidad.</p>
+                        <p<><strong>🛠️ El servicio estará nuevamente disponible el lunes 28 a partir de las 5:00 p.m.</strong></p>
+                        <p>Mientras tanto, puede remitir sus documentos a través de los siguientes canales alternativos:</p>
+                        <ul>
+                            <li>
+                                📧 <strong>Correo electrónico</strong>: 
+                                <a href="mailto:mesadepartes@apci.gob.pe">mesadepartes@apci.gob.pe</a>
+                            </li>
+                            <li>
+                                🏢 <strong>Mesa de Partes Presencial</strong>: Horario de atención:
+                                <strong>lunes a viernes, de 08:30 a.m. a 4:30 p.m.</strong>
+                            </li>
+                        </ul>
+                        <p>Agradecemos su comprensión.</p>
+                </div>             
+            </div>
+        </div>
     </div>
+
+
+
+
 
     <div class="modal" tabindex="-1" id="modalDoc">
         <div class="modal-dialog modal-xl">
@@ -690,15 +721,27 @@
             $("#txtCorreoConf").val("");
         }
     });
+   
 
     $("#primerBoton").on("click", function(e) {
+
+        if ($("#txtTipoDoc").val() == 73) {
+                    $("#txtNombComp").val() == $("#txtNombComp").val();
+                    $("#txtDireccion").val() == $("#txtDireccion").val();
+                }
+        else {
+            $("#txtNombComp").val($("#txtNombCompCorto").val());
+            $("#txtDireccion").val($("#txtDireccionCorto").val());
+        }
         var valido = true;
         var form = $("#FormRemitente");
+     
         if (form[0].checkValidity()) {
             event.target.checkValidity();
             event.preventDefault();
             event.stopPropagation();
             if ($("#txtCorreo").val() == $("#txtCorreoConf").val()) {
+
                 stregistroDoc.next();
             }
         } else {
@@ -712,16 +755,25 @@
         if ($("#txtTipoDoc").val() == 73) {
             $("#buscarDNI").closest("div.input-group-append").show();
             $("#txtNombComp").prop("disabled", true);
+            $("#txtNombCompCorto").prop("disabled", true);
+            $("#limpiarBoton").closest("div.input-group-append").show();
+            $("#txtDireccionCorto").prop("disabled", true);
         } else {
             $("#buscarDNI").closest("div.input-group-append").hide();
             $("#txtNombComp").prop("disabled", false);
+            $("#txtNombCompCorto").prop("disabled", false);
+            $("#limpiarBoton").closest("div.input-group-append").hide();
+            $("#txtDireccionCorto").prop("disabled", false);
         }
     });
     
 
     $("#buscarDNI").on("click", function(e) {
+        //$("#txtDireccionCorto").prop("disabled", true);
         if ($("#txtNumDocEntidad").val() != '') {
             getSpinner('Cargando datos...');
+            
+
             $.post("regMesaPartesVirtual.php", 
                 {
                     Evento: "ObtenerDatosDNI",
@@ -731,7 +783,17 @@
                     let html = JSON.parse(response);
                     if(html.nombre != null){
                         $("#htmlNombreR").html(html.nombre);
+                        $("#htmlNombreCorto").html(html.nombreCorto);
                         $("#htmlDireccionR").html(html.direccion);
+                        $("#htmlDireccionRCorto").html(html.direccionCorto);
+                        $("#limpiarBoton").closest("div.input-group-append").show();
+                        //$("#htmlNombreR").html(html.nombreCorto).css("disabled", "block");
+
+                        $("#htmlDireccionRCorto").closest("div").show();
+                        $("#htmlDireccionR").closest("div").hide();
+                        
+                        
+
                         cargarUbigeoReniec(html.ubigeo);
                     }
                     deleteSpinner();
@@ -1365,6 +1427,8 @@
         formData.append("Telefono", $("#txtTel").val());
         formData.append("Correo", $("#txtCorreoConf").val());
         formData.append("Nombre", $("#txtNombComp").val());
+        formData.append("NombreCorto", $("#txtNombCompCorto").val());
+        formData.append("DireccionCorto", $("#txtDireccionCorto").val());
         formData.append("NuevoTramite", $("#txtTipoNuevoTramite").val());
         formData.append('ArchivoPrincipalNuevoTipo',document.getElementById('fileArchivoPrincipalNuevoTipo').files[0]);        
         

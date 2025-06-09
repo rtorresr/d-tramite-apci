@@ -50,7 +50,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <th>CUD</th>
                                         <th>Documento</th>
                                         <th>Asunto</th>
+                                        <th>Entidad</th>
                                         <th>Última fecha Modificación</th>
+                                        <th>Origen</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -70,6 +72,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
 
     <form id="valoresFirma">
         <input type="hidden" id="idDigitalLote">
+        <input type="hidden" id="sT">           <!-- PARA SELLADO DE TIEMPO  --->
     </form>
 
     <div id="addComponent"></div>
@@ -102,6 +105,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
     </div>
     
     <script type="text/javascript" src="https://dsp.reniec.gob.pe/refirma_invoker/resources/js/client.js"></script>
+    <!--RENIEC-->
+                            
     <!-- <script type="text/javascript" src="invoker/client.js"></script> -->
     <script type="text/javascript" src="../conexion/global.js"></script>
     <script type="text/javascript">
@@ -135,6 +140,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 Evento: "ObtenerArgumentosFirmaLote",
                 Tipo: "W",
                 IdDigitalLote: $("#idDigitalLote").val()
+                ,sT: $("#sT").val()           //PARA EL SELLADO DE TIEMPO
+
+                /*console.log('LOG DEL PROGRAMADOR');
+                console.log(IdDigitalLote);
+                console.log(sT);*/
             };
 
             getSpinner('Guardando documento');
@@ -150,6 +160,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             var data = {
                 Evento: "RecuperarFirmadoLote", 
                 IdDigitalLote: $("#idDigitalLote").val()
+                ,sT: $("#sT").val()           //PARA EL SELLADO DE TIEMPO
             };
             $.post("registerDoc/Documentos.php", data)
                 .done((r) => {
@@ -159,6 +170,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         console.log('Documentos firmados correctamente!');
                         M.toast({html: "Documentos firmados correctamente!"}); 
                         $("#idDigitalLote").val("");
+                        $("#sT").val();          //PARA EL SELLADO DE TIEMPO
                         $("#btnDoc").trigger("click");
                         $.each( [$("#btnPrimary"), $("#btnRetroceder"), $("#btnGenerar"), $("#btnFirmar"), $("#btnDoc"), $("#btnDerivar")], function( key, value ) {
                             value.css("display","none");
@@ -223,6 +235,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $(td).attr('data-codigo', rowData.codigo);
                         $(td).attr('data-tipodoc', rowData.nFlgTipoDoc);
                         $(td).attr('data-proyectoini', rowData.proyectoIni);
+                        
                         if(rowData.corresponde == 1){
                             $(td).addClass('lote');
                         }                            
@@ -282,7 +295,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     }
                 }
                 ,{'data': 'asunto'}
+                ,{'data': 'nombreEntidad'}
                 ,{'data': 'fechaModificacion'}
+                ,{'data': 'distribucion'}
             ],
             'select': {
                 'style': 'multi'
@@ -685,6 +700,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                     let json = $.parseJSON(response);
                                     if(json.ok){
                                         $("#idDigitalLote").val(json.data);
+                                        $("#sT").val(json.sT);    // PARA SELLADO DE TIEMPO
+                                        console.log(json.data);
+                                        console.log('json.sT');
+                                        console.log(json.sT);
                                         initInvoker('W');
                                     } else {
                                         console.log('Error al recuperar el archivo!');

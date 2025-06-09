@@ -52,7 +52,7 @@ ob_start();
                     <p>
                         <?php echo '"Decenio de la Igualdad de Oportunidades para mujeres y hombres"';?>
                         <br>
-                        <?php echo '"Año del Bicentenario, de la consolidación de nuestra Independencia y de la Conmemoración de las heroicas batallas de Junín y Ayacucho"';?>
+                        <?php echo '"Año de la recuperación y consolidación de la economía peruana"';?>
                     </p>
                 </td>
             </tr>

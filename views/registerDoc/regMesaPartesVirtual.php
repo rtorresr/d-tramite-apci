@@ -253,7 +253,7 @@ switch ($_REQUEST['Evento']) {
             $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
             $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-            $mail->Password = 'Hacker147';                           // SMTP password
+            $mail->Password = '@pc1Us1#$2025!!&';                           // SMTP password
             $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 465;
             $mail->setFrom('no-reply@apci.gob.pe', 'D-Trámite');

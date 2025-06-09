@@ -55,7 +55,7 @@ $response = json_decode(curl_exec($client));
                             <div class="card hoverable">
                                 <div class="card-body">                                    
                                     <fieldset>
-                                        <legend>Funcionario Responsable de Entregar la Información (Alterno)</legend>
+                                        <legend>Funcionario Responsable de Entregar la Información</legend>
                                         <div class="row">
                                             <div class="col s12">
                                                 <p>Lic. Gloria Bejarano Noblecilla</p>

@@ -44,6 +44,7 @@
         $tipo       =   $_POST['cTipoDocIdentidad']??'';
         $num        =   $_POST['cNumDocIdentidad']??'';
         $direccion  =   $_POST['cDireccionTrabajador']??'';
+        $comentario =   $_POST['comentario']??'';
         $tra1       =   $_POST['cTlfTrabajador1']??'';
         $tra2       =   $_POST['cTlfTrabajador2']??'';
         $mail       =   $_POST['cMailTrabajador']??'';
@@ -53,7 +54,7 @@
         $perfil     =   $_POST['iCodPerfil']??'null';
         $usuario    =   $_POST['cUsuario']??'';
 
-        $sql = "SP_TRABAJADORES_UPDATE  '".$oficina."',".$categoria.",".$perfil.",'".$nombre."','".$apellido."','".$tipo."','".$num."','".$direccion."','".$mail."','".$tra1."','".$tra2."','".$estado."','".$usuario."','".$_POST['iCodTrabajador']."','".$firma."','".$vb."','".$encargado."'";
+        $sql = "SP_TRABAJADORES_UPDATE  '".$oficina."',".$categoria.",".$perfil.",'".$nombre."','".$apellido."','".$tipo."','".$num."','".$direccion."','".$comentario."','".$mail."','".$tra1."','".$tra2."','".$estado."','".$usuario."','".$_POST['iCodTrabajador']."','".$firma."','".$vb."','".$encargado."'";
 
         $rs = sqlsrv_query($cnx,$sql);
 		sqlsrv_close($cnx);

@@ -91,18 +91,34 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                             </div>-->
                                             <div class="input-field col s6">
                                                 <select id="codEspecialista">
-                                                    <?php
+                                                    <?php   //WHERE pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil";
                                                     $sqlTra ="SELECT pu.iCodTrabajador, cNombresTrabajador, cApellidosTrabajador , cDescPerfil
                                                                 FROM Tra_M_Perfil_Ususario AS pu, Tra_M_Trabajadores AS tb, Tra_M_Perfil AS p
-                                                                WHERE pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil";
+                                                                WHERE nFlgEstado=1 and pu.iCodOficina = ".$_SESSION['iCodOficinaLogin']." AND pu.iCodPerfil in (4) AND pu.iCodTrabajador = tb.iCodTrabajador AND p.iCodPerfil = pu.iCodPerfil ORDER BY cNombresTrabajador ASC";
                                                     $rsTra = sqlsrv_query($cnx,$sqlTra);
                                                     echo "<option value=''>TODOS</option>";
                                                     while ($RsTra = sqlsrv_fetch_array($rsTra)){
-                                                        echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cApellidosTrabajador']).", ".rtrim($RsTra['cNombresTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                        //echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cApellidosTrabajador']).", ".rtrim($RsTra['cNombresTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
+                                                        echo "<option value='".$RsTra['iCodTrabajador']."'>".rtrim($RsTra['cNombresTrabajador']).", ".rtrim($RsTra['cApellidosTrabajador'])." ( ".rtrim($RsTra['cDescPerfil'])." )</option>";
                                                     }
                                                     ?>
                                                 </select>
                                                 <label for="codEspecialista" class="active">Especialista</label>
+                                            </div>
+                                            <div class="col s6 input-field">
+                                                <select id="cboEstado" name="cboEstado">
+                                                    <option value="">TODOS</option>
+                                                    <option value="0">PENDIENTE</option>
+                                                    <option value="1">EN PROCESO</option>
+                                                    <option value="2">DERIVADO</option>
+                                                    <option value="3">DELEGADO</option>
+                                                    <option value="4">RESPONDIDO</option>
+                                                    <option value="5">FINALIZADO</option>
+                                                    <option value="6">RECHAZADO</option>
+                                                    <option value="7">CANCELADO</option>
+                                                    <option value="10">DEVUELTO</option>
+                                                </select>
+                                                <label for="cboEstado" class="active">Estado</label>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -126,16 +142,17 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 <div class="col s12">
                     <div class="card hoverable">
                         <div class="card-table">
-                            <table id="tblConsultaEmit" class="bordered hoverable highlight striped" name="tblConsultaEmit">
+                            <table id="tblConsultaEmit" class="bordered hoverable highlight striped" name="tblConsultaEmit" style="width: 99.5%">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th>CUD</th>
                                         <th>Documento</th>
                                         <th>Asunto</th>
-                                        <th>Oficina Origen</th>
+                                        <th>Remitente</th>
+                                        <th>Origen</th>
+                                        <th>Destino</th>
                                         <th>Fecha Documento</th>
-                                        <th>Trabajador Destino</th>
                                         <th>Estado</th>
                                     </tr>
                                 </thead>
@@ -263,8 +280,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                      type: ''
                  }
             },
-            scrollY: "100%",
-            scrollCollapse: true,
+            /*scrollY: "100%",
+            scrollCollapse: true,*/
             ajax: {
                 url: 'ajaxtablas/ajaxConsultaDelegados.php',
                 type: 'POST',
@@ -281,6 +298,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                       //"VI_CCODTIPODOC": $('#cCodTipoDoc').val()==null?0: $('#cCodTipoDoc').val(),
                       //"VI_CCODIFICACION": $('#txtDoc').val()==null?"":$('#txtDoc').val(),
                       "VI_USARIODELEGADO": $("#codEspecialista").val()==null?"":$('#codEspecialista').val(),
+                      "VI_ESTADO": $("#cboEstado").val()==null?"":$('#cboEstado').val(),
                   } );
 
                 }
@@ -293,7 +311,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
             buttons: [
                 { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                 { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
             ],
             "language": {
@@ -321,9 +339,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     'autoWidth': true
                 }
                 ,{'data': 'ASUNTO', 'autoWidth': true}
+                ,{'data': 'ENTIDAD', 'autoWidth': true}
                 ,{'data': 'OFICINA_ORIGIN', 'autoWidth': true}
-                ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
                 ,{'data': 'TRABAJADOR_DERIVAR', 'autoWidth': true}
+                ,{'data': 'FEC_REGISTRO', 'autoWidth': true}
                 ,{'data': 'ESTADO_TRAMITE', 'autoWidth': true}
                 
             ],
@@ -617,7 +636,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                             if(json.tieneAnexos == '1') {
                                                                 let cont = 1;
                                                                 json.anexos.forEach(function (elemento) {
-                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                    /*Inicio Renombre*/
+                                                                        let elementoNombre = elemento.nombre;            
+                                                                        if (/^\d/.test(elementoNombre)) {
+                                                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                        }
+                                                                    /*Fin Renombre*/
+                                                                    //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                     cont++;
                                                                 })
                                                             }else{
@@ -659,7 +685,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{

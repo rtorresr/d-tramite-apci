@@ -51,14 +51,25 @@ class DespachoController
         }else{
             $lstanexos = null;
         };
-        try{            
+        try{   
+
             //$urlCUO = RUTA_SIGTI_SERVICIOS."ApiInteroperabilidad/Api/Interoperabilidad/CUO/CUO_GET_0001?Ip=127.0.0.1";
-            $urlCUO = RUTA_SIGTI_SERVICIOS."ApiInteroperabilidad/Api/Interoperabilidad/CUO/CUO_GET_0002?Ruc=20504915523&Servicio=3011";
+            /*$urlCUO = RUTA_SIGTI_SERVICIOS."ApiInteroperabilidad/Api/Interoperabilidad/CUO/CUO_GET_0002?Ruc=20504915523&Servicio=3011";
             $clientCUO = curl_init();
             curl_setopt($clientCUO, CURLOPT_URL, $urlCUO);
             curl_setopt($clientCUO,CURLOPT_RETURNTRANSFER,true);
             $responseCUO = json_decode(curl_exec($clientCUO));            
-            $vcuo = $responseCUO->EntityResult;
+            $vcuo = $responseCUO->EntityResult;*/
+
+            $urlCUO = "https://ws2.pide.gob.pe/Rest/PCM/CEntidad?ruc=20504915523&servicio=3011";
+            $clientCUO = curl_init();
+            curl_setopt($clientCUO, CURLOPT_URL, $urlCUO);
+            curl_setopt($clientCUO,CURLOPT_RETURNTRANSFER,true);
+            $responseCUO = curl_exec($clientCUO);     
+            $xml = new SimpleXMLElement( $responseCUO );
+            $vcuo = (string) $xml->return[0]; 
+            //print_r($vcuo);
+            
             
             $url = RUTA_SIGTI_SERVICIOS."ApiInteroperabilidad/Api/Interoperabilidad/tramite/SSO_GET_0004";
             $data = array(
@@ -94,6 +105,7 @@ class DespachoController
             if ($respuesta->vcodresField == 0) {
                 $datoActulizar = array($vcuo, $_POST['id'], $_SESSION['IdSesion']);
                 $o->actualizarPendienteEnvio($datoActulizar);
+                print_r($vcuo);
             } else {
                 die( print_r( "No se pudo enviar: ".$respuesta->vcodresField." ". utf8_encode($respuesta->vdesresField), true));
             }
@@ -177,5 +189,136 @@ class DespachoController
         $datoResultado = $documento->agregarDocumento($_POST['nombre'], $o->cargoBase64, $_POST['tramite'], $_POST['tipoEnlace'], 'Despacho/Cargo', true);
         $despacho->idCargo = $datoResultado['idDocDigital'];
         $despacho->retornarCargo();
+    }
+
+    public function enviarPide_REST(){
+        $parametros = array($_POST['id']);
+        $despacho = new DespachoModel();
+        $resultado = $despacho->obtenerDatosParaEnvio($parametros);
+        $o = new DespachoModel();
+        $o->establecer($resultado[0]);
+        $o->fecDoc = $o->fecDoc->format('Y-m-d H:i:s');
+        if ($o->numAnexos > 0){
+            $lstanexos = [];
+            foreach (json_decode($o->jsonAnexos) as $clave => $valor){
+                $anexo = new stdClass();
+                $anexo->vnomdoc = $valor->VNOMDOC;
+                //array_push($lstanexos,$anexo);
+                array_push($lstanexos,trim($valor->VNOMDOC));
+            }
+            $lstanexos = json_encode($lstanexos);
+        }else{
+            $lstanexos = null;
+        };
+    
+        
+            $urlCUO = "https://ws2.pide.gob.pe/Rest/PCM/CEntidad?ruc=20504915523&servicio=3011";
+            $clientCUO = curl_init();
+            curl_setopt($clientCUO, CURLOPT_URL, $urlCUO);
+            curl_setopt($clientCUO,CURLOPT_RETURNTRANSFER,true);
+            $responseCUO = curl_exec($clientCUO);     
+            $xml = new SimpleXMLElement( $responseCUO );
+            $vcuo = (string) $xml->return[0];           
+        
+          
+            $rucEntrem = '20504915523';
+            $ruc = $o->ruc;
+            $nomEntemi = 'AGENCIA PERUANA DE COPERACIÓN INTERNACIONAL';
+            $uniOrgRem = $o->oficina;
+            $cuo = $vcuo;
+            $codTipDoc = $o->tipoDoc;
+            $numDoc = trim($o->numDoc);
+            $fecDoc = date('Y-m-d', strtotime($o->fecDoc));
+            $uniOrgDst = $o->ofiDestino;
+            $nomDst = $o->perDestino;
+            $nomCarDst = $o->cargPerDestino;
+            $asu = $o->asunto;
+            $numAnx = $o->numAnexos;
+            $numFol = trim($o->foliosDoc);
+            $pdfDoc = trim($o->docBase64);
+            $nomDoc = $o->documento;
+            $urlDocAnx = $o->urlAnexos;
+            $tipoDocIdenRem = $o->tipoDocIdenRem;
+            $numDocIdenRem = $o->docIdenRem;
+
+            
+
+            // Crear el array PHP que contiene los datos para el JSON
+            $data = [
+                "PIDE" => [
+                    "vrucentrem" => $rucEntrem,
+                    "vrucentrec" => $ruc,
+                    "vnomentemi" => $nomEntemi,
+                    "vuniorgrem" => $uniOrgRem,
+                    "vcuo" => $cuo,
+                    "vcuoref" => "",
+                    "ccodtipdoc" => $codTipDoc,
+                    "vnumdoc" => $numDoc,
+                    "dfecdoc" => $fecDoc,
+                    "vuniorgdst" => $uniOrgDst,
+                    "vnomdst" => $nomDst,
+                    "vnomcardst" => $nomCarDst,
+                    "vasu" => $asu,
+                    "snumanx" => $numAnx,
+                    "snumfol" => $numFol,
+                    "bpdfdoc" => $pdfDoc,
+                    "vnomdoc" => $nomDoc,
+                    "vnomdoc2" => "prueba",
+                    "vurldocanx" => $urlDocAnx,
+                    "ctipdociderem" => $tipoDocIdenRem,
+                    "vnumdociderem" => $numDocIdenRem
+                ]
+            ];
+
+            // Convertir el array a formato JSON usando json_encode
+            $jsonData = json_encode($data);
+
+            // Ahora, utilizar curl para enviar el JSON
+            $ch = curl_init();
+
+            // Configurar la URL, el método POST, los encabezados y el cuerpo de la solicitud
+            curl_setopt($ch, CURLOPT_URL, "https://ws2.pide.gob.pe/Rest/Pcm/RecepcionarTramite?out=json");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Content-Type: application/json"
+            ]);
+
+            // Ejecutar la solicitud
+            $response = curl_exec($ch);
+
+            // Comprobar si ocurrió un error en la ejecución de la solicitud
+            if(curl_error($ch)) {
+                echo 'Error:' . curl_error($ch);
+            } else {
+                echo 'Response: ' . $response;
+                echo '<br>';
+                print_r('ENVIO REST2');
+                echo '<br>';
+                print_r($jsonData);echo '<br>';
+                print_r('b64');echo '<br>';
+                print_r($pdfDoc);
+
+
+            }
+
+            // Cerrar la sesión de curl
+            curl_close($ch);
+
+        /*try{            
+            
+            if ($vcuo !='') {
+                $datoActulizar = array($vcuo, $_POST['id'], $_SESSION['IdSesion']);
+                $o->actualizarPendienteEnvio($datoActulizar);  
+            } else {
+                //die( print_r( "No se pudo enviar: ".$respuesta->vcodresField." ". utf8_encode($respuesta->vdesresField), true));
+                die( print_r( "No se pudo enviar "));
+            }
+
+        } catch (Exception $e) { 
+            echo $e->getMessage();
+        }  */
+
     }
 }

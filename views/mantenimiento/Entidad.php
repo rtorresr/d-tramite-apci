@@ -32,12 +32,17 @@ switch ($_POST['Evento']){
     break;
 
     case 'AgregarEntidad':
+        $timestamp = new DateTime(null, new DateTimeZone('America/Lima'));
+        $fechaHoy = $timestamp->format('YmdHis');
+
         $parametros = array(
             $_POST["Datos"]["tipoEntidad"],
             $_POST["Datos"]["siglaEntidad"]??'',
+            //strtoupper($_POST["Datos"]["nombreEntidad"]),
             $_POST["Datos"]["nombreEntidad"],
             $_POST["Datos"]["tipoDocumento"],
             $_POST["Datos"]["numeroDocumento"],
+            //$_POST["Datos"]["numeroDocumento"]!= null ? $_POST["Datos"]["numeroDocumento"]:$fechaHoy,
             $_POST["Datos"]["responsableEntidad"]??'',
             $_POST["Datos"]["cargoResponsableEntidad"]??'',
             $_POST["Datos"]["flgRequiereDireccion"] ?? 1,
@@ -134,6 +139,7 @@ switch ($_POST['Evento']){
             $_POST["Datos"]["idEntidad"],
             $_POST["Datos"]["tipoEntidad"],
             $_POST["Datos"]["siglaEntidad"]??'',
+            //strtoupper($_POST["Datos"]["nombreEntidad"]),
             $_POST["Datos"]["nombreEntidad"],
             $_POST["Datos"]["tipoDocumento"],
             $_POST["Datos"]["numeroDocumento"],

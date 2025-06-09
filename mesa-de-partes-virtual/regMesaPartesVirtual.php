@@ -688,34 +688,76 @@ switch ($_POST['Evento']) {
         $responseRENIEC = json_decode(curl_exec($clientRENIEC));
 
         $nombre = null;
+        $nombreCorto = null;
         $direccion = null;
+        $direccionCorto = null;
         $ubigeo = null;
 
         if($responseRENIEC->EntityResult != null){
             $data = $responseRENIEC->EntityResult;
 
+                $nombreReducido = substr($data->Nombres, 0, 1); 
+                $PaternoReducido = substr($data->Paterno, 0, 1); 
+                $MaternoReducido = substr($data->Materno, 0, 1); 
+                $nombreCompletoConAsterisco = $nombreReducido . ' *****';
+                $paternoConAsterisco = $PaternoReducido . ' *****';
+                $maternoConAsterisco = $MaternoReducido . ' *****';
+                //LA DIRECCION MUESTRA LA INICIAL Y LO DEMAS CON *
+                $direccionOriginal = $data->Direccion;
+                $palabras = explode(' ', $direccionOriginal);
+                $direccionReducida = '';
+                foreach ($palabras as $palabra) {
+                    if (strlen($palabra) > 0) {
+                        $direccionReducida .= strtoupper($palabra[0]) . str_repeat('*', strlen($palabra) - 1) . ' ';
+                    }
+                }
+                $DireccionReducidoConAsterisco = trim($direccionReducida); 
+
+            //esto es para que registre
             $nombre = '<label for="txtNombComp">Nombre completo</label><input class="form-control" id="txtNombComp" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required value="'.$data->Nombres.' '.$data->Paterno.' '.$data->Materno.'">';
             $direccion = '<label for="txtDireccion">Dirección</label>
             <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="'.$data->Direccion.'">
             <div class="invalid-feedback">
                 Por favor, ingrese la dirección.
             </div>';
+
+            //esto para que muestre
+            $nombreCorto = '<label for="txtNombCompCorto">Nombre completo</label><input class="form-control" id="txtNombCompCorto" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required value="'.$nombreCompletoConAsterisco.' '.$paternoConAsterisco.' '.$maternoConAsterisco.'">';
+            $direccionCorto = '<label for="txtDireccion">Dirección</label>
+            <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="'.$DireccionReducidoConAsterisco.'" disabled="disabled">
+            <div class="invalid-feedback">
+                Por favor, ingrese la dirección.
+            </div>';
             $ubigeo = $data->Ubigeo;
         }elseif($responseRENIEC->EntityResult['direccion'] == null 
+            || $responseRENIEC->EntityResult['direccionCorto'] == null
             || $responseRENIEC->EntityResult['nombre'] == null
+            || $responseRENIEC->EntityResult['nombreCorto'] == null
             || $responseRENIEC->EntityResult['ubigeo'] == null
             ) {
                 $nombre = '<label for="txtNombComp">Nombre completo</label><input class="form-control" id="txtNombComp" type="text" placeholder="Ingrese su nombre completo" required value="">';
+                $nombreCorto = '<label for="txtNombCompCorto">Nombre completo</label><input class="form-control" id="txtNombCompCorto" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required value="123">';
                 $direccion = '<label for="txtDireccion">Dirección</label>
                 <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="">
+                <div class="invalid-feedback">
+                    Por favor, ingrese la dirección.
+                </div>';
+                $direccionCorto = '<label for="txtDireccionCorto">Dirección</label>
+                <input class="form-control" id="txtDireccionCorto" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="" disabled="disabled">
                 <div class="invalid-feedback">
                     Por favor, ingrese la dirección.
                 </div>';
                 $ubigeo = "";
         } else {
                 $nombre = '<label for="txtNombComp">Nombre completo</label><input class="form-control" id="txtNombComp" type="text" placeholder="Ingrese su nombre completo" required value="">';
+                $nombreCorto = '<label for="txtNombCompCorto">Nombre completo</label><input class="form-control" id="txtNombCompCorto" type="text" placeholder="Ej. JUAN SOTO SANCHEZ" disabled="disabled" required value="123">';
                 $direccion = '<label for="txtDireccion">Dirección</label>
                 <input class="form-control" id="txtDireccion" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="">
+                <div class="invalid-feedback">
+                    Por favor, ingrese la dirección.
+                </div>';
+                $direccionCorto = '<label for="txtDireccionCorto">Dirección</label>
+                <input class="form-control" id="txtDireccionCorto" type="text" placeholder="Ej. Calle Los Girasoles 123 Int. 11, Piso 4" required value="" disabled="disabled">
                 <div class="invalid-feedback">
                     Por favor, ingrese la dirección.
                 </div>';
@@ -724,7 +766,9 @@ switch ($_POST['Evento']) {
 
         $obtRes = new stdClass();
         $obtRes->nombre = $nombre;
+        $obtRes->nombreCorto = $nombreCorto;
         $obtRes->direccion = $direccion;
+        $obtRes->direccionCorto = $direccionCorto;
         $obtRes->ubigeo = $ubigeo;
 
         echo json_encode($obtRes);
@@ -755,10 +799,12 @@ switch ($_POST['Evento']) {
         $responseSUNAT = json_decode(curl_exec($clientSUNAT));
 
         $denominacion = null;
+
         if ($responseSUNAT->Success) {
             $data = $responseSUNAT->EntityResult;
+
             $denominacion = '<label for="txtDenInst">Denominación</label>
-            <input class="form-control" id="txtDenInst" type="text" placeholder="Ej. Caritas Arquidiocesana de Huancayo" disabled="disabled" value="'.str_replace('"', '', trim($data->ddp_nombre)).'">';
+            <input class="form-control" id="txtDenInst" type="text" placeholder="Ej. Caritas Arquidiocesana de Huancayo" disabled="disabled" value="'.str_replace('"', '', trim($data->ddp_nombre)).'">';           
         }
 
         $obtRes = new stdClass();

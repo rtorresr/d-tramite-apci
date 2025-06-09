@@ -79,7 +79,7 @@ while($Rs=sqlsrv_fetch_array($rsConsulta)){
     $subdata['TrabajadorDestino'] = $Rs['cTrabajadorDerivar'];
     //$subdata['destino']=$Rs['cOficinaDestino'].' | '.$Rs['cTrabajadorDerivar'];
     $subdata['nomEstado']=$Rs['nomEstado'];
-    $subdata['fFecMovimiento']=$Rs['fFecMovimiento'] != null ? $Rs['fFecMovimiento']->format( 'd-m-Y H:i:s') : '';
+    $subdata['fFecMovimiento']=$Rs['fFecMovimiento'] != null ? $Rs['fFecMovimiento']->format( 'd/m/Y H:i:s') : '';
     $subdata['flgEncriptado']=$Rs['flgEncriptado'];
     $subdata['origen']=$Rs['origen'];
     $data[]=$subdata;

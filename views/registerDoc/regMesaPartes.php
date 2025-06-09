@@ -204,6 +204,83 @@ function generarHojaIngreso ($codTramite, $estado, $cnx) {
     return $html;
 }
 
+
+
+
+function generarHojaIngresoCargo ($codTramite, $estado, $cnx) {
+    $params = array(
+        '',
+        'tramite',
+        $codTramite,
+        ''
+    );
+    $sqldatos = "{call SP_CONSULTA_DATOS_DOCUMENTO (?,?,?,?) }";
+    $rsdatos = sqlsrv_query($cnx, $sqldatos, $params);
+    if($rsdatos === false) {
+        print_r('Error al obtener datos del documento.');
+        print_r('generar hoja ruta');
+        http_response_code(500);
+        die(print_r(sqlsrv_errors()));
+    }
+    if(sqlsrv_has_rows($rsdatos)){
+        $Rrdatos = sqlsrv_fetch_array($rsdatos,SQLSRV_FETCH_ASSOC);
+    }
+
+    $html = '<div class="card">
+                <div class="card-header text-center ">';
+    $html .=        'Registro de Documento';
+    $html .=    '</div>
+                <div class="card-body">
+                    <div id="registroBarr">
+                        <table align="center" cellpadding="3" cellspacing="3" border="0">
+                            <tr>
+                                <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:12px;font-family:arial">
+                                    <b>D-TRÁMITE</b>
+                                </td>
+                            </tr>';
+
+    $html .=                '<tr>
+                                <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:19px;font-family:arial">DOCUMENTO: ';
+    $html .=                        $Rrdatos['cDescTipoDoc'].' '.$Rrdatos['cNroDocumento'];
+    $html .=                    '</td>
+                            </tr>';
+
+    $html .=                '<tr>
+                                <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:19px;font-family:arial">CUD: ';
+    $html .=                    $Rrdatos['nCud'];
+    $html .=                    '</td>
+                            </tr>';
+
+    $html .=                '<tr>
+                                <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:13px;font-family:arial">FECHA Y HORA: 
+                                    <b>';
+    $html .=                            $Rrdatos['fFecRegistro']->format("d-m-Y H:i:s");
+    $html .=                        '</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:17px;font-family:arial"><b>d-tramite.apci.gob.pe</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                 <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:13px;font-family:arial">GENERADO POR: ';
+    $html .=                        $Rrdatos['trabajador'];
+    $html .=                     '</td>
+                            </tr>
+                            <tr>
+                                 <td align="center" style="border-right:1px solid #043D75;border-left:1px solid #043D75;border-top:1px solid #043D75;border-bottom:1px solid #043D75;font-size:13px;font-family:arial">ASUNTO: ';
+    $html .=                        $Rrdatos['cAsunto'];
+    $html .=                    '</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>';
+    $html .= '<div style="font-family:arial;font-size:12px;color:#000000">
+                        <b>Documento completo</b>
+                     </div>';
+    return $html;
+}
+
 if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
     switch ($_POST['Evento']) {
         case 'registroMesaPartes':
@@ -329,6 +406,145 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             echo $hojaRegistro;
             break;
 
+        case 'registroDocumentoCargo':
+
+                //$fechaDoc = date('Y-m-d',strtotime($_POST['fechaDocumento']));
+    
+                $parametros = array(
+                    //$_POST['cNroDocumento'],
+                    $_SESSION['CODIGO_TRABAJADOR'],
+                    $_SESSION['iCodOficinaLogin'],
+                    $_SESSION['iCodPerfilLogin'],
+                    $_POST['cCodTipoDoc'],
+                    //$fechaDoc,
+                    $_POST['iCodRemitente']?? '',
+                    $_POST['cNombreRemitente']?? '',
+                    $_POST['direccionRemi']??'',
+                    $_POST['cNomRemitente']?? '',
+                    $_POST['cCargoRemitente']?? '',
+                    $_POST['cAsunto'],
+                    //$_POST['cObservaciones'],
+                    $_POST['nNumFolio'],
+                    isset($_POST['documentoEntrada']) ? json_encode($_POST['documentoEntrada']) : '',
+                    $_POST['nCud']?? '',
+                    $_POST['COD_OFICINA_DERIVAR'],
+                    $_POST['COD_TRABAJADOR_DERIVAR'],
+                    $_POST['SIDEMIEXT']
+                );
+    
+                $sqlregistro = "{call [INTEROPERABILIDAD].[SP_INSERTAR_DESPACHO_CARGO] (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }";
+                $rsregistro = sqlsrv_query($cnx, $sqlregistro, $parametros);
+                if($rsregistro === false) {
+                    print_r('Error al registrar el documento.');
+                    http_response_code(500);
+                    die(print_r(sqlsrv_errors()));
+                }
+    
+                while($next_rs = sqlsrv_next_result($rsregistro)){
+                    if( $next_rs ) {
+                        $Rsregistro = sqlsrv_fetch_array( $rsregistro, SQLSRV_FETCH_ASSOC);
+                    } elseif( is_null($next_rs)) {
+                        echo "No se pudo obtener datos";
+                        return;
+                    } else {
+                        print_r('Error al obtener datos despues de registrar.');
+                        http_response_code(500);
+                        die(print_r(sqlsrv_errors(), true));
+                    }
+                }
+    
+                generarCud($Rsregistro['iCodTramite'],1,$cnx);
+    
+                
+    
+                $hojaRegistro = generarHojaIngresoCargo ($Rsregistro['iCodTramite'],$Rsregistro['estado'],$cnx);
+    
+                if($Rsregistro['estado'] == 1 && isset($_POST['documentoEntrada'])){
+                    $registro = DocDigital::obtenerDocsDigitalTramite($cnx, $Rsregistro['iCodTramite'], 5);
+                    $docDigitalMesa = new DocDigital($cnx);
+                    $docDigitalMesa->obtenerDocDigitalPorId($registro[0]);
+                    $docDigitalMesa->tmp_name = RUTA_DTRAMITE.$docDigitalMesa->obtenerRutaDocDigital();
+                    $docDigitalMesa->cargarDocumento();
+                }
+    
+                echo $hojaRegistro;
+            break;
+        
+            case 'registroDocumentoCargoArchivado':
+
+                //$fechaDoc = date('Y-m-d',strtotime($_POST['fechaDocumento']));
+    
+                $parametros = array(
+                    $_POST['cNroDocumento'],
+                    $_SESSION['CODIGO_TRABAJADOR'],
+                    $_SESSION['iCodOficinaLogin'],
+                    $_SESSION['iCodPerfilLogin'],
+                    $_POST['cCodTipoDoc'],  
+                    //$fechaDoc,
+                    $_POST['iCodRemitente']?? '',
+                    $_POST['cNombreRemitente']?? '',
+                    $_POST['direccionRemi']??'',
+                    $_POST['cNomRemitente']?? '',
+                    $_POST['cCargoRemitente']?? '',
+                    $_POST['cAsunto'],
+                    $_POST['cAsunto'],
+                    $_POST['nNumFolio'],
+                    isset($_POST['documentoEntrada']) ? json_encode($_POST['documentoEntrada']) : '',
+                    $_POST['nCud']?? '',
+                    //$_POST['COD_OFICINA_DERIVAR'],
+                    //$_POST['COD_TRABAJADOR_DERIVAR'],
+                    $_SESSION['iCodOficinaLogin'],
+                    $_SESSION['CODIGO_TRABAJADOR'],
+                    $_POST['SIDRECEXT'],
+                    $_POST['VNUMDOC']
+                );
+
+
+                //var_dump('envio1');
+                //var_dump($parametros);   
+
+                $sqlregistro = "{call [INTEROPERABILIDAD].[SP_INSERTAR_RECEPCION_CARGO] (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }";
+                $rsregistro = sqlsrv_query($cnx, $sqlregistro, $parametros);
+                
+                //var_dump('envio2');
+                //var_dump($parametros);
+
+                if($rsregistro === false) {
+                    print_r('Error al registrar el documento.');
+                    http_response_code(500);
+                    die(print_r(sqlsrv_errors()));
+                }
+    
+                while($next_rs = sqlsrv_next_result($rsregistro)){
+                    if( $next_rs ) {
+                        $Rsregistro = sqlsrv_fetch_array( $rsregistro, SQLSRV_FETCH_ASSOC);
+                    } elseif( is_null($next_rs)) {
+                        echo "No se pudo obtener datos";
+                        return;
+                    } else {
+                        print_r('Error al obtener datos despues de registrar.');
+                        http_response_code(500);
+                        die(print_r(sqlsrv_errors(), true));
+                    }
+                }
+    
+                generarCud($Rsregistro['iCodTramite'],1,$cnx);
+    
+                
+    
+                $hojaRegistro = generarHojaIngresoCargo ($Rsregistro['iCodTramite'],$Rsregistro['estado'],$cnx);
+    
+                if($Rsregistro['estado'] == 1 && isset($_POST['documentoEntrada'])){
+                    $registro = DocDigital::obtenerDocsDigitalTramite($cnx, $Rsregistro['iCodTramite'], 5);
+                    $docDigitalMesa = new DocDigital($cnx);
+                    $docDigitalMesa->obtenerDocDigitalPorId($registro[0]);
+                    $docDigitalMesa->tmp_name = RUTA_DTRAMITE.$docDigitalMesa->obtenerRutaDocDigital();
+                    $docDigitalMesa->cargarDocumento();
+                }
+    
+                echo $hojaRegistro;
+            break;
+
         case "registroRequisitosFaltantes":
             if (($_POST["nroRequisitosFaltantes"] - count($_POST["iCodTupaRequisitoFaltante"])) === 0) {
                 $completo = 1;
@@ -393,7 +609,8 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 die(print_r(sqlsrv_errors()));
             }
             break;
-
+        
+            
         case "anularMesaPartes":
             $codigos = $_POST['values'];
             $params = array(

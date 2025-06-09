@@ -1,3 +1,6 @@
+var botonesAct = '<li> <a id="btnEnviarCargo" style="display: none" class="btn btn-primary"><i class="fas fa-upload"></i><span> Cargo</span></a> </li>';
+$("#actionBtns").append(botonesAct);
+
 var tblPendientesCargo = $('#tblPendientesCargo').DataTable({
     responsive: true,
     ajax: {
@@ -73,6 +76,9 @@ var tblPendientesCargo = $('#tblPendientesCargo').DataTable({
     }
 });
 
+var btnEnviarCargo = $("#btnEnviarCargo");
+actionButtons.push(btnEnviarCargo);
+
 var actionButtons = actionBtn;
 var supportButtons = supportBtns;
 
@@ -92,7 +98,7 @@ tblPendientesCargo
 
             default:
                 $.each( actionButtons, function( key, value ) {
-                    value.css("display","inline-block");
+                    value.css("display","none");
                 });
                 $.each( supportButtons, function( key, value ) {
                     value.css("display","none");
@@ -125,12 +131,22 @@ tblPendientesCargo
 
             default:
                 $.each( actionButtons, function( key, value ) {
-                    value.css("display","inline-block");
+                    value.css("display","none");
                 });
                 $.each( supportButtons, function( key, value ) {
                     value.css("display","none");
                 });
                 break;
+        }
+    });
+
+    btnEnviarCargo.on("click", function () {
+        let rows_selected = tblPendientesCargo.column(0).checkboxes.selected();
+        if (rows_selected.length > 0) {
+            let fila = tblPendientesCargo.rows(rows_selected[0]).data()[0];
+            window.location.replace(urlpage+"views/registroCargoInteroperabilidad.php?cud=" + btoa(fila.cud)+"&idT="+btoa(fila.iCodTrabajadorRegistro)+"&idO="+btoa(fila.iCodOficinaRegistro)+"&idI="+btoa(fila.sIdemiext)+"&remi="+btoa(fila.iCodRemitente));
+        } else {
+            alert("Por favor, seleccione una fila.");
         }
     });
 

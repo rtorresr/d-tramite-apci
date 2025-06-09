@@ -66,7 +66,7 @@ switch ($evento){
             $subdata=array();
             $subdata = $Rs;
             // $subdata['fecha_doc']=$Rs['fecha_doc']->format( 'd-m-Y'); 
-            $subdata['fecha_doc'] = ($Rs['fecha_doc'] == NULL) ? NULL : $Rs['fecha_doc']->format( 'd-m-Y'); 
+            $subdata['fecha_doc'] = ($Rs['fecha_doc'] == NULL) ? NULL : $Rs['fecha_doc']->format( 'd/m/Y'); 
             $data[]=$subdata;
         }
 

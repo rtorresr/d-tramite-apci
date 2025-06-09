@@ -28,7 +28,8 @@ $columnas=array(
     11  =>  'codigo',
     12  =>  'cCodTipoDoc',
     13  =>  'tipoDoc',
-    14  =>  'IdProyecto'
+    14  =>  'IdProyecto',
+    15  =>  'entidad'
 );
 
 if ($_SESSION['iCodPerfilLogin'] == 18 || $_SESSION['iCodPerfilLogin'] == 19 || $_SESSION['iCodPerfilLogin'] == 20 ){
@@ -89,6 +90,7 @@ while($Rs=sqlsrv_fetch_array($thing["data"])){
     $subdata['cObservacionesDerivar']=$Rs['cObservacionesDerivar'];
 
     $subdata['IdProyecto']=$Rs['IdProyecto'];
+    $subdata['entidad']=$Rs['entidad'];
     $data[]=$subdata;
     $contado++;
 }

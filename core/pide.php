@@ -21,11 +21,12 @@ $url = '';
 if (isset($_REQUEST['dni'])){
     $params = array(
             "nuDniConsulta" => $_REQUEST['dni'], //44069967
-            "nuDniUsuario" => 43169867,
+            "nuDniUsuario" => 40413882,   // DE lUIS RODRIGUEZ
             "nuRucUsuario" => 20504915523,
-            "password" => 198530,
+            "password" => 40413882,
     );
     $url = 'https://ws5.pide.gob.pe/services/ReniecConsultaDni?wsdl';
+    //$url = 'https://ws2.pide.gob.pe/services/RENIECCDni?wsdl';
     $client = new SoapClient($url, $options);
     $query = $client->consultar(array('arg0'=>$params));
     }else{

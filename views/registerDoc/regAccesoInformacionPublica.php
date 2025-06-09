@@ -267,7 +267,7 @@ function registrarSolicitud ($datos,$idTramite,$cnx,$url_srv,$fileUpload) {
                         <p>
                             <?php echo '"Decenio de la Igualdad de Oportunidades para mujeres y hombres"';?>
                             <br>
-                            <?php echo '"Año del Bicentenario, de la consolidación de nuestra Independencia y de la Conmemoración de las heroicas batallas de Junín y Ayacucho"';?>
+                            <?php echo '"Año de la recuperación y consolidación de la economía peruana"';?>
                             <br>
                             <!-- <php echo '"Año del Bicentenario del Congreso de la República del Perú"'?> -->
                         </p>
@@ -610,7 +610,7 @@ switch ($_REQUEST['Evento']) {
                 $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
                 $mail->SMTPAuth = true;                               // Enable SMTP authentication
                 $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
-                $mail->Password = 'Hacker147';                           // SMTP password
+                $mail->Password = MAIL_PASSWORD;                           // SMTP password
                 $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
                 $mail->Port = 465;
                 $mail->setFrom('no-reply@apci.gob.pe', 'D-Trámite');

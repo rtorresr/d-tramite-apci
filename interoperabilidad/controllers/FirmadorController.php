@@ -15,6 +15,7 @@ class FirmadorController
     private $firma;
     private $razon;
     private $apariencia;
+    private $cud;  /*CUD*/
 
     public function argumentosFirmador(){
         $this->tipo = $_POST['type'];
@@ -22,6 +23,14 @@ class FirmadorController
         $this->nomDoc = $_POST['nombreDocumentoFirmar'];        
         $this->tipoFirma = $_POST['tipFirma'];
         $this->nroVisto = $_POST['nroVisto'];
+        $this->cud = $_POST['cud'];   /*CUD*/
+
+        /*print_r('DATOS');
+        print_r($this->nomDoc);
+        print_r('<br>');
+        print_r('CUD:'.$this->cud);
+        print_r('<br>');
+        print_r('ESO FUE EL CUD');*/
         // $urlArray = explode("/", $this->urlDocumento);
         // $this->nomDoc = DocDigital::formatearNombre(array_pop($urlArray),true,[' ']);
 
@@ -40,8 +49,9 @@ class FirmadorController
             $this->apariencia = 2;
 
         } else if ($this->tipoFirma =='c') {
-            $this->firma = "files.apci.gob.pe/srv-files/firmas/default/apci__logo--mini--color.png";;
-            $this->razon = 'Cargo del documento';
+            $this->firma = "files.apci.gob.pe/srv-files/firmas/default/apci__logo--mini--color.png";
+            //$this->razon = 'Cargo del documento';
+            $this->razon = 'Cargo documento   CUD: '.$this->cud;    /*CUD*/
             $this->posx = 420;
             $this->posy = 20;
             $this->apariencia = 0;

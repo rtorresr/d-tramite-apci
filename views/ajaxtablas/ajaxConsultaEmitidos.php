@@ -40,10 +40,10 @@ try {
         $subdata['ASUNTO']=$Rs['ASUNTO'];
         $subdata['ESTADO_DOCUMENTO']=$Rs['ESTADO_DOCUMENTO'];        
         $subdata['OFICINA_ORIGIN']=$Rs['OFICINA_ORIGIN'];
-        $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd-m-Y H:i:s') : '';
+        $subdata['FEC_DOCUMENTO']=($Rs['FEC_DOCUMENTO'] != null || $Rs['FEC_DOCUMENTO'] != '') ? $Rs['FEC_DOCUMENTO']->format( 'd/m/Y H:i:s') : '';
         $subdata['DESTINO']=$Rs['DESTINO'];
         $subdata['TRABAJADOR_DESTINO']=$Rs['TRABAJADOR_DESTINO'];
-        $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd-m-Y H:i:s') : '';
+        $subdata['FEC_REGISTRO']=$Rs['FEC_REGISTRO'] != null ? $Rs['FEC_REGISTRO']->format( 'd/m/Y H:i:s') : '';
         $subdata['flgEncriptado']=$Rs['flgEncriptado'];  
         $subdata['origen']=$Rs['origen'];       
         $data[]=$subdata;

@@ -98,7 +98,7 @@ while ($Rs=sqlsrv_fetch_array($rs)){
                 <img src="../dist/images/cabecera.png">
                 <p class="page_header_tag" style="font-family: Arial; font-size: 9pt;"> <?= '"Decenio de la Igualdad de Oportunidades para mujeres y hombres"'?>
                     <br>
-                    <?php echo '"Año del Bicentenario, de la consolidación de nuestra Independencia y de la Conmemoración de las heroicas batallas de Junín y Ayacucho"'?>
+                    <?php echo '"Año de la recuperación y consolidación de la economía peruana"'?>
                 </p>
             </div>
         </page_header>

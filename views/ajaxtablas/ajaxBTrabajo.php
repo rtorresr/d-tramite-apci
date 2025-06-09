@@ -39,6 +39,10 @@ while($Rs=sqlsrv_fetch_array($rsBdRecibidos, SQLSRV_FETCH_ASSOC)){
     $subdata['contieneDoc'] = $Rs['contieneDoc'];
     $subdata['nFlgTipoDoc'] = $Rs['nFlgTipoDoc'];
     $subdata['proyectoIni'] = $Rs['proyectoIni'];
+    if($Rs['nFlgTipoDoc']==1){$subdata['distribucion'] ="Interno";}
+    if($Rs['nFlgTipoDoc']==2){$subdata['distribucion'] ="Interno";}
+    if($Rs['nFlgTipoDoc']==3){$subdata['distribucion'] ="Externo";}
+    $subdata['nombreEntidad'] = $Rs['nombreEntidad'];
     // $datos = explode(' | ',$Rs['texto']);
     // $subdata['documento']=$datos[0]??'';
     // $subdata['asunto']=$datos[1]??'';

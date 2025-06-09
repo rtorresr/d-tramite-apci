@@ -105,6 +105,7 @@ class RecepcionController
     public function firmadoCargo(){
         $url = $_POST['urlDocFirmar'];
         $nombre = $_POST['nombreDocumentoFirmar'];
+        //$cud = $_POST['cud'];  /*CUD*/
         $idTramite = $_POST['idTramite'];
         $sIdrecext = $_POST['sIdrecext'];
         $resultado = $this->guardarCargoFirmado($url,$idTramite,$nombre);

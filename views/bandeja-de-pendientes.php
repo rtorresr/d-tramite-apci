@@ -415,7 +415,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 dom: '<"header"fB>tr<"footer"l<"paging-info"ip>>',
                 buttons: [
                     { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel' },
-                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                     { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' },
                     // 'selectAll',
                     // 'selectNone'
@@ -541,8 +541,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             var btnAnexos = $("#btnAnexos");
             var btnDescargarDoc = $("#btnDescargarDoc")
 
-            var actionButtons = [btnPrimary, btnRechazar, btnSecondary];
-            var supportButtons = [btnFourth, btnDetail, btnFlow, btnDoc, btnAnexos, btnDescargarDoc];
+            /*var actionButtons = [btnPrimary, btnRechazar, btnSecondary];
+            var supportButtons = [btnFourth, btnDetail, btnFlow, btnDoc, btnAnexos, btnDescargarDoc];*/
+            var actionButtons = [btnPrimary,btnFourth, btnRechazar, btnSecondary];
+            var supportButtons = [btnDetail, btnFlow, btnDoc, btnAnexos, btnDescargarDoc];
+
             var totalCount = 0;
             var seleccionados = [];
 
@@ -989,7 +992,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     url: "ajax/ajaxValidarMovimiento.php",
                     method: "POST",
                     data: {
-                        IdMovimiento: movimientos[0]
+                        //IdMovimiento: movimientos[0]
+                        IdMovimiento: JSON.stringify(movimientos)
                     },
                     datatype: "json",
                     success: function (response) {

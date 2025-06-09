@@ -2,15 +2,39 @@
 include_once("../../conexion/conexion.php");
 session_start();
 
-$params = array(
+/*$params = array(
     $_POST['IdMovimiento'],
 );
-$sql = "{call UP_VALIDAR_MOVIMIENTO (?) }";
+$sql = "{call UP_VALIDAR_MOVIMIENTO (?) }";*/
 
-$rs = sqlsrv_query($cnx, $sql, $params);
+$array = $_POST['IdMovimiento'];
+$data = json_decode($array,true);
+$Rs = [];
+foreach ($data as $value) {
+
+
+/*$rs = sqlsrv_query($cnx, $sql, $params);
 if($rs === false) {
     http_response_code(500);
-    die(print_r(sqlsrv_errors()));
+    die(print_r(sqlsrv_errors()));*/
+
+    $params = array($value);
+
+     $sql = "{call UP_VALIDAR_MOVIMIENTO (?) }";
+     
+     $rs = sqlsrv_query($cnx, $sql, $params);
+     if($rs === false) {
+         http_response_code(500);
+         die(print_r(sqlsrv_errors()));
+     }
+     $Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
+
+     if($Rs['HABILITAR']!=0){
+        echo json_encode($Rs);   
+        break;
+     }
+
 }
-$Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
+//$Rs = sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC);
 echo json_encode($Rs);
+return;

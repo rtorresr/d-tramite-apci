@@ -44,7 +44,7 @@ switch ($_POST['Accion']) {
         while($Rs=sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC)){
             $item = $Rs;
             $item['TrabajadorModifica'] = $Rs['TrabajadorModifica'] != 'NO ENCONTRADO' ? $Rs['TrabajadorModifica'] : '';
-            $item['FecRegistro'] = $Rs['FecRegistro'] != null ? $Rs['FecRegistro']->format( 'd/m/Y') : '';
+            $item['FecRegistro'] = $Rs['FecRegistro'] != null ? $Rs['FecRegistro']->format( 'd/m/Y H:i:s') : '';
             $item['FecModifica'] = $Rs['FecModifica'] != null ? $Rs['FecModifica']->format( 'd/m/Y H:i:s') : '';
             $data[] = $item;
         }

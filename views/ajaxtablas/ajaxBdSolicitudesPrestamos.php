@@ -43,6 +43,9 @@ while($Rs=sqlsrv_fetch_array($rs, SQLSRV_FETCH_ASSOC)){
     $subdata['fechaPlazo'] = $Rs['FecPlazoDevolucion'] != null ? $Rs['FecPlazoDevolucion']->format( 'Y-m-d H:i:s') : '';
     $subdata['flgFueraPlazoAtencion'] = $Rs['FlgFueraPlazoAtencion'];
     $subdata['fechaPlazoAtencion'] = $Rs['FecPlazoAtencion'] != null ? $Rs['FecPlazoAtencion']->format( 'Y-m-d H:i:s') : '';
+    $subdata['Comentario']=$Rs['Comentario'];
+    $subdata['IdDetallePrestamo'] = $Rs['IdDetallePrestamo'];
+    $subdata['IdDocDigital'] = $Rs['IdDocDigital'];
     $data[]=$subdata;
     $contador++;
 }

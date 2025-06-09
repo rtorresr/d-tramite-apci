@@ -20,4 +20,5 @@
     <input type="hidden" id="sIdrecext" value="">
     <input type="hidden" id="tipoFirma" value="">
     <input type="hidden" id="nroVisto" value="">    
+    <input type="hidden" id="cud" value="">    <!-- /*CUD*/ -->
 </form>

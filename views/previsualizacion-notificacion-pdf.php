@@ -89,12 +89,15 @@ if($rs === false) {
     die(print_r(sqlsrv_errors()));
 }
 
-$destinatarios = [];
-if(sqlsrv_has_rows($rs)){ 
-    while( $row = sqlsrv_fetch_array($rs,SQLSRV_FETCH_ASSOC)){
-        $destinatarios[]=$row;
-    }
-}
+// $destinatarios = [];
+// if(sqlsrv_has_rows($rs)){ 
+//     while( $row = sqlsrv_fetch_array($rs,SQLSRV_FETCH_ASSOC)){
+//         $destinatarios[]=$row;
+//         if(isset($row['FoliosDespacho'])){
+//             $folios=$row['FolioDespacho'];
+//         }
+//     }
+// }
 
 foreach($destinatarios as $i => $e){
     if($e['iCodRemitente'] == $_POST['destinatario']){
@@ -119,7 +122,8 @@ $documento = trim($_POST['cDescTipoDoc']).' N° XXX-'.date('Y').'-APCI/'.trim($R
 
 $nroDocEntidad = $destinatarios['nroDocumento'];
 // $despacho = json_decode($_POST['despacho']);
-$folios = isset($destinatarios->FoliosDespacho) ? $destinatarios->FoliosDespacho : 0;
+//$folios = isset($destinatarios->FoliosDespacho) ? $destinatarios->FoliosDespacho : 0;
+$folios = $destinatarios['foliosDespacho'];
 $observacion = isset($destinatarios->ObservacionesDespacho) ? $destinatarios->ObservacionesDespacho : '';
 $oficinaRegistro = $_POST['OficinaFirmante'];
 

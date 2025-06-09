@@ -1,4 +1,5 @@
-var botonesAct = '<li><a id="btnEnviarPide" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span>Enviar</span></a></li>';
+var botonesAct = '<li> <a id="btnEnviarCargo" style="display: none" class="btn btn-primary"><i class="fas fa-upload"></i><span> Cargo</span>     </a> </li>'+
+'<li><a id="btnEnviarPide" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span>Enviar</span></a> </li>';
 $("#actionBtns").append(botonesAct);
 
 var tblPendientesEnviar = $('#tblPendientesEnviar').DataTable({
@@ -71,9 +72,11 @@ var tblPendientesEnviar = $('#tblPendientesEnviar').DataTable({
 });
 
 var btnEnviar = $("#btnEnviarPide");
+var btnEnviarCargo = $("#btnEnviarCargo");
 
 var actionButtons = actionBtn;
 actionButtons.push(btnEnviar);
+actionButtons.push(btnEnviarCargo);
 
 var supportButtons = supportBtns;
 
@@ -93,7 +96,7 @@ tblPendientesEnviar
 
             default:
                 $.each( actionButtons, function( key, value ) {
-                    value.css("display","inline-block");
+                    value.css("display","none");
                 });
                 $.each( supportButtons, function( key, value ) {
                     value.css("display","none");
@@ -126,7 +129,7 @@ tblPendientesEnviar
 
             default:
                 $.each( actionButtons, function( key, value ) {
-                    value.css("display","inline-block");
+                    value.css("display","none");
                 });
                 $.each( supportButtons, function( key, value ) {
                     value.css("display","none");
@@ -153,6 +156,17 @@ btnEnviar.on("click", function () {
             M.toast({html: '¡Enviado correctamente!'});
         }
     });
+});
+
+
+btnEnviarCargo.on("click", function () {
+    let rows_selected = tblPendientesEnviar.column(0).checkboxes.selected();
+    if (rows_selected.length > 0) {
+        let fila = tblPendientesEnviar.rows(rows_selected[0]).data()[0];
+        window.location.replace(urlpage+"views/registroCargoInteroperabilidad.php?cud=" + btoa(fila.cud)+"&idT="+btoa(fila.iCodTrabajadorRegistro)+"&idO="+btoa(fila.iCodOficinaRegistro)+"&idI="+btoa(fila.sIdemiext)+"&remi="+btoa(fila.iCodRemitente));
+    } else {
+        alert("Por favor, seleccione una fila.");
+    }
 });
 
 var tblGeneral = tblPendientesEnviar;

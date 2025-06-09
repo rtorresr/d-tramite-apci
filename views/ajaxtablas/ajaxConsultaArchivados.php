@@ -5,19 +5,22 @@ $cboTramite =$_POST['cboTramite']??'';
 $cud = $_POST['cud'] ?? '';
 $tipoDoc = $_POST['tipoDoc']??'';
 $cAsunto = $_POST['cAsunto']??'';
+$trabajadorFinal = $_POST['trabajadorFinal']??'';
 $remitente = $_POST['remitente']??'';
 $nroDoc = $_POST['nroDoc']??'';
 $oficinaOrigen = $_POST['oficinaOrigen']??$_SESSION['iCodOficinaLogin'];
 $oficinaDestino = $_POST['oficinaDestino']??'NULL';
 $nEstadoMovimiento = $_POST['nEstadoMovimiento'] ?? '';
 $iCodOficinaOrigen = $_POST['iCodOficinaOrigen'] ?? '';
-$fechaini = $_POST['fechaini']??20190101;
-$fechafin = $_POST['fechafin']??20191231;
+//$fechaIni = $_POST['fecIni']??20190101;
+$fechaIni = (isset($_POST['fecIni']) && $_POST['fecIni'] !== '')? date('Ymd',strtotime($_POST['fecIni'])) : '';
+//$fechaFin = $_POST['fecFin']??20191231;
+$fechaFin = (isset($_POST['fecFin']) && $_POST['fecFin'] !== '')? date('Ymd',strtotime($_POST['fecFin'])) : '';
 //echo $_POST["order"][0]."---";
 //print_r($_POST["order"]);
 
-$sqlConsulta = "execute SP_CONSULTA_DOCUMENTOS_ARCHIVADOS '".$cboTramite."','".$cud."','".$cAsunto."','".$remitente."',".$oficinaOrigen.",".$oficinaDestino.",'"
-                                            .$tipoDoc."','".$nroDoc."','".$fechaini."','".$fechafin."','".$nEstadoMovimiento."','".$iCodOficinaOrigen."','',".$_POST["start"].",".
+$sqlConsulta = "execute SP_CONSULTA_DOCUMENTOS_ARCHIVADOS '".$cboTramite."','".$cud."','".$cAsunto."','".$trabajadorFinal."','".$remitente."',".$oficinaOrigen.",".$oficinaDestino.",'"
+                                            .$tipoDoc."','".$nroDoc."','".$fechaIni."','".$fechaFin."','".$nEstadoMovimiento."','".$iCodOficinaOrigen."','',".$_POST["start"].",".
                                             $_POST["length"];
 
 
@@ -51,8 +54,8 @@ while($Rs=sqlsrv_fetch_array($rsConsulta)){
     $subdata['nEstadoMovimiento']=$Rs['nEstadoMovimiento'];
     $subdata['cObservacionesFinalizar']=$Rs['cObservacionesFinalizar'];
     $subdata['flgTieneCargo']=$Rs['flgTieneCargo'];
-    $subdata['fFecDerivar']=$Rs['fFecDerivar'] != null ? $Rs['fFecDerivar']->format( 'd-m-Y H:i:s') : '';
-    $subdata['fFecRecepcion']=$Rs['fFecMovimiento'] != null ? $Rs['fFecMovimiento']->format( 'd-m-Y H:i:s') : '';
+    $subdata['fFecDerivar']=$Rs['fFecDerivar'] != null ? $Rs['fFecDerivar']->format( 'd/m/Y H:i:s') : '';
+    $subdata['fFecRecepcion']=$Rs['fFecMovimiento'] != null ? $Rs['fFecMovimiento']->format( 'd/m/Y H:i:s') : '';
     $subdata['flgEncriptado']=$Rs['flgEncriptado'];
     $subdata['origen']=$Rs['origen'];
     $contador ++;

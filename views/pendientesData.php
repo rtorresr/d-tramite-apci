@@ -4,7 +4,7 @@ include_once("../conexion/conexion.php");
     
 switch ($_POST['opcion']){
     case 1: // derivar movimiento
-        $params = array(
+        /*$params = array(
             $_SESSION['CODIGO_TRABAJADOR'],
             $_SESSION['iCodOficinaLogin'],
             $_POST['iCodMovimiento'][0],
@@ -17,7 +17,28 @@ switch ($_POST['opcion']){
             http_response_code(500);
             die(print_r(sqlsrv_errors()));
         }
-        break;
+        break;*/
+        
+        if(is_array($_POST['iCodMovimiento'])):
+            foreach($_POST['iCodMovimiento'] as $value):
+                $params = array(
+                    $_SESSION['CODIGO_TRABAJADOR'],
+                    $_SESSION['iCodOficinaLogin'],
+                    $value,
+                    json_encode($_POST['datos'])
+                );
+                $sqlDer = "{call SP_DERIVACION_MULTIPLE (?,?,?,?) }";
+                $rs = sqlsrv_query($cnx, $sqlDer, $params);
+                if($rs === false) {
+                    http_response_code(500);
+                    die(print_r(sqlsrv_errors()));
+                }
+    
+              endforeach;
+              endif;
+            
+            break;
+
 
     case 3: // archivar movimiento
         try{

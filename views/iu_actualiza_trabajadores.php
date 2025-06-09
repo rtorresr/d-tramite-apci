@@ -1,3 +1,14 @@
+<style>
+  #miid::placeholder {
+  color: #666666;
+  text-align: left;
+  padding-top: 10px;
+  overflow: hidden;
+  resize: none;
+  border-radius: 4px;
+          margin: 10px;
+}
+ </style>
 <?php
 session_start();
 $pageTitle = "Actualizar de Trabajador";
@@ -129,6 +140,11 @@ include_once("../conexion/conexion.php");
                                                         ?>
                                                 </select>
                                                 <label for="txtestado">Estado:&nbsp;</label>
+                                            </div>
+                                            <div class="col s12 input-field">
+                                                <!--input name="comentario" type="text" id="comentario" class="FormPropertReg form-control" value="<?=trim($Rs['comentario'])?>">
+                                                <label for="comentario">descripcion: --/--/---- [medio] - Comentario</label-->
+                                                <textarea name="comentario" cols="10" rows="50" id="miid" placeholder="Descripción: --/--/---- [medio] - Comentario" style=""><?=trim($Rs['comentario'])?></textarea>
                                             </div>
                                         </div>
                                     <fieldset>

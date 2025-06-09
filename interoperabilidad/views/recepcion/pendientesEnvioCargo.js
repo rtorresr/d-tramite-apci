@@ -1,4 +1,5 @@
-var botonesAct = '<li><a id="btnEnvioCargo" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span>Envio cargo</span></a></li>';
+var botonesAct = '<li><a id="btnEnvioCargo" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span>Envio cargo</span></a></li>'+
+                '<li><a id="btnArchivar" style="display: none" class="btn btn-primary"><i class="	far fa-file-archive"></i><span> Archivar</span></a></li>';
 $("#actionBtns").append(botonesAct);
 
 var botonesSupo = '<li><a id="btnFlujo" style="display: none" class="btn btn-link"><i class="fas fa-project-diagram fa-fw left"></i><span>Flujo</span></a></li>' +
@@ -69,12 +70,14 @@ var tblPendientesEnvioCargo = $('#tblPendientesEnvioCargo').DataTable({
 });
 
 var btnEnvioCargo = $("#btnEnvioCargo");
+var btnArchivar = $("#btnArchivar");
 var btnFlujo = $("#btnFlujo");
 var btnDoc = $("#btnDoc");
 var btnAnexos = $("#btnAnexos");
 
 var actionButtons = actionBtn;
 actionButtons.push(btnEnvioCargo);
+actionButtons.push(btnArchivar);
 
 var supportButtons = supportBtns;
 supportButtons.push(btnFlujo);
@@ -140,6 +143,25 @@ tblPendientesEnvioCargo
         }
     });
 
+
+
+    btnArchivar.on("click", function () {
+        let rows_selected = tblPendientesEnvioCargo.column(0).checkboxes.selected();
+        if (rows_selected.length > 0) {
+            let fila = tblPendientesEnvioCargo.rows(rows_selected[0]).data()[0];
+            if(fila.idTramite>0){
+            window.location.replace(urlpage+"views/registroCargoInteroperabilidadArch.php?cud=" + btoa(fila.cud)+"&idT="+btoa(fila.iCodTrabajadorRegistro)+"&idO="+btoa(fila.iCodOficinaRegistro)+"&idI="+btoa(fila.sIdrecext)+"&doc="+btoa(fila.numeroDocumento)+"&remi="+btoa(fila.iCodRemitente));
+            }
+            else {
+                M.toast({html: '¡No se puede archivar por que contiene CUD!'});
+            }
+
+        } else {
+            alert("Por favor, seleccione una fila.");
+        }
+    });
+
+
 btnEnvioCargo.on("click", function () {
     let rows_selected = tblPendientesEnvioCargo.column(0).checkboxes.selected();
     let values = [];
@@ -147,11 +169,15 @@ btnEnvioCargo.on("click", function () {
         values.push(tblPendientesEnvioCargo.rows(fila).data()[0]);
     });
     let fila = values[0];
+
+                
+
     if (fila.idTramite == null){
         $("#urlDocumentoFirmar").val(urlnginx + fila.ruta);
         $("#nombreDocumentoFirmar").val(fila.nombre);
         $("#sIdrecext").val(fila.sIdrecext);
         $("#idTramite").val(fila.idTramite);
+        $("#cud").val(fila.cud);   /*CUD*/
         $("#tipoFirma").val('c');
         $("#nroVisto").val(0);
         initInvoker('W');   
@@ -169,13 +195,16 @@ btnEnvioCargo.on("click", function () {
                     $("#nombreDocumentoFirmar").val(json['nombre']);
                     $("#sIdrecext").val(fila.sIdrecext);
                     $("#idTramite").val(fila.idTramite);
+                    $("#cud").val(fila.cud);        /*CUD*/
                     $("#tipoFirma").val('c');
                     $("#nroVisto").val(0);
                     initInvoker('W');
                 }else {
                     M.toast({html: '¡No contiene documento asociado!'});
                 }
+                
             }
+            
         });
     }
 });

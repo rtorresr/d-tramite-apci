@@ -47,6 +47,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                 <li><a id="btnFlow" class="btn btn-link modal-trigger" style="display: none" href="#modalFlujo"><i class="fas fa-project-diagram fa-fw left"></i><span>Flujo</span></a></li>
                                 <li><a id="btnDoc" class="btn btn-link" style="display: none"><i class="fas fa-file-pdf fa-fw left"></i><span>Ver</span></a></li>
                                 <li><a id="btnAnexos" class="btn btn-link modal-trigger" style="display: none" href="#modalAnexo"><i class="fas fa-paperclip fa-fw left"></i><span>Anexos</span></a></li>
+                                <li><a id="btnDescargarDoc" class="btn btn-link" style="display: none" ><i class="far fa-file-archive"></i><span> Descargar</span></a></li>
                             </ul>
                         </div>
                         <div class="col s6 input-field" style="position:relative; line-height: 30px; color: initial">
@@ -161,7 +162,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <th>Origen</th>
                                         <th>Destino</th>
                                         <th>Fecha de Envío</th>
-                                        <th>Estado Documento</th>
+                                        <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -373,7 +374,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
             buttons: [
                 { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                 { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
             ],
             "language": {
@@ -480,10 +481,11 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         var btnFlow = $("#btnFlow");
         var btnDoc = $("#btnDoc");
         var btnAnexos = $("#btnAnexos");
+        var btnDescargarDoc = $("#btnDescargarDoc");
 
         var actionButtons = [btnPrimary];
-        var supportButtons = [btnFlow, btnDoc, btnAnexos];
-        var uniqueButtons = [btnDoc, btnAnexos];
+        var supportButtons = [btnFlow, btnDoc, btnAnexos, btnDescargarDoc];
+        var uniqueButtons = [btnDoc, btnAnexos, btnDescargarDoc];
 
         $("#cboTramite").change(function(){
             var selected = $(this).val();
@@ -725,7 +727,16 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                             if(json.tieneAnexos == '1') {
                                                                 let cont = 1;
                                                                 json.anexos.forEach(function (elemento) {
-                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                    /*Inicio Renombre*/
+                                                                        let elementoNombre = elemento.nombre;            
+                                                                        // Verificamos si el nombre empieza con un número
+                                                                        if (/^\d/.test(elementoNombre)) {
+                                                                            // Si empieza con un número, eliminamos el número al inicio
+                                                                            elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                        }
+                                                                    /*Fin Renombre*/
+                                                                    //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                     cont++;
                                                                 })
                                                             }else{
@@ -766,7 +777,16 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    // Verificamos si el nombre empieza con un número
+                                    if (/^\d/.test(elementoNombre)) {
+                                    // Si empieza con un número, eliminamos el número al inicio
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                               /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{
@@ -777,7 +797,111 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             }             
         });
 
+
+
+
+        /*inicio descargarDoc*/
+        btnDescargarDoc.on('click', function(){
+                    var promesa = new Promise((resolve, reject) => {
+                        initProgress();
+                        // $("#progressBar p").text('');
+                        // $("#progressBar div.progress div.progressbar").css("width","0%");
+                        // $("#progressBar").css("display", "block");
+                        resolve(true);
+                    });
+
+                    promesa.then((respuesta) => {
+                        return new Promise((resolve,reject) =>{
+                            var data = new Object();
+
+                            data.nombreZip = 'archivo'+Date.now();
+                            data.fila = tblConsultaGen.rows( { selected: true } ).data().toArray()[0];
+                            data.codigo = data.fila.codigo;
+
+                            
+
+                           /*
+                           data.codigo = 0;
+                            if (data.fila.tipo == 'T'){
+                                data.codigo = data.fila.codigo;
+                            } else {
+                                data.codigo = data.fila.subCodigo;
+                            }*/
+                            updateProgress(`Generando Zip`,`0%`);
+
+                            console.log('DATA');
+                            console.log(data);
+
+                            return resolve(data);
+                        });
+
+                       
+
+
+                    }).then((respuesta) => {
+                        $.ajax({
+                            async: false,
+                            url: 'ajax/ajaxConsultaGeneralZip.php',
+                            type: 'POST',
+                            datatype: 'json',
+                            data: {
+                                "evento" : "AgregarAZip",
+                                "codigo" : respuesta.codigo,
+                                "nombre" : respuesta.fila.origen.trim()+' '+ respuesta.fila.cdesctipodoc.trim()+' '+ respuesta.fila.nCud.trim(),
+                                "nombreZip" : respuesta.nombreZip
+                            }
+                            
+                        }).done(function(response){
+                            var result = JSON.parse(response);
+                            if (result.success){
+                                updateProgress(`Generando Zip 100%`,`100%`);
+                                location.href = `../archivosTemp/${respuesta.nombreZip}.zip`;
+                                $.ajax({
+                                    async: false,
+                                    url: 'ajax/ajaxConsultaGeneralZip.php',
+                                    type: 'POST',
+                                    data: {"evento" : "EliminarZip","nombreZip" : respuesta.nombreZip}                                       
+                                })
+                                .done(() => finishProgress());
+                            } else {
+                                finishProgress();
+                                M.toast({html: result.message});
+                            }                                
+                        });
+
+                        
+                    });         
+                });
+        /*fin descargarDoc*/
+
     });
+
+
+    /*descargarDoc*/
+    function initProgress(){                
+                $("#progressBar p").text('');
+                $("#progressBar div.progress div.progressbar").css("width","0%");
+                
+                if ($("#progressBar").css("display") == "none"){
+                    $("#progressBar").css("display", "block");
+                }
+            };
+
+            function updateProgress(text, porcentaje){
+                $("#progressBar p").text(text);
+                $("#progressBar div.progress div.progressbar").css("width",porcentaje);
+                // getSpinner();
+            }
+
+            function finishProgress(){                
+                $("#progressBar p").text('');
+                $("#progressBar div.progress div.progressbar").css("width","0%");
+                
+                if ($("#progressBar").css("display") == "block"){
+                    $("#progressBar").css("display", "none");
+                }
+            };
+        /*fin descargarDoc*/
 </script>
 
 </body>

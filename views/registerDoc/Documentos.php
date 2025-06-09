@@ -117,6 +117,9 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             $data = array();
             while($Rs=sqlsrv_fetch_array($rsConsulta,SQLSRV_FETCH_ASSOC)){
                 $data[]=$Rs;
+               /* if($Rs['iCodOficinaRegistro']==$_SESSION['iCodOficinaLogin'] || $Rs['iCodTrabajadorFirmante']===$_SESSION['CODIGO_TRABAJADOR'] || $Rs['iCodOficinaFirmante']===$_SESSION['iCodOficinaLogin'] ){   //---PARA VALIDAR GRUPO
+                    $data[]=$Rs;                                                  
+                }     */                                                           //---PARA VALIDAR GRUPO
             }
             $recordsTotal=sqlsrv_num_rows($rsConsulta);
             $recordsFiltered=sqlsrv_num_rows($rsConsulta);
@@ -197,7 +200,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 json_encode($_POST['codigos']),
                 $_SESSION['CODIGO_TRABAJADOR'],
                 $_SESSION['iCodOficinaLogin'],
-                $_SESSION['iCodPerfilLogin']
+                $_SESSION['iCodPerfilLogin'],
             );
             $sqlEnvioJefeProyecto = "{call SP_DERIVAR_JEFE_PROYECTO (?,?,?,?) }";
             $rs = sqlsrv_query($cnx, $sqlEnvioJefeProyecto, $params);
@@ -562,6 +565,69 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                     $mail = new Email();
                     $mail->Enviar($asunto, $correos, $cuerpo);
                 }
+
+
+                // INICIO ALERTA AL DERIVAR POR CORREO
+                /*$paramsDP2 = array(
+                    $_POST['codigo']
+                );
+                $sqlDP2 = "{call SP_OBTENER_DATOS_TRAMITE (?) }";
+                $rsDP2 = sqlsrv_query($cnx, $sqlDP2, $paramsDP2);
+                if($rsDP2 === false) {
+                    http_response_code(500);                
+                    die(print_r(sqlsrv_errors()));
+                }
+                $RsDP2 = sqlsrv_fetch_array( $rsDP2, SQLSRV_FETCH_ASSOC);
+                if($flgCorrecto) 
+                {    
+                    $nombresDerivar = $RsDP2['NombreTrabajadorDerivar'];
+                    $correoDerivar = $RsDP2['CorreoTrabajadorDerivar'];
+                    $nCud = $RsDP2['nCud'];
+                    $cAsunto = $RsDP2['cAsunto'];
+                    $cCodificacion = $RsDP2['cCodificacion'];
+                    $TrabajadoresADerivar = $RsDP2['TrabajadoresADerivar'];
+                    $nombre_docDerivar = $docDigitalP->name;
+                    $url_docDerivar = $rutaArchivo;
+
+                    $asuntoDerivar = 'Documento derivado';
+                    $cuerpoDerivar = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+                    <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" style="background:#ccc!important"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width"><title>Alerta derivar</title><style>@media only screen{html{min-height:100%;background:#f3f3f3}}@media only screen and (max-width:596px){.small-float-center{margin:0 auto!important;float:none!important;text-align:center!important}}@media only screen and (max-width:596px){table.body img{width:auto;height:auto}table.body center{min-width:0!important}table.body .container{width:95%!important}table.body .columns{height:auto!important;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;padding-left:16px!important;padding-right:16px!important}table.body .columns .columns{padding-left:0!important;padding-right:0!important}table.body .collapse .columns{padding-left:0!important;padding-right:0!important}th.small-6{display:inline-block!important;width:50%!important}th.small-12{display:inline-block!important;width:100%!important}.columns th.small-12{display:block!important;width:100%!important}table.menu{width:100%!important}table.menu td,table.menu th{width:auto!important;display:inline-block!important}table.menu.vertical td,table.menu.vertical th{display:block!important}table.menu[align=center]{width:auto!important}}</style></head><body style="-moz-box-sizing:border-box;-ms-text-size-adjust:100%;-webkit-box-sizing:border-box;-webkit-text-size-adjust:100%;Margin:0;background:#ccc!important;box-sizing:border-box;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;min-width:100%;padding:0;text-align:left;width:100%!important"><span class="preheader" style="color:#f3f3f3;display:none!important;font-size:1px;line-height:1px;max-height:0;max-width:0;mso-hide:all!important;opacity:0;overflow:hidden;visibility:hidden"></span>
+                    <table class="body" style="Margin:0;background:#ccc!important;border-collapse:collapse;border-spacing:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;height:100%;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><td class="center" align="center" valign="top" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><center data-parsed style="min-width:580px;width:100%"><table class="spacer float-center" style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:100%">
+                    <tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="32px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:32px;font-weight:400;hyphens:auto;line-height:32px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table><table align="center" class="container float-center" style="Margin:0 auto;background:#fefefe;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:580px">
+                    <tbody><tr style="padding:0;text-align:left;vertical-align:top"><td style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><table bgcolor="#2f4576" class="wrapper header with-bg-img--dark" align="center" style="background:#3b5998;border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><td class="wrapper-inner" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:20px;text-align:left;vertical-align:top;word-wrap:break-word"><table class="row" style="border-collapse:collapse;border-spacing:0;display:table;padding:0;position:relative;text-align:left;vertical-align:top;width:100%">
+                    <tbody><tr style="padding:0;text-align:left;vertical-align:top"><th class="small-6 large-6 columns first" valign="middle" style="Margin:0 auto;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:0;padding-left:16px;padding-right:8px;text-align:left;width:274px">
+                    <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><th style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left">
+                    <img src="https://d-tramite.apci.gob.pe/dist/images/favicon.png" style="-ms-interpolation-mode:bicubic;clear:both;display:block;max-width:30%;outline:0;text-decoration:none;width:70px"></th></tr></table></th><th class="small-6 large-6 columns last" valign="middle" style="Margin:0 auto;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:0;padding-left:8px;padding-right:16px;text-align:left;width:274px"><table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><th style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left"><h6 class="text-right description" style="Margin:0;Margin-bottom:10px;color:#fff;font-family:Helvetica,Arial,sans-serif;font-size:18px;font-weight:400;line-height:1.3;margin:0;margin-bottom:0;margin-top:0;padding:0;padding-top:0;text-align:right;word-wrap:normal">
+                    Alerta derivar</h6></th></tr></table></th></tr></tbody></table></td></tr></table></td></tr></tbody></table><table align="center" class="container float-center" style="Margin:0 auto;background:#fefefe;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:580px"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><table class="spacer" style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="24px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;hyphens:auto;line-height:24px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table>
+                    <table class="row" style="border-collapse:collapse;border-spacing:0;display:table;padding:0;position:relative;text-align:left;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><th class="small-12 large-12 columns first last" style="Margin:0 auto;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:16px;padding-right:16px;text-align:left;width:564px">
+                    <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><th style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left"><p class="lead" style="Margin:0;Margin-bottom:10px;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:400;line-height:1.6;margin:0;margin-bottom:10px;padding:0;text-align:left">
+                    Estimado(a) '.$nombresDerivar.', <strong></strong>:</p><p style="Margin:0;Margin-bottom:10px;color:#484848;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.5;margin:0;margin-bottom:10px;padding:0;text-align:left">
+                    Se remite la información del documento que acaba de derivar por el Sistema D-Trámite</p><table class="spacer" style="color:#0a0a0a;border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                    <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                    <td height="16px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:16px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table><table class="callout" style="Margin-bottom:16px;border-collapse:collapse;border-spacing:0;margin-bottom:16px;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><th style="Margin:0;background:#faf0e1;border:1px solid #986517;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:10px;text-align:left;width:100%">
+                    
+                    <b>Asunto: </b>'.$cAsunto.'<br><br>  
+                    <b>Documento: </b> '.$cCodificacion.'<br><br>  
+                    <b>CUD: </b> '.$nCud.'<br><br> 
+                    <b style="color:black !important;">Trabajador(es) a Derivar: </b> <p style="color:black !important;">'.$TrabajadoresADerivar.'</p>   
+
+                    </th><th class="expander" style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;visibility:hidden;width:0"></th></tr></table><table class="button expanded secondary" style="Margin:0 0 16px 0;border-collapse:collapse;border-spacing:0;margin:0 0 16px 0;padding:0;text-align:left;vertical-align:top;width:100%!important"><tr style="padding:0;text-align:left;vertical-align:top"><td style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><td style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;background:#e09c35;border:0 solid #e09c35;border-collapse:collapse!important;color:#fefefe;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><center data-parsed style="min-width:0;width:100%">
+                  
+                    </center></td></tr></table></td><td class="expander" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0!important;text-align:left;vertical-align:top;visibility:hidden;width:0;word-wrap:break-word"></td></tr></table><table class="spacer" style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="32px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:32px;font-weight:400;hyphens:auto;line-height:32px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table>
+                    
+                    <p style="Margin:0;Margin-bottom:10px;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:left">                    Atentamente,</p><p style="Margin:0;Margin-bottom:10px;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:left">
+                    
+                    D-Trámite - APCI</p><table class="spacer" style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="16px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:16px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table></th><th class="expander" style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;visibility:hidden;width:0"></th></tr></table></th></tr></tbody></table></td></tr></tbody></table><table class="spacer float-center" style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="16px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:16px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table><table align="center" class="container footer__container float-center" style="Margin:0 auto;background:#fefefe;background-color:transparent!important;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:580px"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+                    <table bgcolor="transparent" class="wrapper" align="center" style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><td class="wrapper-inner" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word"><table class="row footer__pos" style="border-collapse:collapse;border-spacing:0;display:table;padding:0;position:relative;text-align:left;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><th class="small-12 large-12 columns first last" valign="middle" style="Margin:0 auto;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:16px;padding-right:16px;text-align:left;width:564px"><table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%"><tr style="padding:0;text-align:left;vertical-align:top"><th style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left"><p style="Margin:0;Margin-bottom:10px;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:center"><img style="-ms-interpolation-mode:bicubic;clear:both;display:block;margin:auto;max-width:100%;outline:0;text-decoration:none;width:auto" src="https://d-tramite.apci.gob.pe/dist/images/favicon.png" height="50"></p><p style="Margin:0;Margin-bottom:10px;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:center">
+                    <small style="color:#616161!important;font-size:80%">Toda la información contenida en este mensaje es confidencial y de uso exclusivo de APCI.<br>Si ha recibido este mensaje por error, por favor proceda a eliminarlo y notificar al remitente.</small></p></th><th class="expander" style="Margin:0;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;visibility:hidden;width:0"></th></tr></table></th></tr></tbody></table></td></tr></table></td></tr></tbody></table><table class="spacer float-center" style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:100%"><tbody><tr style="padding:0;text-align:left;vertical-align:top"><td height="16px" style="-moz-hyphens:auto;-webkit-hyphens:auto;Margin:0;border-collapse:collapse!important;color:#0a0a0a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;hyphens:auto;line-height:16px;margin:0;mso-line-height-rule:exactly;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&#xA0;</td></tr></tbody></table></center></td></tr></table><!-- prevent Gmail on iOS font size manipulation --><div style="display:none;white-space:nowrap;font:15px courier;line-height:0">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div></body></html>';                       
+                    $correosDerivar = [];
+                    array_push($correosDerivar,$correoDerivar);
+                    $mail = new Email();
+                    $mail->Enviar($asuntoDerivar, $correosDerivar, $cuerpoDerivar);
+                }*/
+                //FIN ENVIO DERIVAR CORREO
+
+
     
                 // $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
                 // try {
@@ -1310,12 +1376,14 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                     $docDigital->idTramite = $i['codigo'];
                     $docDigital->idTipo = 0;
                     $docDigital->idEntidad = 0;
+                    $docDigital->selloTiempo = 0;               //PARA SELLADO DE TIEMPO EXTERNO
                     $docDigital->obtenerDocMayor();
 
                     if($docDigital->idDocDigital > 0){
                         if ($docDigital->idTipo == 2){    
                             $docDigital->idTramite = $i['codigo'];
                             $docDigital->idTipo = 8;
+                            $docDigital->selloTiempo = 0;               //PARA SELLADO DE TIEMPO EXTERNO
                             $docDigital->obtenerDocMayor();
                         }
 
@@ -1344,12 +1412,14 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                         $docDigital->idTramite = $i['codigo'];
                         $docDigital->idTipo = 0;
                         $docDigital->idEntidad = $destinoExterno['iCodRemitente'];
+                        $docDigital->selloTiempo = 1;       //PARA SELLADO DE TIEMPO EXTERNO
                         $docDigital->obtenerDocMayor();
 
                         if($docDigital->idDocDigital > 0){
                             if ($docDigital->idTipo == 2){    
                                 $docDigital->idTramite = $i['codigo'];
                                 $docDigital->idTipo = 8;
+                                $docDigital->selloTiempo = 1;       //PARA SELLADO DE TIEMPO EXTERNO
                                 $docDigital->obtenerDocMayor();
                             }
 
@@ -1360,12 +1430,14 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                             $docDigital->idTramite = $destinoExterno['idTramiteNotificacion'];
                             $docDigital->idTipo = 0;
                             $docDigital->idEntidad = 0;
+                            $docDigital->selloTiempo = 1;       //PARA SELLADO DE TIEMPO EXTERNO
                             $docDigital->obtenerDocMayor();
 
                             if($docDigital->idDocDigital > 0){
                                 if ($docDigital->idTipo == 2){    
                                     $docDigital->idTramite = $destinoExterno['idTramiteNotificacion'];
                                     $docDigital->idTipo = 8;
+                                    $docDigital->selloTiempo = 1;       //PARA SELLADO DE TIEMPO EXTERNO
                                     $docDigital->obtenerDocMayor();
                                 }
 
@@ -1394,6 +1466,7 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             if($comprimido->subirDocumento()){
                 $response->ok = true;
                 $response->data = $comprimido->idDocDigital;
+                $response->sT = $docDigital->selloTiempo;       //PARA SELLADO DE TIEMPO EXTERNO
             }
 
             DocDigital::eliminar($rutaTempZip);
@@ -1413,6 +1486,20 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
             $posy =174;
             $documentName = $docDigital->clearName;
             $firma = "https://files.apci.gob.pe/srv-files/firmas/default/firma.png";
+
+            //$selloTiempo=$_POST['sT'];
+
+            /* CONDICIONAL SELLADO TIEMPO EXTERNO*/
+            $selloTiempoMap = [
+                0 => '0',    // SIN SELLO
+                1 => '1',    // CON SELLO
+                null => '1',  // CON SELLO
+                '' => '1'  // CON SELLO
+            ];
+
+            // Determinar el valor de selloTiempo basado en el mapeo
+            $idTipoTra = $_POST['sT'];
+            $selloTiempo = $selloTiempoMap[$idTipoTra] ?? '1';
 
             $param ='{
                 "app":"pcx",
@@ -1438,7 +1525,8 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 "signatureLevel":"1",
                 "maxFileSize":"5242880"
             }';
-
+            //"signatureLevel":"'.$selloTiempo.'",
+            //
             $paramentro = base64_encode($param);
             echo json_encode(["args" => $paramentro]);
             break;

@@ -144,7 +144,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 <div class="col s12">
                     <div class="card hoverable">
                         <div class="card-table">
-                            <table id="tblConsultaGen" class="bordered hoverable highlight striped" name="tblConsultaGen">
+                        <table id="tblConsultaGen" class="bordered hoverable highlight striped" name="tblConsultaGen" style="width: 99.5%">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -154,8 +154,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                         <th>Remitente</th>
                                         <th>Oficina Destino</th>
                                         <th>Trabajador Destino</th>
-                                        <th>Estado Documento</th>
                                         <th>Fecha de Envío</th>
+                                        <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -318,8 +318,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                      type: ''
                  }
             },
-            scrollY: "100%",
-            scrollCollapse: true,
+            /*scrollY: "100%",
+            scrollCollapse: true,*/
             ajax: {
                 url: 'ajaxtablas/ajaxConsultaDerivados.php',
                 type: 'POST',
@@ -354,7 +354,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             dom: '<"header"B>tr<"footer"l<"paging-info"ip>>',
             buttons: [
                 { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', exportOptions: { modifier: { page: 'all', search: 'none' } } },
-                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
+                { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', orientation:'landscape' },
                 { extend: 'print', text: '<i class="fas fa-print"></i> Imprimir' }
             ],
             "language": {
@@ -385,8 +385,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 ,{'data': 'remitente', 'autoWidth': true}
                 ,{'data': 'OficinaDestino', 'autoWidth': true}
                 ,{'data': 'TrabajadorDestino', 'autoWidth': true}
-                ,{'data': 'nomEstado', 'autoWidth': true}
                 ,{'data': 'fFecMovimiento', 'autoWidth': true}
+                ,{'data': 'nomEstado', 'autoWidth': true}
             ],
             'select': {
                 'style': 'multiple'
@@ -733,7 +733,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                                                             if(json.tieneAnexos == '1') {
                                                                 let cont = 1;
                                                                 json.anexos.forEach(function (elemento) {
-                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                                                    /*Inicio Renombre*/
+                                                                        let elementoNombre = elemento.nombre;            
+                                                                        if (/^\d/.test(elementoNombre)) {
+                                                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                                                        }
+                                                                    /*Fin Renombre*/
+                                                                    //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                                                    $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                                                     cont++;
                                                                 })
                                                             }else{
@@ -775,7 +782,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                    elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{

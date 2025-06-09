@@ -160,7 +160,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         </div>
     </div>
 
-    <div id="modalDerivar" class="modal">
+    <!--div id="modalDerivar" class="modal">
         <div class="modal-header">
             <h4>Derivación del documento</h4>
         </div>
@@ -209,6 +209,111 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             <a class="modal-close waves-effect btn-flat">Cancelar</a>
             <a id="btnEnviarDer" class="waves-effect btn-flat">Derivar</a>
         </div>
+    </div-->
+
+    <div id="modalDerivar" class="modal">
+        <div class="modal-header">
+            <h4>Envío del documento</h4>
+        </div>
+        <div class="modal-content">
+            <form name="formDerivar" class="row" id="formDerivar">
+                <div class="col s12 m6 l6 input-field">
+                    <select id="OficinaResponsableDer" class="FormPropertReg mdb-select colorful-select dropdown-primary" searchable="Buscar aqui..">
+                        <option value="">Seleccione</option>
+                        <?php
+                        $sqlOfi = "SELECT iCodOficina, cNomOficina, cSiglaOficina FROM Tra_M_Oficinas WHERE iFlgEstado != 0 AND flgEliminado = 0 ORDER BY cNomOficina ASC";
+                        $rsOfi  = sqlsrv_query($cnx,$sqlOfi);
+                        while ($RsDep2 = sqlsrv_fetch_array($rsOfi)){
+                            echo "<option value=".$RsDep2['iCodOficina']." >".trim($RsDep2['cNomOficina'])." - ".trim($RsDep2["cSiglaOficina"])."</option>";
+                        }
+                        ?>
+                    </select>
+                    <label for="OficinaResponsableDer">Oficina</label>
+                </div>
+                <div class="col s12 m6 l6 input-field">
+                    <select id="responsableDer" class="FormPropertReg mdb-select colorful-select dropdown-primary"></select>
+                    <label for="responsableDer">Responsable</label>
+                </div>
+                <div class="input-field col s12 m5">
+                    <select id="IndicacionDer">
+                        <?php
+                        $rsInd = sqlsrv_query($cnx,"SELECT * FROM Tra_M_Indicaciones");
+                        while ($RsInd = sqlsrv_fetch_array($rsInd)){
+                            echo "<option value='".$RsInd['iCodIndicacion']."'>".trim($RsInd['cIndicacion'])."</option>";
+                        } ?>
+                    </select>
+                    <label for="IndicacionDer">Indicación</label>
+                </div>
+                <div class="input-field col s12 m5">
+                    <select id="prioridadDer"  class="size9 FormPropertReg mdb-select colorful-select dropdown-primary">
+                        <option value="Alta">Alta</option>
+                        <option value="Media" selected>Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                    <label for="prioridadDer">Prioridad</label>
+                </div>
+                <div class="input-field col s12 m2">
+                    <select id="cCopiaDer"  class="size9 FormPropertReg mdb-select colorful-select dropdown-primary">
+                        <option value="0">No</option>
+                        <option value="1">Si</option>
+                    </select>
+                    <label for="cCopiaDer">Copia</label>
+                </div>
+                <div class="input-field col s12">
+                    <textarea id="obsDerivar" class="materialize-textarea FormPropertReg"></textarea>
+                    <label for="obsDerivar">Instrucción Específica</label>
+                </div>
+                <div class="col s12">
+                    <div class="row">
+                        <div class="col s4">
+                            <p>
+                                <label>
+                                    <input type="checkbox" class="filled-in" id="habilitarPlazo">
+                                    <span>Con plazo</span>
+                                </label>
+                            </p>
+                        </div>
+                        <div class="col s6 input-field" id="fecPlazoDiv" style="display: none;">
+                            <input placeholder="dd-mm-aaaa" value="" type="text" id="fecPlazo" name="fecPlazo" class="FormPropertReg form-control datepicker">
+                            <label for="fecPlazo">Fecha de Plazo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col m2">
+                    <input name="button" type="button" class="btn btn-secondary" value="Agregar" id="btnAgregarDestinoDerivar">
+                </div>
+
+                <table id="TblDestinosDerivar" class="bordered hoverable highlight striped" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Oficina</th>
+                        <th>Responsable</th>
+                        <th>Indicación</th>
+                        <th>Prioridad</th>
+                        <th>Instrucción Específica</th>
+                        <th>Copia</th>
+                        <th>Plazo</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+                 <!--MODIFICADO-->
+                    <div class="col s6 input-field">
+                     <div class="switch">
+                        <label>
+                             Sin encriptar
+                                <input type="checkbox" <?=($_SESSION['flgEncriptacion'] == 1 ? '' : 'disabled')?> id="flgEncriptado" name="flgEncriptado" value="1">
+                                 <span class="lever"></span>
+                                 Encriptado
+                         </label>
+                      </div>
+                    </div>   
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect btn-flat">Cancelar</a>
+            <a id="btnEnviarDer" class="waves-effect btn-flat">Derivar</a>
+        </div>
     </div>
 
     <div id="modalHojaRuta" class="modal modal-fixed-footer modal-fixed-header" style="width: 30%!important;">
@@ -240,6 +345,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
 
     <script src="includes/dropzone.js"></script>
     <script>
+        let dataResponable = [];
         $(document).ready(function() {
             $('.modal').modal();
 
@@ -302,7 +408,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     'style': 'multi'
                 }
             });
-
+            
             var btnPrimary = $("#btnPrimary");
             var btnSecondary = $("#btnSecondary");
             var btnThird = $("#btnThird");
@@ -317,6 +423,43 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             tblBandejaIncompletos
                 .on( 'select', function ( e, dt, type, indexes ) {
                     var count = tblBandejaIncompletos.rows( { selected: true } ).count();
+                    /*INICIO MULTIPLE*/
+                    if( tblBandejaIncompletos.rows( dt[0] ).data()[1] == undefined ){
+                        
+                        let seleccionado = tblBandejaIncompletos.rows( dt[0] ).data()[0];
+                        
+                        var lists = seleccionados.filter(x => {
+                            return x.rowId == seleccionado.rowId;
+                        });
+    
+                        if ( lists.length == 0 ) {
+                            seleccionados.push(seleccionado);
+                        }
+
+                    } else {
+                            let sets = tblBandejaIncompletos.rows( { selected: true } ).data();
+
+                            $.each( sets, function( key, value ) {
+                                var lists = seleccionados.filter(x => {
+                                    return x.rowId == value.rowId;
+                                });
+            
+                                if ( lists.length == 0 ) {
+                                    seleccionados.push(value);
+                                }
+                            });
+
+                            $.each( actionButtons, function( key, value ) {
+                                value.css("display","inline-block");
+                            });
+
+                            $.each( supportButtons, function( key, value ) {
+                                value.css("display","none");
+                            });
+
+                            $('.actionButtons').show(100);
+                    }
+                    /*FIN MULTIPLE*/
 
                     switch (count) {
                         case 1:
@@ -548,7 +691,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 instance.open();
             });
 
-            $("#btnEnviarDer").on('click',function (e) {
+            /*$("#btnEnviarDer").on('click',function (e) { AQUI NO ESTA CORREO
                 e.preventDefault();
                 let fila = tblBandejaIncompletos.rows( { selected: true } ).data().toArray()[0];
                 let formData = new FormData();
@@ -558,6 +701,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 formData.append("iCodOficina", $("#OficinaResponsableDer").val());
                 formData.append("iCodIndicacion", $("#IndicacionDer").val());
                 formData.append("prioridad", $("#prioridadDer").val());
+                formData.append("incriptado", $("#flgEncriptado").prop("checked") ? 1 : 0);
+                formData.append("correo", dataResponable.cMailTrabajador);
+                formData.append("nombreTrabajador", dataResponable.cNombresTrabajador.trim()+", "+dataResponable.cApellidosTrabajador.trim());
                 getSpinner('Derivando documento');
                 $.ajax({
                     url: "registerDoc/regMesaPartes.php",
@@ -581,7 +727,99 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         M.toast({html: "Error al derivar el documento"});
                     }
                 });
+            });*/
+
+            /*INICIO MULTIPLE**/
+            var btnEnviarDer = $("#btnEnviarDer");
+            var seleccionados = [];
+
+            btnEnviarDer.on('click', function (e) {
+                e.preventDefault();
+                let iCodTramite = 0;
+                if (tblDestinosDerivar.data().length === 0){
+                    $.alert('No tiene ningún destinatario agregado!');
+                }else{
+                    var values=seleccionados;
+                    
+                    let movimientos = [];
+                    $.each(values, function (index, fila) {
+                        movimientos.push(fila.codTramite);
+                        iCodTramite = fila.codTramite;
+                    });
+                    
+                    let tablaDer = tblDestinosDerivar.data();
+                    let dataTablaDer = [];
+
+                    console.log("dataResponable",dataResponable)
+
+                    $.each(tablaDer, function (i, item) {
+                        var dato = item;
+
+                        let cResponsableDer = parseInt(dato.cResponsableDer);
+                        let responsable = dataResponable.find(function(resp) {
+                            return parseInt(resp.value) === cResponsableDer;
+                        });
+                        console.log("cResponsableDer",cResponsableDer,responsable)
+                        dato.correo = responsable ? responsable.correo : "";
+
+                        
+
+                        // let dataResponableMap = new Map();
+
+                        // dataResponable.forEach(resp => {
+                        //     dataResponableMap.set(parseInt(resp.value), resp.correo);
+                        // });
+                        // console.log("dataResponable",dataResponable)
+                        // dato.correo = dataResponableMap.get(cResponsableDer) || "";
+
+                        if (dato.fecPlazo != ""){
+                            dato.fecPlazo = dato.fecPlazo.split("-").reverse().join("-");
+                        }
+                        dataTablaDer.push(dato);
+                    });
+
+                    var parametrosDer = {
+                        iCodTramite: iCodTramite,
+                        iCodMovimiento : movimientos,
+                        datos: dataTablaDer,
+                        incriptado: $("#flgEncriptado").prop("checked") ? 1 : 0,
+                        // destinos: dataResponable,
+                        //correo: dataResponable.cMailTrabajador,
+                        //nombreTrabajador: dataResponable.cNombresTrabajador.trim()+", "+dataResponable.cApellidosTrabajador.trim()
+
+                    };
+                    console.log('datos enviar1');
+                    console.log(parametrosDer);
+                  
+                    //var_dump(arrayParametros);
+                  
+                    $.ajax({
+                        cache: false,
+                        url: "pendientesDataMesaParte.php",
+                        method: "POST",
+                        //data: parametrosDer,
+                        data: parametrosDer,
+                        datatype: "json",
+                        success: function (response) {
+                            tblBandejaIncompletos.ajax.reload();
+                            M.toast({html: '¡Documento Derivado!'});
+                            limpiarSeleccionados();
+                            M.Modal.getInstance($("#modalDerivar")).close();
+                        },
+                        error: function (e) {
+                            console.log(e);
+                            console.log('Error al derivar!');
+                            M.toast({html: "Error al derivar!"});
+                        }                                     
+                    });
+                }
             });
+
+            function limpiarSeleccionados() {
+                seleccionados = [];
+                tblBandejaIncompletos.rows().deselect();
+            }
+            /*FIN MULTIPLE*/
 
             btnFourth.on('click', function (e) {
                 e.preventDefault();
@@ -707,7 +945,14 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         if(json.tieneAnexos == '1') {
                             let cont = 1;
                             json.anexos.forEach(function (elemento) {
-                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+elemento.nombre+'</a></li>');
+                                /*Inicio Renombre*/
+                                    let elementoNombre = elemento.nombre;            
+                                    if (/^\d/.test(elementoNombre)) {
+                                        elementoNombre = elementoNombre.replace(/^\d+\.\s*/, '');
+                                    }
+                                /*Fin Renombre*/
+                                //$('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elemento.nombre+'</a></li>');
+                                $('#modalAnexo div.modal-content ul').append('<li><span class="fa-li"><i class="fas fa-file-alt"></i></span><a class="btn-link" href="'+elemento.url+'" target="_blank">'+cont+'. '+elementoNombre+'</a></li>');
                                 cont++;
                             })
                         }else{
@@ -910,7 +1155,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
            }
        });
 
-       var tblAnexos = $('#tblAnexos').DataTable({
+        var tblAnexos = $('#tblAnexos').DataTable({
             responsive: true,
             searching: false,
             ordering: false,
@@ -959,9 +1204,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
            } else {
                $("#nroConstanciaSIGCTI").parent().css("display", "none");
            }
-       });
+        });
 
-       $("#btnCancelarCargarDocumento").on("click", function(e) {
+        $("#btnCancelarCargarDocumento").on("click", function(e) {
             e.preventDefault();
             e.stopPropagation();
             $("div#docPrincipal")[0].dropzone.removeAllFiles();
@@ -973,8 +1218,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             instance.close();
         });
 
-        $('#OficinaResponsableDer').on('change', function () {
+        /*$('#OficinaResponsableDer').on('change', function () {
             $('#responsableDer option').remove();
+
+            dataResponable = [];
             codigo = this.value;
             $.ajax({
                 cache: false,
@@ -985,16 +1232,263 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 success: function(list){
                     $.each(list,function(index,value)
                     {
+                        let obj = {
+                            value: value.iCodTrabajador,
+                            text: value.cNombresTrabajador.trim() + ", " + value.cApellidosTrabajador.trim(),
+                            correo: value.cMailTrabajador
+                        };
+                        dataResponable.push(obj);
+                        // dataResponable = value;
+
                         $('#responsableDer').append($('<option>',{
                             value : value.iCodTrabajador,
                             text  : value.cNombresTrabajador.trim()+", "+value.cApellidosTrabajador.trim()
                         }));
                     });
+                    console.log(dataResponable);
                     $('#responsableDer').formSelect();
                 },
             });
 
+        });*/
+
+
+    $('#OficinaResponsableDer').on('change', function () {
+    $('#responsableDer option').remove();
+
+    //dataResponable = [];
+    codigo = this.value;
+    
+    $.ajax({
+        cache: false,
+        method: 'POST',
+        url: 'loadResponsableRIO.php',
+        data: { iCodOficinaResponsable: codigo },
+        dataType: 'json',
+        success: function (list) {
+            $.each(list, function (index, value) {
+                let obj = {
+                    value: value.iCodTrabajador,
+                    text: value.cNombresTrabajador.trim() + ", " + value.cApellidosTrabajador.trim(),
+                    correo: value.cMailTrabajador
+                };
+                dataResponable.push(obj);
+
+                $('#responsableDer').append($('<option>', {
+                    value: value.iCodTrabajador,
+                    text: value.cNombresTrabajador.trim() + ", " + value.cApellidosTrabajador.trim()
+                }));
+            });
+            console.log(dataResponable);
+            $('#responsableDer').formSelect();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error responsables: " + error);
+        }
+    });
+});
+
+
+        /*INICIO MULTIPLE*/
+        Dropzone.autoDiscover = false;
+        $("#dropzoneAgrupado").dropzone({
+                url: "ajax/cargarDocsAgrupado.php",
+                paramName: "fileUpLoadDigital", // The name that will be used to transfer the file
+                autoProcessQueue: false,
+                maxFiles: 10,
+                acceptedFiles: ".jpg, .jpeg, .png, .pdf, .doc, .docx, .xls,.xlsx, .ppt, .pptx",
+                addRemoveLinks: true,
+                maxFilesize: 1200, // MB
+                uploadMultiple: true,
+                parallelUploads: 10,
+                dictDefaultMessage: "Arrastar y Soltar tus archivos aquí o<br>click a subir...",
+                dictInvalidFileType: "Archivo no válido",
+                dictMaxFilesExceeded: "Solo 10 archivos son permitidos",
+                dictCancelUpload: "Cancelar",
+                dictRemoveFile: "Remover",
+                dictFileTooBig: "El archivo es demasiado grande ({{filesize}}MiB). Máximo permitido: {{maxFilesize}}MB.",
+                dictFallbackMessage: "Tu navegador no soporta  drag 'n' drop .",
+                dictCancelUploadConfirmation: "¿Está seguro de cancelar esta subida?",
+                accept: function (file, done) {
+                    let estado = false;
+                    let data = tblAnexos.data();
+                    $.each(data, function (i, item) {
+                        if (file.name == item.nombreAnexo) {
+                            estado = true;
+                        }
+                    });
+                    if (!estado) {
+                        done();
+                    } else {
+                        done("El documento ya está agregado");
+                        $.alert("El documento" + file.name +" ya está agregado");
+                        this.removeFile(file);
+                    }
+                },
+                init: function () {
+                    var myDropzone = this;
+                    $("#btnSubirDocsAgrupado").on("click", function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        queuedFiles = myDropzone.getQueuedFiles();
+                        if (queuedFiles.length > 0) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            myDropzone.processQueue();
+                        }else{
+                            $.alert('¡No hay documentos para subir al sistema!');
+                        }
+                    });
+
+                    this.on("sendingmultiple", function (file, xhr, formData) {
+                        let agrupado = 0;
+                        formData.append('agrupado',agrupado);
+                    });
+                    this.on("successmultiple", function(file, response) {
+                        let json = $.parseJSON(response);
+                        M.toast({html: json.mensaje});
+                        $.each(json.data, function (i,fila) {
+                            InsertarAnexo(fila.codigo, fila.original, fila.nuevo);
+                        });                   
+                        this.removeAllFiles();
+                    });
+                }
+            });
+
+        
+            $('#cOficinas').select2({
+            width: '100%',
+            placeholder: 'Seleccione o busque',
+            maximumSelectionLength: 10,
+            "language": {
+                "noResults": function(){
+                    return "<p>No se encontró la oficina.</p><p><a href='#' class='btn btn-link'>¿Desea registrarlo?</a></p>";
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            ajax: {
+                url: 'ajax/ajaxOficinas.php',
+                dataType: 'json',
+                delay: 100,
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
         });
+
+        var tblDestinosDerivar = $('#TblDestinosDerivar').DataTable({
+            responsive: true,
+            searching: false,
+            ordering: false,
+            paging: false,
+            info: false,
+            "drawCallback": function() {
+                let api = this.api();
+                if (api.data().length === 0){
+                    $("#TblDestinosDerivar").hide();
+                }else{
+                    $("#TblDestinosDerivar").show();
+                }
+            },
+            "language": {
+                "url": "../dist/scripts/datatables-es_ES.json"
+            },
+            'columns': [
+                { 'data': 'nomOficinaDer', 'autoWidth': true,"width": "25%", 'className': 'text-left' },
+                { 'data': 'nomResponsableDer', 'autoWidth': true, "width": "25%",'className': 'text-left' },
+                { 'data': 'nIndicacionDer', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                { 'data': 'nomPrioridadDer', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                { 'data': 'nObservacionDer', 'autoWidth': true, "width": "20%",'className': 'text-left' },
+                { 'data': 'nCopiaDer', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                { 'data': 'fecPlazo', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+               // { 'data': 'resPcorreo', 'autoWidth': true, "width": "10%",'className': 'text-left' },
+                {
+                    'render': function (data, type, full, meta) {
+                        return '<button type="button" data-accion="eliminar" data-toggle="tooltip" title="Eliminar" class="btn btn-sm btn-outline-secondary" data-placement="top"><i class="fas fa-trash-alt"></i></button> ';
+                    }, 'className': 'text-center',"width": "20px"
+                },
+            ]
+        });
+
+        $("#TblDestinosDerivar tbody").on('click', 'button', function () {
+            let accion = $(this).attr("data-accion");
+            if(accion === 'eliminar'){
+                tblDestinosDerivar.row($(this).parents('tr')).remove().draw(false);
+            }
+        });
+
+        $("#btnAgregarDestinoDerivar").click(function(){
+            var validacion = true;
+
+            if ($("#OficinaResponsableDer option:selected").val() == "" || $("#OficinaResponsableDer option:selected").val() == undefined){
+                $.alert("Seleccione una oficina");
+                validacion = false;
+                return false;
+            }
+
+            if ($("#responsableDer option:selected").val() == "" || $("#responsableDer option:selected").val() == undefined){
+                $.alert("Seleccione un trabajador");
+                validacion = false;
+                return false;
+            }
+           
+            if(validacion){
+                let destinoDerivar = new Object();
+                destinoDerivar.cOficinaDer= $("#OficinaResponsableDer option:selected").val();
+                destinoDerivar.nomOficinaDer= $("#OficinaResponsableDer option:selected").text();
+                destinoDerivar.cResponsableDer = $("#responsableDer option:selected").val();
+                destinoDerivar.nomResponsableDer = $("#responsableDer option:selected").text();
+                destinoDerivar.cIndicacionDer = $("#IndicacionDer option:selected").val();
+                destinoDerivar.nIndicacionDer = $("#IndicacionDer option:selected").text();
+                destinoDerivar.cPrioridadDer = $("#prioridadDer option:selected").val();
+                destinoDerivar.nomPrioridadDer = $("#prioridadDer option:selected").text();
+                destinoDerivar.nObservacionDer = $("#obsDerivar").val();
+                destinoDerivar.cCopiaDer = $("#cCopiaDer option:selected").val();
+                destinoDerivar.nCopiaDer = $("#cCopiaDer option:selected").text();
+                destinoDerivar.encriptado = $("#flgEncriptado option:selected").val();
+                
+                //destinoDerivar.correo = $("#correo option:selected").val();
+                //destinoDerivar.nombres = $("#cNombresTrabajador option:selected").val();
+                if ($("#habilitarPlazo").prop("checked")){
+                    destinoDerivar.fecPlazo = $("#fecPlazo").val();
+                } else {
+                    destinoDerivar.fecPlazo = ""
+                }           
+                
+                 
+                 // destinosDerivarArray.push(destinoDerivar);
+
+                //VALIDAR SI YA ESTA INGRESADO
+                let data = tblDestinosDerivar.data();
+                let estado = false;
+                $.each(data, function (i, item) {
+                    if (destinoDerivar.cOficinaDer == item.cOficinaDer && destinoDerivar.cResponsableDer == item.cResponsableDer) {
+                        estado = true;
+                    }
+                });
+                if (!estado) {
+                    tblDestinosDerivar.row.add(destinoDerivar).draw();
+                } else {
+                    $.alert("El destino ingresado ya está agregado");
+                }
+            }
+        });
+
+        $("#habilitarPlazo").on("click", function(e){
+            $("#fecPlazo").val("");
+            if ($("#habilitarPlazo").prop("checked")){
+                $("#fecPlazoDiv").show();
+            } else {
+                $("#fecPlazoDiv").hide();                
+            }
+        });
+        /*FIN MULTIPLE*/
+
 
     </script>
 
