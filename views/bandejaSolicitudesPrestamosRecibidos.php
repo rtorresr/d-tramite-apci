@@ -25,15 +25,18 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         <li><button id="btnAtenderSolicitud" style="display: none" class="btn btn-primary"><i class="fas fa-reply fa-fw left"></i><span> Atender</span></button></li>
                         <li><button id="btnObservar" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> Observar</span></button></li>
                         <li><button id="btnAmpliarPLazoAtencion" style="display: none" class="btn btn-link"><i class="fas fa-hourglass-end"></i><span> Ampliar Plazo Atención</span></button></li>
-                        <li><button id="btnDevolverFaltaDatos" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> Devolver por falta de datos</span></button></li>
-                        <li><button id="btnDevolverNoObrarArchivo" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> Devolver por no obrar en el Archivo</span></button></li>
+                        <li><button id="btnDevolverFaltaDatos" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> D. por falta de datos</span></button></li>
+                        <li><button id="btnDevolverNoObrarArchivo" style="display: none" class="btn btn-link"><i class="fas fa-undo"></i><span> D. por no obrar en el Archivo</span></button></li>
                         <li><button id="btnRenotificar" style="display: none" class="btn btn-link"><i class="fas fa-reply fa-fw left"></i><span> Re-Notificar</span></button></li>
                         <li><button id="btnAnular" style="display: none" class="btn btn-link"><i class="fas fa-trash"></i><span> Anular</span></button></li>
                         <!--<li><button id="btnAmpliarPlazo" style="display: none" class="btn btn-link"><i class="fas fa-hourglass-end"></i><span> Ampliar Plazo</span></button></li>-->
                         <!--<li><button id="btnRegistrarDevolucion" style="display: none" class="btn btn-link"><i class="far fa-times-circle"></i><span> Registrar Devolución</span></button></li>-->
                         <li><button id="btnVerSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver solicitud</span></button></li>
                         <li><button id="btnHistorico" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver historico</span></button></li>
-                        <li><button id="btnVerSolicitudPorDevolver" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span>Ver solicitud por devolver</span></button></li>                        
+                        <li><button id="btnVerSolicitudPorDevolver" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span>Ver solicitud por devolver</span></button></li>
+                        <li><button id="btnVerDocSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. solicitud</span></button></li>
+                        <li><button id="btnVerDocCargo" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. cargo</span></button></li>
+                        <li><button id="btnVerDocDevolucion" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. devolución</span></button></li>
                 </div>
             </nav>
         </div>
@@ -634,16 +637,18 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             var btnVerSolicitud = $("#btnVerSolicitud");
             var btnHistorico = $("#btnHistorico");
             var btnVerSolicitudPorDevolver = $("#btnVerSolicitudPorDevolver");
-            
+            var btnVerDocSolicitud = $("#btnVerDocSolicitud");
+            var btnVerDocCargo = $("#btnVerDocCargo");
+            var btnVerDocDevolucion = $("#btnVerDocDevolucion");            
 
             var actionButtonsRecibidosEnCurso = [];
-            var supportButtonsRecibidosEnCurso = [btnAtenderSolicitud, btnAnular, btnObservar, btnAmpliarPLazoAtencion, btnDevolverFaltaDatos, btnDevolverNoObrarArchivo, btnHistorico];
+            var supportButtonsRecibidosEnCurso = [btnAtenderSolicitud, btnAnular, btnObservar, btnAmpliarPLazoAtencion, btnDevolverFaltaDatos, btnDevolverNoObrarArchivo, btnHistorico, btnVerDocSolicitud, btnVerDocCargo, btnVerDocDevolucion];
 
             var actionButtonsRecibidosNotificados = [];
-            var supportButtonsRecibidosNotificados = [btnRenotificar, btnAnular, btnVerSolicitud, btnHistorico];
+            var supportButtonsRecibidosNotificados = [btnRenotificar, btnAnular, btnVerSolicitud, btnHistorico, btnVerDocSolicitud, btnVerDocCargo, btnVerDocDevolucion];
 
             var actionButtonsRecibidosPorDevolver = [];
-            var supportButtonsRecibidosPorDevolver = [btnVerSolicitudPorDevolver, btnHistorico];
+            var supportButtonsRecibidosPorDevolver = [btnVerSolicitudPorDevolver, btnHistorico, btnVerDocSolicitud, btnVerDocCargo, btnVerDocDevolucion];
             /*btnAmpliarPlazo,*/ 
 
             var tblBandejaSolicitudesEnCurso = $('#tblBandejaSolicitudesEnCurso').DataTable({
@@ -2047,7 +2052,121 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $('#modalHistorico div.modal-content').html(html);
                         instance.open();
                     });
-            });           
+            });
+
+            btnVerDocSolicitud.on("click", function (e) {
+                var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                if (tblBandejaSolicitudesNotificados.column(0).checkboxes.selected().length !== 0){
+                    var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                } else if (tblBandejaSolicitudesPorDevolver.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesPorDevolver;
+                } else if (tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesEnCurso;
+                }
+                let rows_selected = tablaObtenerDato.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tablaObtenerDato.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 1);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
+            });
+
+            btnVerDocCargo.on("click", function (e) {
+                var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                if (tblBandejaSolicitudesNotificados.column(0).checkboxes.selected().length !== 0){
+                    var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                } else if (tblBandejaSolicitudesPorDevolver.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesPorDevolver;
+                } else if (tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesEnCurso;
+                }
+                let rows_selected = tablaObtenerDato.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tablaObtenerDato.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 2);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
+            });
+
+            btnVerDocDevolucion.on("click", function (e) {
+                var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                if (tblBandejaSolicitudesNotificados.column(0).checkboxes.selected().length !== 0){
+                    var tablaObtenerDato = tblBandejaSolicitudesNotificados;
+                } else if (tblBandejaSolicitudesPorDevolver.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesPorDevolver;
+                } else if (tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected().length !== 0) {
+                    var tablaObtenerDato = tblBandejaSolicitudesEnCurso;
+                }
+                let rows_selected = tablaObtenerDato.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tablaObtenerDato.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 3);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
+            });
 
         });
 

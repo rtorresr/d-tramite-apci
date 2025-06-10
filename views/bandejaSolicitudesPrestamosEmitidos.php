@@ -28,6 +28,9 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         <li><button id="btnHistorico" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver historico</span></button></li>
                         <li><button id="btnEditarSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Editar Solicitud</span></button></li>
                         <li><button id="btnArchivarSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-box-full"></i><span> Archivar Solicitud</span></button></li>
+                        <li><button id="btnVerDocSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. solicitud</span></button></li>
+                        <li><button id="btnVerDocCargo" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. cargo</span></button></li>
+                        <li><button id="btnVerDocDevolucion" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver doc. devolución</span></button></li>
                     </ul>
                 </div>
             </nav>
@@ -352,10 +355,13 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             var btnVerSolicitud = $("#btnVerSolicitud");
             var btnEditarSolicitud = $("#btnEditarSolicitud"); 
             var btnArchivarSolicitud = $("#btnArchivarSolicitud");      
-            var btnHistorico = $("#btnHistorico");              
+            var btnHistorico = $("#btnHistorico");
+            var btnVerDocSolicitud = $("#btnVerDocSolicitud");
+            var btnVerDocCargo = $("#btnVerDocCargo");
+            var btnVerDocDevolucion = $("#btnVerDocDevolucion");
 
             var actionButtonsEmitidosFinalizados = [];
-            var supportButtonsEmitidosFinalizados = [btnVerSolicitud, btnHistorico, btnEditarSolicitud, btnArchivarSolicitud];
+            var supportButtonsEmitidosFinalizados = [btnVerSolicitud, btnHistorico, btnEditarSolicitud, btnArchivarSolicitud, btnVerDocSolicitud, btnVerDocCargo, btnVerDocDevolucion];
 
             var tblBandejaSolicitudesEmitidoFinalizados = $('#tblBandejaSolicitudesEmitidoFinalizados').DataTable({
                 responsive: true,
@@ -970,6 +976,96 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 $("#firmaRealizada").val("GuardarFirmaDevolucion");
 
                 sendParam();
+            });
+
+            btnVerDocSolicitud.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 1);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
+            });
+
+            btnVerDocCargo.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 2);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
+            });
+
+            btnVerDocDevolucion.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+                
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+
+                let fila = values[0];
+
+                let formData = new FormData();
+                formData.append("Evento","VerSolicitudPrestamo");
+                formData.append("IdSolicitudPrestamo", fila.IdSolicitudPrestamo);
+                formData.append("codTipo", 3);
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(ruta) {
+                        if(ruta != ''){
+                            window.open(ruta, '_blank');
+                        }
+                    }
+                });
             });
 
             

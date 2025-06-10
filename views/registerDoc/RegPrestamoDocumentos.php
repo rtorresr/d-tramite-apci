@@ -980,6 +980,43 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
                 die(print_r(sqlsrv_errors()));
             }
             break;
+
+        case 'VerSolicitudPrestamo':
+            $idSolicitudPrestamo = $_POST['IdSolicitudPrestamo'];
+            $codTipo = $_POST['codTipo'];
+
+            $queryDatosSolicitud = "select
+                sp.IdArchivoSolicitud,
+                sp.IdArchivoCargoDevolucion,
+                sp.IdArchivoCargoDevolucion
+            from T_Solicitud_Prestamo as sp
+            where sp.FlgEliminado = 1 and sp.IdSolicitudPrestamo = ".$idSolicitudPrestamo;
+            $rsDatosSolicitud = sqlsrv_query($cnx, $queryDatosSolicitud);
+            $datosSolicitud = sqlsrv_fetch_array($rsDatosSolicitud, SQLSRV_FETCH_ASSOC);
+
+            $ruta = '';
+            $idDigital = 0;
+            switch($codTipo){
+                case 1:
+                    $idDigital = $datosSolicitud['IdArchivoSolicitud'];
+                    break;
+                case 2:
+                    $idDigital = $datosSolicitud['IdArchivoCargoDevolucion'];
+                    break;
+                case 3:
+                    $idDigital = $datosSolicitud['IdArchivoCargoDevolucion'];
+                    break;
+            }
+
+            if($idDigital != 0){
+                $docDigital = new DocDigital($cnx);
+                $docDigital->obtenerDocDigitalPorId($idDigital, 1);
+                $ruta = RUTA_DTRAMITE.$docDigital->obtenerRutaDocDigitalSecundario();
+            }
+
+            echo $ruta;
+
+            break;
         
         case '':
 
