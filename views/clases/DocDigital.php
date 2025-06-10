@@ -271,6 +271,24 @@ class DocDigital
             case 17:
                 $carpeta = 'Prestamo/Solicitudes/Firmados';
                 break;
+            case 18:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamo/NoFirmados';
+                break;
+            case 19:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamo/PreFirmados';
+                break;
+            case 20:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamo/Firmados';
+                break;
+            case 21:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamoDevolucion/NoFirmados';
+                break;
+            case 22:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamoDevolucion/PreFirmados';
+                break;
+            case 23:
+                $carpeta = 'Prestamo/Solicitudes/CargoPrestamoDevolucion/Firmados';
+                break;
         }
 
         return $carpeta;

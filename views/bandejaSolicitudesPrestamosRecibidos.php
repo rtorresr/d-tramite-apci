@@ -33,7 +33,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         <!--<li><button id="btnRegistrarDevolucion" style="display: none" class="btn btn-link"><i class="far fa-times-circle"></i><span> Registrar Devolución</span></button></li>-->
                         <li><button id="btnVerSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver solicitud</span></button></li>
                         <li><button id="btnHistorico" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver historico</span></button></li>
-                        <li><button id="btnVerSolicitudPorDevolver" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span>Ver solicitud</span></button></li>                        
+                        <li><button id="btnVerSolicitudPorDevolver" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span>Ver solicitud por devolver</span></button></li>                        
                 </div>
             </nav>
         </div>
@@ -137,10 +137,10 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         <div class="col s6 input-field">
                             <div class="switch">
                                 <label>
-                                    Digital
+                                    Reproducción Digital
                                     <input type="checkbox" id="FlgTipoDocumento" name="FlgTipoDocumento" value="0">
                                     <span class="lever"></span>
-                                    Físico
+                                    Reproducción Física
                                 </label>
                             </div>
                         </div>
@@ -280,6 +280,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             </div>
         </div>
         <div class="modal-footer">
+            <a class="waves-effect waves-green btn-flat" id="btnGenerarDevolucion"> Generar devolucion</a>
             <a class="modal-close waves-effect waves-green btn-flat"> Cerrar</a>
         </div>
     </div>
@@ -401,6 +402,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
     <input type="hidden" id="idTipoTra" value="">
     <input type="hidden" id="nroVisto" value="">
     <input type="hidden" id="flgRequireFirmaLote" value="">
+    <input type="hidden" id="firmaRealizada" value="">
 
     <?php include("includes/userinfo.php"); ?>
     <?php include("includes/pie.php"); ?>
@@ -474,19 +476,29 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         function MiFuncionOkWeb(){
             let idDigital = document.getElementById("idDigital").value;
             let idSolicitudPrestamo = document.getElementById("idSolicitudPrestamo").value;
+            let firmaRealizada = document.getElementById("firmaRealizada").value;
+
+            let evento = 'GuardarFirmaAutorizacion';
+
+            if(firmaRealizada == 'GuardarVistoCargo'){
+                evento = 'GuardarVistoCargo';
+            } else if(firmaRealizada == 'GuardarVistoCargoDevolucion'){
+                evento = 'GuardarVistoCargoDevolucion';
+            }
 
             getSpinner('Guardando Documento');
             $.ajax({
                 url: "registerDoc/RegPrestamoDocumentos.php",
                 method: "POST",
                 data: {
-                    Evento: "GuardarFirmaAutorizacion",
+                    Evento: evento,
                     IdSolicitudPrestamo: idSolicitudPrestamo,
                     IdDigital: idDigital,
                 },
                 datatype: "json",
                 success: function (response) {
-                    tblBandejaSolicitudesEnCurso.ajax.reload();
+                    location.reload();
+                    // tblBandejaSolicitudesEnCurso.ajax.reload();
                 },
                 error: function (e) {
                     console.log(e);
@@ -631,7 +643,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             var supportButtonsRecibidosNotificados = [btnRenotificar, btnAnular, btnVerSolicitud, btnHistorico];
 
             var actionButtonsRecibidosPorDevolver = [];
-            var supportButtonsRecibidosPorDevolver = [/*btnAmpliarPlazo,*/ btnVerSolicitudPorDevolver, btnHistorico];
+            var supportButtonsRecibidosPorDevolver = [btnVerSolicitudPorDevolver, btnHistorico];
+            /*btnAmpliarPlazo,*/ 
 
             var tblBandejaSolicitudesEnCurso = $('#tblBandejaSolicitudesEnCurso').DataTable({
                 responsive: true,
@@ -954,7 +967,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     return false;
                 }
                 let formData = new FormData();
-                formData.append("Evento","NotificarSolicitudPrestamo");
+                formData.append("Evento","CargoPrestamo");
                 formData.append("IdSolicitudPrestamo",$("#codSolicitudPrestamo").val());
                 $.ajax({
                     cache: false,
@@ -965,14 +978,78 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                     contentType: false,
                     datatype: "json",
                     success : function() {
-                        M.toast({html: '¡Solicitud notificada!'});
-                        tblBandejaSolicitudesEnCurso.ajax.reload();
-                        let elem = document.querySelector('#modalAtenderSolicitud');
-                        let instance = M.Modal.init(elem, {dismissible:false});
-                        instance.close();
+                        let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
+
+                        let values=[];
+                        $.each(rows_selected, function (index, rowId) {
+                            values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
+                        });
+                        let fila = values[0];                        
+
+                        $("#idSolicitudPrestamo").val(fila.IdSolicitudPrestamo);
+                        $("#idDigital").val(fila.IdArchivoCargoPrestamo);
+                        $("#tipo_f").val('f');
+                        $("#nroVisto").val(0);
+                        $("#idTipoTra").val(2);
+                        $("#flgRequireFirmaLote").val(0);
+                        $("#firmaRealizada").val("GuardarVistoCargo");
+
+                        sendParam();
+
+                        // M.toast({html: '¡Solicitud notificada!'});
+                        // tblBandejaSolicitudesEnCurso.ajax.reload();
+                        // let elem = document.querySelector('#modalAtenderSolicitud');
+                        // let instance = M.Modal.init(elem, {dismissible:false});
+                        // instance.close();
                     }
                 });
             });
+
+            $("#btnGenerarDevolucion").on("click", function (e) {
+                let data = tblVerDetalleSolicitudPorDevolver.data();
+                let noNotificar = false;
+                $.each(data, function (i, item) {
+                    if (item.IdEstadoDetallePrestamo !== 16) {
+                        noNotificar = true;
+                    }
+                });
+                if (noNotificar === true){
+                    $.alert('¡Falta devolver documentos!');
+                    return false;
+                }
+                let formData = new FormData();
+                formData.append("Evento","CargoPrestamoDevolucion");
+                formData.append("IdSolicitudPrestamo",$("#IdSolicitudPrestamoVer").val());
+                $.ajax({
+                    cache: false,
+                    url: "registerDoc/RegPrestamoDocumentos.php",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    datatype: "json",
+                    success : function(responseIdDigital) {
+                        let rows_selected = tblBandejaSolicitudesEnCurso.column(0).checkboxes.selected();
+
+                        let values=[];
+                        $.each(rows_selected, function (index, rowId) {
+                            values.push(tblBandejaSolicitudesEnCurso.rows(rowId).data()[0]);
+                        });
+                        let fila = values[0];
+
+                        $("#idSolicitudPrestamo").val($("#IdSolicitudPrestamoVer").val());
+                        $("#idDigital").val(responseIdDigital);
+                        $("#tipo_f").val('v');
+                        $("#nroVisto").val(0);
+                        $("#idTipoTra").val(2);
+                        $("#flgRequireFirmaLote").val(0);
+                        $("#firmaRealizada").val("GuardarVistoCargoDevolucion");
+
+                        sendParam();
+                    }
+                });
+            });
+            
 
             var tblBandejaSolicitudesNotificados = $('#tblBandejaSolicitudesNotificados').DataTable({
                 responsive: true,
@@ -1295,6 +1372,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             tblBandejaSolicitudesPorDevolver
                 .on( 'select', function ( e, dt, type, indexes ) {
                     let count = tblBandejaSolicitudesPorDevolver.rows( { selected: true } ).count();
+                    console.log(supportButtonsRecibidosPorDevolver);
+                    
                     switch (count) {
                         case 1:
                             $.each( actionButtonsRecibidosPorDevolver, function( key, value ) {
@@ -1419,7 +1498,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                         $("#formularioDevolverDatos").css("display","block");                        
                         break;
 
-                        case 'ver-documento':
+                    case 'ver-documento':
                         $.ajax({
                             cache: false,
                             url: "registerDoc/RegPrestamoDocumentos.php",

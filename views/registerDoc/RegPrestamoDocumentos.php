@@ -718,7 +718,269 @@ if ($_SESSION['CODIGO_TRABAJADOR'] !== ''){
 
             break;
 
-            
+        case 'CargoPrestamo':
+            $IdSolicitudPrestamo = $_POST['IdSolicitudPrestamo'];
+
+            $params = array(
+                $_POST['IdSolicitudPrestamo'],
+                $_SESSION['IdSesion']
+            );
+            $sql = "{call UP_SOLICITAR_CARGO_SOLICITUD_PRESTAMO  (?,?) }";
+            $rs = sqlsrv_query($cnx, $sql, $params);
+            if($rs === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+            $Rs = sqlsrv_fetch_array( $rs, SQLSRV_FETCH_ASSOC);
+
+            $idDocDigital = 0;        
+            include("../cargo_prestamo_pdf.php");
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoPrestamo = ".$idDocDigital."
+                    where IdSolicitudPrestamo = ".$IdSolicitudPrestamo;
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            // $nombres = $Rs['NOMBRE_COMPLETO'];
+            // $correo = $Rs['CORREO'];
+            // $nombre_doc = $Rs['NOMBRE_DOC'];
+
+            // $asunto = 'Solicitud de préstamo '.$nombre_doc;
+            // $cuerpo = '<p>Estimado(a) '.$nombres.', su solicitud de préstamo '.$nombre_doc.' ya esta lista por favor revisar.';
+
+            // $correos = [];
+            // array_push($correos,$correo);
+
+            // $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+            // try {
+            //     //Server settings
+            //     $mail->SMTPDebug = 0;                                 // Enable verbose debug output
+            //     $mail->isSMTP();                                      // Set mailer to use SMTP
+            //     $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+            //     $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            //     $mail->Username = 'd-tramite@apci.gob.pe';                 // SMTP username
+            //     $mail->Password = 'Hacker147';                           // SMTP password
+            //     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+            //     $mail->Port = 465;                                    // TCP port to connect to
+
+            //     //Recipients
+            //     $mail->setFrom('no-reply@apci.gob.pe', 'D-Trámite');
+            //     //$mail->addAddress('jatayauri@apci.gob.pe', 'Joe User');     // Add a recipient
+            //     for ($e = 0; $e < count($correos); $e++){
+            //         $mail->addAddress($correos[$e]);
+            //     }
+
+            //     //Content
+            //     $mail->isHTML(true);// Set email format to HTML
+            //     $mail->Subject = $asunto;
+            //     $mail->Body = $cuerpo;
+            //     $mail->CharSet = 'UTF-8';
+            //     $mail->AltBody = 'No responder';
+
+            //     $mail->send();
+            //     echo 'Message has been sent';
+            // } catch (Exception $e) {
+            //     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            //     http_response_code(500);
+            //     die(print_r(sqlsrv_errors()));
+            // }
+            break;
+
+        case 'GuardarVistoCargo':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 19;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalVistoBueno = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoPrestamo = ".$idDocDigitalVistoBueno."
+                    , IdEstadoSolicitudPrestamo = 115
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+
+        case 'GuardarFirmaCargo':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 20;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalDFirma = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoPrestamo = ".$idDocDigitalDFirma."
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            $paramsNotificar = array(
+                $_POST['IdSolicitudPrestamo'],
+                $_SESSION['IdSesion']
+            );
+            $sqlNotificar = "{call UP_NOTIFICAR_SOLICITUD_PRESTAMO  (?,?) }";
+            $rsNotificar = sqlsrv_query($cnx, $sqlNotificar, $paramsNotificar);
+            if($rsNotificar === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+        
+        case 'CargoPrestamoDevolucion':
+            $IdSolicitudPrestamo = $_POST['IdSolicitudPrestamo'];
+
+            $params = array(
+                $_POST['IdSolicitudPrestamo'],
+                $_SESSION['IdSesion']
+            );
+            $sql = "{call UP_SOLICITAR_CARGO_SOLICITUD_PRESTAMO_DEVOLUCION  (?,?) }";
+            $rs = sqlsrv_query($cnx, $sql, $params);
+            if($rs === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+            $Rs = sqlsrv_fetch_array( $rs, SQLSRV_FETCH_ASSOC);
+
+            $idDocDigital = 0;
+            include("../cargo_prestamo_devolucion_pdf.php");
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoDevolucion = ".$idDocDigital."
+                    where IdSolicitudPrestamo = ".$IdSolicitudPrestamo;
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            echo $idDocDigital;
+            break;
+
+        case 'GuardarVistoCargoDevolucion':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 22;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalVistoBueno = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoDevolucion = ".$idDocDigitalVistoBueno."
+                    , IdEstadoSolicitudPrestamo = 116
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+
+            break;
+    
+        case 'GuardarFirmaDevolucion':
+            $idDigital = $_POST['IdDigital'];
+
+            $docDigitalOriginal = new DocDigital($cnx);
+            $docDigitalOriginal->obtenerDocDigitalPorId($idDigital, 1);
+
+            $separa=DIRECTORY_SEPARATOR;
+            $tmp = dirname(tempnam (null,''));
+            $tmp_name = $tmp.$separa."upload".$separa.$docDigitalOriginal->clearName;
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 23;
+            $docDigital->tmp_name = $tmp_name;
+            $docDigital->name = $docDigitalOriginal->name;
+            $docDigital->type = 'application/pdf';
+            $docDigital->size = 0;
+
+            $docDigital->idOficina = $_SESSION['iCodOficinaLogin'];
+            $docDigital->idTrabajador = $_SESSION['CODIGO_TRABAJADOR'];
+            $docDigital->sesion = $_SESSION['IdSesion'];
+
+            $docDigital->subirDocumentoSecundario();
+
+            $idDocDigitalDFirma = $docDigital->idDocDigital;
+
+            $sqlUpdate = "update T_Solicitud_Prestamo
+                    set IdArchivoCargoPrestamo = ".$idDocDigitalDFirma.",
+                        IdTrabajadorDevolucion = ".$_SESSION['CODIGO_TRABAJADOR'].",
+                        FlgFinalizado = 0,
+                        IdEstadoSolicitudPrestamo = 42,
+                        IdModifica = ".$_SESSION['IdSesion'].",
+                        FecModifica = GETDATE()
+                    where IdSolicitudPrestamo = ".$_POST['IdSolicitudPrestamo'];
+            $rsUpdate = sqlsrv_query($cnx, $sqlUpdate);
+            if($rsUpdate === false) {
+                http_response_code(500);
+                die(print_r(sqlsrv_errors()));
+            }
+            break;
+        
         case '':
 
             break;

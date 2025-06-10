@@ -22,6 +22,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                 <div class="nav-wrapper">
                     <ul id="nav-mobile" class="">
                         <li><button id="btnVistoBueno" style="display: none" class="btn btn-primary"><i class="fas fa-signature"></i><span> Visto Bueno</span></button></li>
+                        <li><button id="btnFirmaCargo" style="display: none" class="btn btn-primary"><i class="fas fa-signature"></i><span> Firma cargo</span></button></li>
+                        <li><button id="btnFirmaCargoDevolucion" style="display: none" class="btn btn-primary"><i class="fas fa-signature"></i><span> Firma devolución</span></button></li>
                         <li><button id="btnVerSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Ver Solicitud</span></button></li>
                         <li><button id="btnHistorico" style="display: none" class="btn btn-link"><i class="fas fa-eye"></i><span> Ver historico</span></button></li>
                         <li><button id="btnEditarSolicitud" style="display: none" class="btn btn-link"><i class="fas fa-clipboard fa-fw left"></i><span> Editar Solicitud</span></button></li>
@@ -201,6 +203,7 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
     <input type="hidden" id="idTipoTra" value="">
     <input type="hidden" id="nroVisto" value="">
     <input type="hidden" id="flgRequireFirmaLote" value="">
+    <input type="hidden" id="firmaRealizada" value="">
 
     <?php include("includes/userinfo.php"); ?>
     <?php include("includes/pie.php"); ?>
@@ -280,20 +283,30 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
         function MiFuncionOkWeb(){
             let idDigital = document.getElementById("idDigital").value;
             let idSolicitudPrestamo = document.getElementById("idSolicitudPrestamo").value;
+            let firmaRealizada = document.getElementById("firmaRealizada").value;
+
+            let evento = 'GuardarVistoBueno';
+
+            if(firmaRealizada == 'GuardarFirmaCargo'){
+                evento = 'GuardarFirmaCargo';
+            } else if(firmaRealizada == 'GuardarFirmaDevolucion'){
+                evento = 'GuardarFirmaDevolucion';
+            }
 
             getSpinner('Guardando Documento');
             $.ajax({
                 url: "registerDoc/RegPrestamoDocumentos.php",
                 method: "POST",
                 data: {
-                    Evento: "GuardarVistoBueno",
+                    Evento: evento,
                     IdSolicitudPrestamo: idSolicitudPrestamo,
                     IdDigital: idDigital,
                 },
                 datatype: "json",
-                success: function (response) { 
-                    tblBandejaSolicitudesEmitidoFinalizados.clear().draw();
-                    tblBandejaSolicitudesEmitidoFinalizados.ajax.reload();
+                success: function (response) {
+                    location.reload();
+                    // tblBandejaSolicitudesEmitidoFinalizados.clear().draw();
+                    // tblBandejaSolicitudesEmitidoFinalizados.ajax.reload();
                 },
                 error: function (e) {
                     console.log(e);
@@ -334,6 +347,8 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
             $('.actionButtons').hide();
 
             var btnVistoBueno = $("#btnVistoBueno");
+            var btnFirmaCargo = $("#btnFirmaCargo");
+            var btnFirmaCargoDevolucion = $("#btnFirmaCargoDevolucion");
             var btnVerSolicitud = $("#btnVerSolicitud");
             var btnEditarSolicitud = $("#btnEditarSolicitud"); 
             var btnArchivarSolicitud = $("#btnArchivarSolicitud");      
@@ -411,6 +426,12 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
                             switch(fila.IdEstadoSolicitudPrestamo) {
                                 case 112: //nuevo
                                     btnVistoBueno.css("display","inline-block");
+                                    break;
+                                case 115: //nuevo
+                                    btnFirmaCargo.css("display","inline-block");
+                                    break;
+                                case 116: //nuevo
+                                    btnFirmaCargoDevolucion.css("display","inline-block");
                                     break;
                             }
 
@@ -910,6 +931,48 @@ if($_SESSION['CODIGO_TRABAJADOR']!=""){
 
                 sendParam();
             });
+
+            btnFirmaCargo.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                $("#idSolicitudPrestamo").val(fila.IdSolicitudPrestamo);
+                $("#idDigital").val(fila.IdArchivoCargoPrestamo);
+                $("#tipo_f").val('F');
+                $("#nroVisto").val(0);
+                $("#idTipoTra").val(2);
+                $("#flgRequireFirmaLote").val(0);
+                $("#firmaRealizada").val("GuardarFirmaCargo");
+
+                sendParam();
+            });
+
+            btnFirmaCargoDevolucion.on("click", function (e) {
+                let rows_selected = tblBandejaSolicitudesEmitidoFinalizados.column(0).checkboxes.selected();
+
+                let values=[];
+                $.each(rows_selected, function (index, rowId) {
+                    values.push(tblBandejaSolicitudesEmitidoFinalizados.rows(rowId).data()[0]);
+                });
+                let fila = values[0];
+
+                $("#idSolicitudPrestamo").val(fila.IdSolicitudPrestamo);
+                $("#idDigital").val(fila.IdArchivoCargoDevolucion);
+                $("#tipo_f").val('F');
+                $("#nroVisto").val(0);
+                $("#idTipoTra").val(2);
+                $("#flgRequireFirmaLote").val(0);
+                $("#firmaRealizada").val("GuardarFirmaDevolucion");
+
+                sendParam();
+            });
+
+            
         });
     </script>
     </html>

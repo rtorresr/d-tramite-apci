@@ -107,26 +107,6 @@ while ($row = sqlsrv_fetch_array($rsDatosSolicitudDetalle, SQLSRV_FETCH_ASSOC)) 
     include ('../template/head.php');
 ?>
 
-<footer>
-    <?php if (isset($flgSegundoPdf)){ ?>
-        <!-- <table style="width: 100%; border-top: 1px solid #CC9933;">
-            <tr>
-                <td style="padding-left: 0.15rem;" valign="top">
-                    <p style="word-wrap:break-word; margin-bottom: 0; white-space:normal; font-size: 55%; font-style: italic; line-height: 1; text-align: justify; color: #999"><strong>Esta es una copia auténtica imprimible de un documento electrónico archivado en la Agencia Peruana de Cooperación Internacional,</strong> aplicando lo dispuesto por el Art. 25 de D.S. 070-2013-PCM y la Tercera Disposición Complementaria Final del D.S. 26-2016-PCM. Su autenticidad e integridad pueden ser contrastadas a través de la siguiente dirección web: https://d-tramite.apci.gob.pe/verifica.php con clave: <?=$dataFirma['clave']?></p>
-                </td>                    
-                <td style="text-align: right; padding-top: 5px">
-                    <img class="footerImg" src="../../dist/images/bicentenario-pie.png" height="48" />
-                </td>
-                <td style="text-align: right; padding-top: 5px">
-                    <img class="footerImg" src="../../dist/images/con-punche-peru.png" height="48" />
-                </td>
-            </tr>
-        </table> -->
-        <img class="footerImg" src="../dist/images/pie.png">
-    <?php } else { ?>
-        <img class="footerImg" src="../dist/images/pie.png">
-    <?php } ?>
-</footer>
 <main>
     <style>
         .serv-archivistico {
