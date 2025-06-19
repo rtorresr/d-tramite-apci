@@ -1,10 +1,10 @@
 <form id="FormDocumento">
 
-<div class="form-group border-bottom"> 
+    <div class="form-group border-bottom"> 
         <legend class="overline">Datos del documento</legend>
     </div>
 
-    <div class="form-group">
+    <div class="form-group postulacionesCas">
         <div class="row">
             <div class="col-5">
                 <div class="form-check form-check-inline">
@@ -26,7 +26,7 @@
         </div>
     </div>    
 
-    <div class="form-group sigcti">
+    <div class="form-group sigcti postulacionesCas">
         <div class="row">
             <div class="col-6">
                 <div class="form-check form-check-inline">
@@ -128,7 +128,32 @@
         </div>
     </div>
 
-    <div class="form-group sigcti tupa">
+    <div id="formPostulacionCas" style="display:none">
+        <div class="row">
+            <div class="col-6">
+                <label for="txtProcesoPostulacionCAS">Seleccione Proceso</label>
+                <select class="form-control" id="txtProcesoPostulacionCAS" name="txtProcesoPostulacionCAS">
+                    <option value="">Seleccione</option>
+                    <option value="(CAS TRANSITORIO) - N° 009-2025-APCI-UCF">(CAS TRANSITORIO) - N° 009-2025-APCI-UCF</option>
+                    <option value="(CAS TRANSITORIO) - N° 008-2025-APCI-USI">(CAS TRANSITORIO) - N° 008-2025-APCI-USI</option>
+                    <option value="(CAS TRANSITORIO) - N° 007-2025-APCI-DPP">(CAS TRANSITORIO) - N° 007-2025-APCI-DPP</option>
+                    <option value="(Practicas Profesionales) - N°013-2025-APCI-DFS">(Practicas Profesionales) - N°013-2025-APCI-DFS</option>
+                </select>
+                <div class="invalid-feedback">
+                    Por favor, seleccione un proceso a postular
+                </div>
+            </div>
+            <div class="col-6">
+                <label for="fileArchivoPrincipalPostulacionCAS">Archivo principal</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="fileArchivoPrincipalPostulacionCAS" accept="application/pdf">
+                    <label class="custom-file-label" for="fileArchivoPrincipalPostulacionCAS">Seleccionar Archivo</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group sigcti tupa postulacionesCas postulacionesCasRequeridos">
         <div class="row">
             <div class="col-2">
                 <label for="txtTipoDocumento">Tipo de documento</label>
@@ -172,7 +197,7 @@
         </div>
     </div>
 
-    <div class="form-group sigcti tupa">
+    <div class="form-group sigcti tupa postulacionesCas postulacionesCasRequeridos">
         <div class="row">
             <div class="col">
                 <label for="txtAsunto">Asunto del documento</label>
@@ -191,7 +216,7 @@
 
     <div class="form-group tupa">
         <div class="row">
-            <div class="col">
+            <div class="col postulacionesCasRequeridos">
                 <label for="archivoPrincipal">Archivo principal</label>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="archivoPrincipal" lang="es" required accept="application/pdf">

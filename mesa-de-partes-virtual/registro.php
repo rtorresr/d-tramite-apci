@@ -156,7 +156,7 @@
     </div>
 
     <!-- Modal -->
-    <!--div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -178,17 +178,16 @@
                 </div>
             </div>
         </div>
-    </div-->
+    </div
 
 
     <!-- Modal -->
-    <div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="modalDisc" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDiscLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                 </div>
                 <div class="modal-body">
-                    <!--h5 style="color: #1B365D;">🔧 MANTENIMIENTO DE LA MESA DE PARTES DIGITAL</h5-->
                         <p>Informamos que la <strong>Mesa de Partes Digital de la Agencia Peruana de Cooperación Internacional (APCI)</strong>
                         se encuentra <strong>temporalmente inhabilitada</strong> debido a problemas técnicos con su servicio de interoperabilidad.</p>
                         <p<><strong>🛠️ El servicio estará nuevamente disponible el lunes 28 a partir de las 5:00 p.m.</strong></p>
@@ -204,10 +203,10 @@
                             </li>
                         </ul>
                         <p>Agradecemos su comprensión.</p>
-                </div>             
+                </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 
@@ -724,7 +723,7 @@
    
 
     $("#primerBoton").on("click", function(e) {
-
+        
         if ($("#txtTipoDoc").val() == 73) {
                     $("#txtNombComp").val() == $("#txtNombComp").val();
                     $("#txtDireccion").val() == $("#txtDireccion").val();
@@ -1008,6 +1007,10 @@
         $(".tupa").show();
         $("#avisoRedireccion").hide();
         $("#formNuevoTipo").hide();
+        $("#formPostulacionCas").hide();
+        $(".postulacionesCas").show();
+        $(".postulacionesCasRequeridos input").attr("required", "");
+        $(".postulacionesCasRequeridos select").attr("required", "");
 
         if ($("#cboCudExist").prop("checked")){
             if($('#txtDenProc option:selected').val() == "-1"){
@@ -1029,8 +1032,15 @@
                     $(".tupa").hide();
                     $('#tblDocTupa tbody').empty();
                     $("#botonesSegundoStep").hide();
-                    $(".tupa").hide();
                     $("#formNuevoTipo").show();
+                } else if($('#txtDenProc option:selected').val() == "44"){
+                    $(".tupa").hide();
+                    $('#tblDocTupa tbody').empty();
+                    $("#formPostulacionCas").show();
+                    $(".postulacionesCas").hide();
+                    $(".postulacionesCasRequeridos input").removeAttr("required");
+                    $(".postulacionesCasRequeridos select").removeAttr("required");
+
                 } else {
                     $(".tupa").show();
                     CargarRequisitos();
@@ -1301,6 +1311,12 @@
 
                 formData.append("ID_TIPO_PROCEDIMIENTO", $("#txtClaseProc").val());
                 formData.append("ID_TUPA", $("#txtDenProc").val());
+            }
+
+            // si es una convocatoria de personal
+            if($("#txtDenProc").val() == 44){
+                formData.append("DESC_PROCESO", $("#txtProcesoPostulacionCAS").val());
+                formData.append('ARCHIVO_PRINCIPAL_PROCESO',document.getElementById('fileArchivoPrincipalPostulacionCAS').files[0]);
             }
 
             getSpinner('Guardando documento');

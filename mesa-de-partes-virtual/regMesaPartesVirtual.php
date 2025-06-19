@@ -38,7 +38,7 @@ switch ($_POST['Evento']) {
             print_r('Error al registrar el documento.');
             http_response_code(500);
             die(print_r(sqlsrv_errors()));
-        }        
+        }
 
         $asunto = 'Validación de correo electronico - Mesa de partes digital APCI';
         $cuerpo = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -188,164 +188,211 @@ switch ($_POST['Evento']) {
         break;
 
     case 'RegistrarDocumento':
-        $parametros = array(
-            $_POST['ID_TIPO_ENTIDAD'],
-            $_POST['ID_TIPO_DOC_ENTIDAD'],
-            $_POST['NUM_DOC_ENTIDAD'],
-            $_POST['NOM_ENTIDAD'],
-            $_POST['ID_TIPO_DOC_RESPONSABLE'],
-            $_POST['DNI_RESPONSABLE'],
-            $_POST['NOM_RESPONSABLE'],
-            $_POST['DIRECCION_ENTIDAD'],
-            $_POST['ID_DEPARTEMENTO'],
-            $_POST['ID_PROVINCIA'],
-            $_POST['ID_DISTRITO'],
-            $_POST['TELEFONO_CONTACTO'],            
-            $_POST['CORREO_CONTACTO'],
-            $_POST['FLG_TIENE_CUD'],
-            $_POST['NRO_CUD'],
-            $_POST['ANIO_CUD'],
-            $_POST['ID_TIPO_DOC'],
-            $_POST['NUMERO_DOC'],
-            $_POST['FEC_DOC'],
-            $_POST['FOLIOS'],
-            $_POST['ASUNTO'],
-            $_POST['FLG_ES_TUPA'],
-            $_POST['ID_TIPO_PROCEDIMIENTO'],
-            $_POST['ID_TUPA'],
-            $_POST['FLG_SIGCTI'],
-            $_POST['NRO_SOLICITUD_SIGCTI'],
-            $_POST['ID_SIGCTI'],
-            $_POST['PIN']
-        );
+        if($_POST['ID_TUPA'] == 44){
+            $agrupado = '363'.'318'.date("YmdGis");
 
-        $sqlregistro = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }";
-        $rsregistro = sqlsrv_query($cnx, $sqlregistro, $parametros);
-        if($rsregistro === false) {
-            http_response_code(500);
-            die(print_r('Error al registrar el documento.'));
-        }
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 12;
+            $docDigital->idOficina = 363;
+            $docDigital->idTrabajador = 318;
+            $docDigital->grupo = $agrupado;
 
-        $Rsregistro = sqlsrv_fetch_array( $rsregistro, SQLSRV_FETCH_ASSOC);
+            $archivoPrincipal = $_FILES['ARCHIVO_PRINCIPAL_PROCESO'];
+            $arrayExploded = explode('.',$archivoPrincipal['name']);
+            if (strtoupper(array_pop($arrayExploded)) == 'PDF') {
+                $docDigital->tmp_name = $archivoPrincipal['tmp_name'];
+                $docDigital->name = $archivoPrincipal['name'];
+                $docDigital->type = $archivoPrincipal['type'];
+                $docDigital->size = $archivoPrincipal['size'];
 
-        if ($Rsregistro["CODIGO"] == 0){
-            http_response_code(500);
-            die(print_r($Rsregistro["MENSAJE"]));
-        }
-
-        $idRegistroMesaPartes = $Rsregistro["CODIGO"];
-
-        $agrupado = date("Gis").$idRegistroMesaPartes;
-
-        $datos = new stdClass();
-
-        $docDigital = new DocDigital($cnx);
-        $docDigital->idTipo = 12;
-        $docDigital->idOficina = 0;
-        $docDigital->idTrabajador = 0;
-        $docDigital->grupo = $agrupado;
-
-        $archivoPrincipal = $_FILES['ARCHIVO_PRINCIPAL'];
-        $arrayExploded = explode('.',$archivoPrincipal['name']);
-        if (strtoupper(array_pop($arrayExploded)) == 'PDF') {
-            $docDigital->tmp_name = $archivoPrincipal['tmp_name'];
-            $docDigital->name = $archivoPrincipal['name'];
-            $docDigital->type = $archivoPrincipal['type'];
-            $docDigital->size = $archivoPrincipal['size'];
-
-            $docDigital->clearName = $docDigital::formatearNombre($docDigital->name,true,[' ']);
-            if (!$docDigital::validarFormato($docDigital::obternerExtension($docDigital->clearName))){
-                throw new \Exception('Formato no aceptado');
-            }
-
-            if($docDigital->cargarDocumento()){
-                $ruta = $docDigital::rutaCarpetas($docDigital).$docDigital->clearName;
-                $parametrosDocPrincipal = array(
-                    $idRegistroMesaPartes,
-                    5,
-                    $archivoPrincipal['name'],
-                    $ruta
-                );
-            
-                $sqlDocPrincipal = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL_ARCHIVO (?,?,?,?) }";
-                $rsDocPrincipal = sqlsrv_query($cnx, $sqlDocPrincipal, $parametrosDocPrincipal);
-                if($rsDocPrincipal === false) {
+                if(!$docDigital->subirDocumento()){
                     http_response_code(500);
-                    die(print_r('Error al registrar el archivo principal.'));
+                    die(print_r('Error al guardar el archivo principal.'));
                 }
-            } else {
-                http_response_code(500);
-                die(print_r('Error al guardar el archivo principal.'));
-            }
-        }        
-        
-        if (isset($_FILES['ANEXOS'])){
-            for($i = 0; $i < count($_FILES['ANEXOS']['name']); $i++){
-                $docDigital->idDocDigital = null;
-                $docDigital->idTramite = null;
-                $docDigital->path = null;     
 
-                $docDigital->tmp_name = $_FILES['ANEXOS']['tmp_name'][$i];
-                $docDigital->name = $_FILES['ANEXOS']['name'][$i];
-                $docDigital->type = $_FILES['ANEXOS']['type'][$i];
-                $docDigital->size = $_FILES['ANEXOS']['size'][$i];
+                $parametros = array(
+                    $_POST['ID_TIPO_ENTIDAD'],
+                    $_POST['ID_TIPO_DOC_ENTIDAD'],
+                    $_POST['NUM_DOC_ENTIDAD'],
+                    $_POST['NOM_ENTIDAD'],
+                    $_POST['NOM_RESPONSABLE'],
+
+                    $_POST['DESC_PROCESO'],
+                    354, // OFICINA DERIVAR
+                    $_POST['CORREO_CONTACTO'],
+                    $_POST['PIN'],
+                    $docDigital->idDocDigital
+                );
+
+                $sqlregistro = "{call USP_INGRESO_TRAMITE_DERIVA_CONVOCATORIA_CAS (?,?,?,?,?,?,?,?,?,?) }";
+
+                $rsregistro = sqlsrv_query($cnx, $sqlregistro, $parametros);
+                if($rsregistro === false) {
+                    http_response_code(500);
+                    die(print_r(sqlsrv_errors(), true));
+                    die(print_r('Error al registrar el documento.'));
+                }
+            }
+        } else {
+            $parametros = array(
+                $_POST['ID_TIPO_ENTIDAD'],
+                $_POST['ID_TIPO_DOC_ENTIDAD'],
+                $_POST['NUM_DOC_ENTIDAD'],
+                $_POST['NOM_ENTIDAD'],
+                $_POST['ID_TIPO_DOC_RESPONSABLE'],
+                $_POST['DNI_RESPONSABLE'],
+                $_POST['NOM_RESPONSABLE'],
+                $_POST['DIRECCION_ENTIDAD'],
+                $_POST['ID_DEPARTEMENTO'],
+                $_POST['ID_PROVINCIA'],
+                $_POST['ID_DISTRITO'],
+                $_POST['TELEFONO_CONTACTO'],            
+                $_POST['CORREO_CONTACTO'],
+                $_POST['FLG_TIENE_CUD'],
+                $_POST['NRO_CUD'],
+                $_POST['ANIO_CUD'],
+                $_POST['ID_TIPO_DOC'],
+                $_POST['NUMERO_DOC'],
+                $_POST['FEC_DOC'],
+                $_POST['FOLIOS'],
+                $_POST['ASUNTO'],
+                $_POST['FLG_ES_TUPA'],
+                $_POST['ID_TIPO_PROCEDIMIENTO'],
+                $_POST['ID_TUPA'],
+                $_POST['FLG_SIGCTI'],
+                $_POST['NRO_SOLICITUD_SIGCTI'],
+                $_POST['ID_SIGCTI'],
+                $_POST['PIN']
+            );
+
+            $sqlregistro = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }";
+            $rsregistro = sqlsrv_query($cnx, $sqlregistro, $parametros);
+            if($rsregistro === false) {
+                http_response_code(500);
+                die(print_r('Error al registrar el documento.'));
+            }
+
+            $Rsregistro = sqlsrv_fetch_array( $rsregistro, SQLSRV_FETCH_ASSOC);
+
+            if ($Rsregistro["CODIGO"] == 0){
+                http_response_code(500);
+                die(print_r($Rsregistro["MENSAJE"]));
+            }
+
+            $idRegistroMesaPartes = $Rsregistro["CODIGO"];
+
+            $agrupado = date("Gis").$idRegistroMesaPartes;
+
+            $datos = new stdClass();
+
+            $docDigital = new DocDigital($cnx);
+            $docDigital->idTipo = 12;
+            $docDigital->idOficina = 0;
+            $docDigital->idTrabajador = 0;
+            $docDigital->grupo = $agrupado;
+
+            $archivoPrincipal = $_FILES['ARCHIVO_PRINCIPAL'];
+            $arrayExploded = explode('.',$archivoPrincipal['name']);
+            if (strtoupper(array_pop($arrayExploded)) == 'PDF') {
+                $docDigital->tmp_name = $archivoPrincipal['tmp_name'];
+                $docDigital->name = $archivoPrincipal['name'];
+                $docDigital->type = $archivoPrincipal['type'];
+                $docDigital->size = $archivoPrincipal['size'];
 
                 $docDigital->clearName = $docDigital::formatearNombre($docDigital->name,true,[' ']);
-                $docDigital->path = '';
-
                 if (!$docDigital::validarFormato($docDigital::obternerExtension($docDigital->clearName))){
                     throw new \Exception('Formato no aceptado');
                 }
 
                 if($docDigital->cargarDocumento()){
                     $ruta = $docDigital::rutaCarpetas($docDigital).$docDigital->clearName;
+                    $parametrosDocPrincipal = array(
+                        $idRegistroMesaPartes,
+                        5,
+                        $archivoPrincipal['name'],
+                        $ruta
+                    );
+                
+                    $sqlDocPrincipal = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL_ARCHIVO (?,?,?,?) }";
+                    $rsDocPrincipal = sqlsrv_query($cnx, $sqlDocPrincipal, $parametrosDocPrincipal);
+                    if($rsDocPrincipal === false) {
+                        http_response_code(500);
+                        die(print_r('Error al registrar el archivo principal.'));
+                    }
+                } else {
+                    http_response_code(500);
+                    die(print_r('Error al guardar el archivo principal.'));
+                }
+            }
+            
+            if (isset($_FILES['ANEXOS'])){
+                for($i = 0; $i < count($_FILES['ANEXOS']['name']); $i++){
+                    $docDigital->idDocDigital = null;
+                    $docDigital->idTramite = null;
+                    $docDigital->path = null;     
+
+                    $docDigital->tmp_name = $_FILES['ANEXOS']['tmp_name'][$i];
+                    $docDigital->name = $_FILES['ANEXOS']['name'][$i];
+                    $docDigital->type = $_FILES['ANEXOS']['type'][$i];
+                    $docDigital->size = $_FILES['ANEXOS']['size'][$i];
+
+                    $docDigital->clearName = $docDigital::formatearNombre($docDigital->name,true,[' ']);
+                    $docDigital->path = '';
+
+                    if (!$docDigital::validarFormato($docDigital::obternerExtension($docDigital->clearName))){
+                        throw new \Exception('Formato no aceptado');
+                    }
+
+                    if($docDigital->cargarDocumento()){
+                        $ruta = $docDigital::rutaCarpetas($docDigital).$docDigital->clearName;
+                        $parametrosAnexos = array(
+                            $idRegistroMesaPartes,
+                            3,
+                            $_FILES['ANEXOS']['name'][$i],
+                            $ruta
+                        );
+                
+                        $sqlDocAnexo = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL_ARCHIVO (?,?,?,?) }";
+                        $rsDocAnexo = sqlsrv_query($cnx, $sqlDocAnexo, $parametrosAnexos);
+                        if($rsDocAnexo === false) {                        
+                            http_response_code(500);
+                            die(print_r('Error al registrar el anexo'.$_FILES['ANEXOS']['name'][$i].'.'));
+                        }
+                    } else {
+                        http_response_code(500);
+                        die(print_r('Error al guardar el anexo'.$_FILES['ANEXOS']['name'][$i].'.'));
+                    }           
+                }
+            }
+
+            if (isset($_POST['ANEXOS_SIGCTI'])){
+                for($i = 0; $i < count($_POST['ANEXOS_SIGCTI']); $i++){
+                    
+                    $item = json_decode($_POST['ANEXOS_SIGCTI'][$i]);
                     $parametrosAnexos = array(
                         $idRegistroMesaPartes,
                         3,
-                        $_FILES['ANEXOS']['name'][$i],
-                        $ruta
+                        $item->original,
+                        $item->nuevo
                     );
             
                     $sqlDocAnexo = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL_ARCHIVO (?,?,?,?) }";
                     $rsDocAnexo = sqlsrv_query($cnx, $sqlDocAnexo, $parametrosAnexos);
                     if($rsDocAnexo === false) {                        
                         http_response_code(500);
-                        die(print_r('Error al registrar el anexo'.$_FILES['ANEXOS']['name'][$i].'.'));
+                        die(print_r('Error al registrar el anexo'.$item->original.'.'));
                     }
-                } else {
-                    http_response_code(500);
-                    die(print_r('Error al guardar el anexo'.$_FILES['ANEXOS']['name'][$i].'.'));
-                }           
+                }
             }
         }
-
-        if (isset($_POST['ANEXOS_SIGCTI'])){
-            for($i = 0; $i < count($_POST['ANEXOS_SIGCTI']); $i++){
-                
-                $item = json_decode($_POST['ANEXOS_SIGCTI'][$i]);
-                $parametrosAnexos = array(
-                    $idRegistroMesaPartes,
-                    3,
-                    $item->original,
-                    $item->nuevo
-                );
         
-                $sqlDocAnexo = "{call UP_REGISTRAR_MESA_PARTES_VIRTUAL_ARCHIVO (?,?,?,?) }";
-                $rsDocAnexo = sqlsrv_query($cnx, $sqlDocAnexo, $parametrosAnexos);
-                if($rsDocAnexo === false) {                        
-                    http_response_code(500);
-                    die(print_r('Error al registrar el anexo'.$item->original.'.'));
-                }              
-            }
-        }
-
         if ($_POST['ID_TIPO_ENTIDAD'] == 62){
             $nombres = $_POST['NOM_ENTIDAD'];
         } else {
             $nombres = $_POST['NOM_RESPONSABLE'];
         }
 
-        $correo = $_POST['CORREO_CONTACTO'];    
+        $correo = $_POST['CORREO_CONTACTO'];
 
         $asunto = 'Confirmación de Registro - Mesa de partes digital APCI';
         $cuerpo = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
